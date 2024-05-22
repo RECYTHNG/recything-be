@@ -10,7 +10,7 @@ import (
 
 	"github.com/cloudinary/cloudinary-go/v2"
 	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
-	"github.com/sawalreverr/bebastukar-be/config"
+	"github.com/sawalreverr/recything/config"
 )
 
 func UploadToCloudinary(file interface{}, folderPath string) (string, error) {

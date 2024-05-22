@@ -3,12 +3,12 @@ package database
 import (
 	"log"
 
-	"github.com/sawalreverr/recything/internal/user/entity"
+	user "github.com/sawalreverr/recything/internal/user/entity"
 )
 
 func AutoMigrate(db Database) {
 	if err := db.GetDB().AutoMigrate(
-		&entity.User{},
+		&user.User{},
 	); err != nil {
 		log.Fatal("Database Migration Failed!")
 	}
