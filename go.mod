@@ -7,7 +7,6 @@ require (
 	github.com/go-playground/validator/v10 v10.20.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/labstack/echo/v4 v4.12.0
-	github.com/sawalreverr/bebastukar-be v0.0.0-20240513184107-a6cc59e890e3
 	github.com/spf13/viper v1.18.2
 	golang.org/x/crypto v0.22.0
 	gorm.io/driver/mysql v1.5.6
