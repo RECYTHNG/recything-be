@@ -3,7 +3,7 @@ package database
 import (
 	"log"
 
-	user "github.com/sawalreverr/recything/internal/user/entity"
+	"github.com/sawalreverr/recything/internal/user"
 )
 
 func AutoMigrate(db Database) {
