@@ -71,7 +71,7 @@ func (r *userRepository) FindAll(page int, limit int, sortBy string, sortType st
 func (r *userRepository) FindLastID() (string, error) {
 	var user u.User
 	if err := r.DB.GetDB().Order("id DESC").First(&user).Error; err != nil {
-		return "USR0001", err
+		return "USR0000", err
 	}
 
 	return user.ID, nil
