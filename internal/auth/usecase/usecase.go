@@ -27,7 +27,7 @@ func (uc *authUsecase) RegisterUser(user a.Register) (*u.User, error) {
 	}
 
 	lastID, _ := uc.userRepository.FindLastID()
-	newID := u.GenerateCustomID(lastID, "USR")
+	newID := helper.GenerateCustomID(lastID, "USR")
 
 	hashedPass, _ := helper.GenerateHash(user.Password)
 
@@ -37,6 +37,7 @@ func (uc *authUsecase) RegisterUser(user a.Register) (*u.User, error) {
 		Email:       user.Email,
 		PhoneNumber: user.PhoneNumber,
 		Password:    hashedPass,
+		OTP:         helper.GenerateOTP(),
 	}
 
 	createdUser, err := uc.userRepository.Create(newUser)
@@ -64,6 +65,10 @@ func (uc *authUsecase) LoginUser(user a.Login) (string, error) {
 }
 
 func (uc *authUsecase) VerifyOTP(user a.OTPRequest) error {
+	// userFound, err := uc.userRepository.FindByEmail(user.Email)
+	// if err != nil {
+	// 	return pkg.ErrUserNotFound
+	// }
 
 	return nil
 }

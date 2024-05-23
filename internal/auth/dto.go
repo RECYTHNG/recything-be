@@ -13,6 +13,6 @@ type Login struct {
 }
 
 type OTPRequest struct {
-	PhoneNumber string `json:"phone_number" validate:"required,min=10"`
-	OTP         uint   `json:"otp"`
+	Email string `json:"phone_number" validate:"required,min=10"`
+	OTP   uint   `json:"otp"`
 }
