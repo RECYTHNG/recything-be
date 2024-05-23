@@ -20,6 +20,7 @@ type User struct {
 	Address     string    `json:"address"`
 	PictureURL  string    `json:"picture_url"`
 	OTP         uint      `json:"otp"`
+	IsVerified  bool      `json:"is_verified"`
 
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`
