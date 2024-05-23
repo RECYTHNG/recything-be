@@ -10,6 +10,12 @@ import (
 	"github.com/sawalreverr/recything/internal/helper"
 )
 
+func SuperAdminMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		return jwtMiddleware(c, next, "superadmin")
+	}
+}
+
 func AdminMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		return jwtMiddleware(c, next, "admin")
