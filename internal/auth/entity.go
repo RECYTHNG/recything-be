@@ -9,7 +9,7 @@ type AuthUsecase interface {
 	RegisterUser(user Register) (*user.User, error)
 	LoginUser(user Login) (string, error)
 	VerifyOTP(user OTPRequest) error
-	UpdateOTP(phoneNumber string) error
+	UpdateOTP(email string) error
 }
 
 type AuthHandler interface {

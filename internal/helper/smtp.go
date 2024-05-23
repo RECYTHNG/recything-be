@@ -9,7 +9,7 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
-func SendMail(receiverEmail string, otp string) error {
+func SendMail(receiverEmail string, otp uint) error {
 	conf := config.GetConfig()
 
 	mailer := gomail.NewMessage()
@@ -17,7 +17,7 @@ func SendMail(receiverEmail string, otp string) error {
 	mailer.SetHeader("To", receiverEmail)
 	mailer.SetHeader("Subject", "Recything - OTP Verififcation")
 
-	msg := fmt.Sprintf("Hello, This is your OTP <b>%s</b>", otp)
+	msg := fmt.Sprintf("Hello, This is your OTP <b>%v</b>", otp)
 	mailer.SetBody("text/html", msg)
 
 	dialer := gomail.NewDialer(

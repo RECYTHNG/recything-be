@@ -38,6 +38,7 @@ func (uc *authUsecase) RegisterUser(user a.Register) (*u.User, error) {
 		PhoneNumber: user.PhoneNumber,
 		Password:    hashedPass,
 		OTP:         helper.GenerateOTP(),
+		IsVerified:  false,
 	}
 
 	createdUser, err := uc.userRepository.Create(newUser)
@@ -59,21 +60,44 @@ func (uc *authUsecase) LoginUser(user a.Login) (string, error) {
 		return "", pkg.ErrPasswordInvalid
 	}
 
+	if !userFound.IsVerified {
+		return "", pkg.ErrNeedToVerify
+	}
+
 	token, err := helper.GenerateTokenJWT(userFound.ID, "user")
 
 	return token, err
 }
 
 func (uc *authUsecase) VerifyOTP(user a.OTPRequest) error {
-	// userFound, err := uc.userRepository.FindByEmail(user.Email)
-	// if err != nil {
-	// 	return pkg.ErrUserNotFound
-	// }
+	userFound, err := uc.userRepository.FindByEmail(user.Email)
+	if err != nil {
+		return pkg.ErrUserNotFound
+	}
+
+	if user.OTP != userFound.OTP {
+		return pkg.ErrOTPInvalid
+	}
+
+	userFound.IsVerified = true
+	if err := uc.userRepository.Update(*userFound); err != nil {
+		return pkg.ErrStatusInternalError
+	}
 
 	return nil
 }
 
-func (uc *authUsecase) UpdateOTP(phoneNumber string) error {
+func (uc *authUsecase) UpdateOTP(email string) error {
+	userFound, err := uc.userRepository.FindByEmail(email)
+	if err != nil {
+		return pkg.ErrUserNotFound
+	}
+
+	userFound.OTP = helper.GenerateOTP()
+
+	if err := uc.userRepository.Update(*userFound); err != nil {
+		return pkg.ErrStatusInternalError
+	}
 
 	return nil
 }

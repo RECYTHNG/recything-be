@@ -10,8 +10,3 @@ type UserDetail struct {
 	BirthDate   time.Time `json:"birth_date"`
 	Address     string    `json:"address"`
 }
-
-type OTPRequest struct {
-	PhoneNumber string `json:"phone_number" validate:"required,min=10"`
-	OTP         uint   `json:"otp"`
-}
