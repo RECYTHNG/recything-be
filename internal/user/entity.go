@@ -15,7 +15,7 @@ type User struct {
 	PhoneNumber string    `json:"phone_number"`
 	Password    string    `json:"-"`
 	Point       uint      `json:"point"`
-	Gender      string    `json:"gender" gorm:"type:enum('laki-laki', 'perempuan')"`
+	Gender      string    `json:"gender" gorm:"type:enum('laki-laki', 'perempuan');default:laki-laki"`
 	BirthDate   time.Time `json:"birth_date" gorm:"type:datetime"`
 	Address     string    `json:"address"`
 	PictureURL  string    `json:"picture_url"`
