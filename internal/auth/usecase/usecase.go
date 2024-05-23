@@ -75,6 +75,10 @@ func (uc *authUsecase) VerifyOTP(user a.OTPRequest) error {
 		return pkg.ErrUserNotFound
 	}
 
+	if userFound.IsVerified {
+		return pkg.ErrUserAlreadyVerified
+	}
+
 	if user.OTP != userFound.OTP {
 		return pkg.ErrOTPInvalid
 	}
@@ -87,17 +91,21 @@ func (uc *authUsecase) VerifyOTP(user a.OTPRequest) error {
 	return nil
 }
 
-func (uc *authUsecase) UpdateOTP(email string) error {
+func (uc *authUsecase) UpdateOTP(email string) (uint, error) {
 	userFound, err := uc.userRepository.FindByEmail(email)
 	if err != nil {
-		return pkg.ErrUserNotFound
+		return 0, pkg.ErrUserNotFound
+	}
+
+	if userFound.IsVerified {
+		return 0, pkg.ErrUserAlreadyVerified
 	}
 
 	userFound.OTP = helper.GenerateOTP()
 
 	if err := uc.userRepository.Update(*userFound); err != nil {
-		return pkg.ErrStatusInternalError
+		return 0, pkg.ErrStatusInternalError
 	}
 
-	return nil
+	return userFound.OTP, nil
 }

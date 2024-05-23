@@ -14,4 +14,5 @@ var (
 	ErrPasswordInvalid          = errors.New("password invalid")
 	ErrOTPInvalid               = errors.New("otp invalid")
 	ErrNeedToVerify             = errors.New("verify account false")
+	ErrUserAlreadyVerified      = errors.New("user already verified")
 )

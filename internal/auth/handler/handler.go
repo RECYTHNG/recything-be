@@ -68,7 +68,7 @@ func (h *authHandler) VerifyOTP(c echo.Context) error {
 			return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
 		}
 
-		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+		return helper.ErrorHandler(c, http.StatusConflict, err.Error())
 	}
 
 	return helper.ResponseHandler(c, http.StatusOK, "otp successfully verified. registration complete!", nil)
@@ -85,7 +85,16 @@ func (h *authHandler) ResendOTP(c echo.Context) error {
 		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
 
-	if err := h.authUsecase.UpdateOTP(request.Email); err != nil {
+	newOTP, err := h.authUsecase.UpdateOTP(request.Email)
+	if err != nil {
+		if errors.Is(err, pkg.ErrStatusInternalError) {
+			return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
+		}
+
+		return helper.ErrorHandler(c, http.StatusConflict, err.Error())
+	}
+
+	if err := helper.SendMail(request.Email, newOTP); err != nil {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
 	}
 
@@ -109,7 +118,7 @@ func (h *authHandler) Login(c echo.Context) error {
 			return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
 		}
 
-		return helper.ErrorHandler(c, http.StatusUnauthorized, err.Error())
+		return helper.ErrorHandler(c, http.StatusUnauthorized, "email or password invalid!")
 	}
 
 	response := a.LoginResponse{
