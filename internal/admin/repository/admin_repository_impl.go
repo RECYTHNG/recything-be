@@ -35,9 +35,25 @@ func (repository *AdminRepositoryImpl) FindAdminByEmail(email string) (*entity.A
 	return &admin, nil
 }
 
+func (repository *AdminRepositoryImpl) FindAdminByID(id string) (*entity.Admin, error) {
+	var admin entity.Admin
+	if err := repository.DB.GetDB().Where("id = ?", id).First(&admin).Error; err != nil {
+		return nil, err
+	}
+	return &admin, nil
+}
+
 func (repository *AdminRepositoryImpl) GetDataAdmin(id string) (*entity.Admin, error) {
 	var admin entity.Admin
 	if err := repository.DB.GetDB().Where("id = ?", id).First(&admin).Error; err != nil {
+		return nil, err
+	}
+	return &admin, nil
+}
+
+func (repository *AdminRepositoryImpl) AddProfileImage(id string, imageUrl string) (*entity.Admin, error) {
+	var admin entity.Admin
+	if err := repository.DB.GetDB().Model(&admin).Where("id = ?", id).Update("image_url", imageUrl).Error; err != nil {
 		return nil, err
 	}
 	return &admin, nil

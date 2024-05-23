@@ -6,3 +6,7 @@ type AdminResponseRegister struct {
 	Email string `json:"email"`
 	Role  string `json:"role"`
 }
+
+type UploadProfileImageResponse struct {
+	ImageUrl string `json:"image_url"`
+}

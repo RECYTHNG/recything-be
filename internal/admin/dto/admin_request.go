@@ -15,3 +15,7 @@ type AdminUpdateRequest struct {
 	NewPassword string `json:"new_password" validate:"required"`
 	Role        string `json:"role" validate:"required"`
 }
+
+type UploadProfileImageRequest struct {
+	ImageUrl string `form:"image_url" validate:"required"`
+}

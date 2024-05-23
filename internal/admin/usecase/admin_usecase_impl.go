@@ -45,12 +45,27 @@ func (usecase *AdminUsecaseImpl) UpdateAdminUsecase(request dto.AdminUpdateReque
 		return nil, err
 	}
 	admin, error := usecase.Repository.UpdateDataAdmin(&entity.Admin{
+		ID:        "1",
 		Name:      request.Name,
 		Email:     request.Email,
 		Password:  request.NewPassword,
 		Role:      request.Role,
 		DeletedAt: gorm.DeletedAt{},
 	}, request.OldPassword)
+	if error != nil {
+		return nil, error
+	}
+	return admin, nil
+}
+
+func (usecase *AdminUsecaseImpl) UploadProfileUsecase(request dto.UploadProfileImageRequest) (*entity.Admin, error) {
+	_, err := usecase.Repository.FindAdminByID("1")
+
+	if err != nil {
+		return nil, err
+	}
+
+	admin, error := usecase.Repository.AddProfileImage("1", request.ImageUrl)
 	if error != nil {
 		return nil, error
 	}
