@@ -118,6 +118,10 @@ func (h *authHandler) Login(c echo.Context) error {
 			return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
 		}
 
+		if errors.Is(err, pkg.ErrNeedToVerify) {
+			return helper.ErrorHandler(c, http.StatusUnauthorized, "verify your account!")
+		}
+
 		return helper.ErrorHandler(c, http.StatusUnauthorized, "email or password invalid!")
 	}
 
