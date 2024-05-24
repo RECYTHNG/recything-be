@@ -24,7 +24,7 @@ func NewAdminUsecase(adminRepo repository.AdminRepository) *AdminUsecaseImpl {
 func (usecase *AdminUsecaseImpl) AddAdminUsecase(request dto.AdminRequestCreate, file io.Reader) (*entity.Admin, error) {
 	findAdmin, _ := usecase.Repository.FindAdminByEmail(request.Email)
 	if findAdmin != nil {
-		return nil, pkg.ErrEmailAlreadyExist
+		return nil, pkg.ErrEmailAlreadyExists
 	}
 
 	imageUrl, errUpload := helper.UploadToCloudinary(file, "profile_admin")

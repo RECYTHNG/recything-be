@@ -56,8 +56,8 @@ func (handler *adminHandlerImpl) AddAdminHandler(c echo.Context) error {
 
 	admin, errUc := handler.Usecase.AddAdminUsecase(request, src)
 	if errUc != nil {
-		if errors.Is(errUc, pkg.ErrEmailAlreadyExist) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrEmailAlreadyExist.Error())
+		if errors.Is(errUc, pkg.ErrEmailAlreadyExists) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrEmailAlreadyExists.Error())
 		}
 
 		if errors.Is(errUc, pkg.ErrUploadCloudinary) {
@@ -94,7 +94,6 @@ func (handler *adminHandlerImpl) GetDataAllAdminHandler(c echo.Context) error {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
 	}
 
-	// Create the slice of AdminDataGetAll directly
 	data := []dto.AdminDataGetAll{}
 
 	for _, admin := range admins {

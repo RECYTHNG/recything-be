@@ -4,6 +4,9 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/sawalreverr/recything/internal/admin/handler"
+	"github.com/sawalreverr/recything/internal/admin/repository"
+	"github.com/sawalreverr/recything/internal/admin/usecase"
 	authHandler "github.com/sawalreverr/recything/internal/auth/handler"
 	authUsecase "github.com/sawalreverr/recything/internal/auth/usecase"
 	"github.com/sawalreverr/recything/internal/middleware"
@@ -78,4 +81,17 @@ func (s *echoServer) userHttpHandler() {
 
 	// Delete user data using param userId
 	s.gr.DELETE("/user/:userId", handler.DeleteUser, SuperAdminOrAdminMiddleware)
+}
+
+func (s *echoServer) supAdminHttpHandler() {
+	repository := repository.NewAdminRepository(s.db)
+	usecase := usecase.NewAdminUsecase(repository)
+	handler := handler.NewAdminHandler(usecase)
+
+	// register admin by super admin
+	s.gr.POST("/superadmin/admins", handler.AddAdminHandler, SuperAdminMiddleware)
+
+	// get all admin by super admin
+	s.gr.GET("/superadmin/admins", handler.GetDataAllAdminHandler, SuperAdminMiddleware)
+
 }

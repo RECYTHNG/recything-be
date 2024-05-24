@@ -53,6 +53,9 @@ func (s *echoServer) Start() {
 	// Users Handler
 	s.userHttpHandler()
 
+	// super admin handler
+	s.supAdminHttpHandler()
+
 	serverPORT := fmt.Sprintf(":%d", s.conf.Server.Port)
 	s.app.Logger.Fatal(s.app.Start(serverPORT))
 }
