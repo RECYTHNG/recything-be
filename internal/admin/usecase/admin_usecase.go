@@ -1,12 +1,13 @@
 package usecase
 
 import (
+	"io"
+
 	"github.com/sawalreverr/recything/internal/admin/dto"
 	"github.com/sawalreverr/recything/internal/admin/entity"
 )
 
 type AdminUsecase interface {
-	AddAdminUsecase(request dto.AdminRequestCreate) (*entity.Admin, error)
-	UpdateAdminUsecase(request dto.AdminUpdateRequest) (*entity.Admin, error)
-	UploadProfileUsecase(request dto.UploadProfileImageRequest) (*entity.Admin, error)
+	AddAdminUsecase(request dto.AdminRequestCreate, file io.Reader) (*entity.Admin, error)
+	UpdateAdminUsecase(request dto.AdminUpdateRequest, id string) (*entity.Admin, error)
 }

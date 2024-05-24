@@ -43,18 +43,18 @@ func (repository *AdminRepositoryImpl) FindAdminByID(id string) (*entity.Admin, 
 	return &admin, nil
 }
 
-func (repository *AdminRepositoryImpl) GetDataAdmin(id string) (*entity.Admin, error) {
-	var admin entity.Admin
-	if err := repository.DB.GetDB().Where("id = ?", id).First(&admin).Error; err != nil {
+func (repository *AdminRepositoryImpl) GetDataAllAdmin(limit int) ([]entity.Admin, error) {
+	var admins []entity.Admin
+	if err := repository.DB.GetDB().Order("id desc").Limit(limit).Find(&admins).Error; err != nil {
 		return nil, err
 	}
-	return &admin, nil
+	return admins, nil
 }
 
-func (repository *AdminRepositoryImpl) AddProfileImage(id string, imageUrl string) (*entity.Admin, error) {
+func (repository *AdminRepositoryImpl) FindLastIdAdmin() (string, error) {
 	var admin entity.Admin
-	if err := repository.DB.GetDB().Model(&admin).Where("id = ?", id).Update("image_url", imageUrl).Error; err != nil {
-		return nil, err
+	if err := repository.DB.GetDB().Order("id desc").First(&admin).Error; err != nil {
+		return "AD0000", err
 	}
-	return &admin, nil
+	return admin.ID, nil
 }

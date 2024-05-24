@@ -30,44 +30,21 @@ func (handler *adminHandlerImpl) AddAdminHandler(c echo.Context) error {
 		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
 
-	admin, errUc := handler.Usecase.AddAdminUsecase(request)
-	if errUc != nil {
-		if errors.Is(errUc, pkg.ErrEmailAlreadyExist) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrEmailAlreadyExist.Error())
-		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
+	if request.Role != "admin" && request.Role != "super admin" {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "role must be admin or super admin")
 	}
 
-	data := dto.AdminResponseRegister{
-		Id:    admin.ID,
-		Name:  admin.Name,
-		Email: admin.Email,
-		Role:  admin.Role,
-	}
-	responseData := helper.ResponseData(http.StatusCreated, "success", data)
-	return c.JSON(http.StatusCreated, responseData)
-
-}
-
-func (handler *adminHandlerImpl) UploadProfileHandler(c echo.Context) error {
-	const maxFileSize = 2 * 1024 * 1024
-
-	if !strings.HasPrefix(c.Request().Header.Get("Content-Type"), "multipart/form-data") {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "request Content-Type isn't multipart/form-data")
-	}
-
-	file, errFile := c.FormFile("image_url")
+	file, errFile := c.FormFile("profile_photo")
 	if errFile != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "failed to get form file: "+errFile.Error())
+		return helper.ErrorHandler(c, http.StatusBadRequest, "profile_photo not found")
 	}
 
-	if file.Size > maxFileSize {
-		return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrFileTooLarge.Error())
+	if file.Size > 2*1024*1024 {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "file is too large")
 	}
 
-	fileType := file.Header.Get("Content-Type")
-	if !strings.HasPrefix(fileType, "image/") {
-		return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrInvalidFileType.Error())
+	if !strings.HasPrefix(file.Header.Get("Content-Type"), "image") {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid file type")
 	}
 
 	src, errOpen := file.Open()
@@ -76,24 +53,27 @@ func (handler *adminHandlerImpl) UploadProfileHandler(c echo.Context) error {
 	}
 	defer src.Close()
 
-	imageUrl, errUpload := helper.UploadToCloudinary(src, "profile_admin")
-	if errUpload != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
+	admin, errUc := handler.Usecase.AddAdminUsecase(request, src)
+	if errUc != nil {
+		if errors.Is(errUc, pkg.ErrEmailAlreadyExist) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrEmailAlreadyExist.Error())
+		}
+
+		if errors.Is(errUc, pkg.ErrUploadCloudinary) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrUploadCloudinary.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
-	// Memperbarui profil admin dengan URL gambar
-	admin, errUploadProfile := handler.Usecase.UploadProfileUsecase(dto.UploadProfileImageRequest{ImageUrl: imageUrl})
-	if errUploadProfile != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, errUploadProfile.Error())
+	data := dto.AdminResponseRegister{
+		Id:           admin.ID,
+		Name:         admin.Name,
+		Email:        admin.Email,
+		Role:         admin.Role,
+		ProfilePhoto: admin.ImageUrl,
 	}
-
-	// Membuat respons
-	data := dto.UploadProfileImageResponse{
-		ImageUrl: admin.ImageUrl,
-	}
-
-	// Mengirimkan respons
-	return c.JSON(http.StatusOK, helper.ResponseData(http.StatusOK, "success", data))
+	responseData := helper.ResponseData(http.StatusCreated, "success", data)
+	return c.JSON(http.StatusCreated, responseData)
 }
 
 func (handler *adminHandlerImpl) UpdateAdminHandler(c echo.Context) error {

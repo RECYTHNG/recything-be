@@ -26,6 +26,5 @@ func (s *echoServer) publicHttpHandler() {
 	adminRepo := repository.NewAdminRepository(s.db)
 	adminUsecase := usecase.NewAdminUsecase(adminRepo)
 	adminHandler := handler.NewAdminHandler(adminUsecase)
-	s.app.POST("/admin/register", adminHandler.AddAdminHandler)
-	s.app.PUT("/admin/profile", adminHandler.UploadProfileHandler)
+	s.app.POST("/superadmin/admins", adminHandler.AddAdminHandler)
 }

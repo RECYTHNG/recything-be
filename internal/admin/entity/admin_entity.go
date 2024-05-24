@@ -11,7 +11,7 @@ type Admin struct {
 	Name      string
 	Email     string
 	Password  string
-	Role      string `gorm:"type:enum('super_admin', 'admin')"`
+	Role      string `gorm:"type:enum('super admin', 'admin')"`
 	ImageUrl  string
 	CreatedAt time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt time.Time      `gorm:"autoUpdateTime"`
