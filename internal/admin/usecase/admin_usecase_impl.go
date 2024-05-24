@@ -53,6 +53,14 @@ func (usecase *AdminUsecaseImpl) AddAdminUsecase(request dto.AdminRequestCreate,
 	return admin, nil
 }
 
+func (usecase *AdminUsecaseImpl) GetDataAllAdminUsecase(limit int) ([]entity.Admin, error) {
+	admins, err := usecase.Repository.GetDataAllAdmin(limit)
+	if err != nil {
+		return nil, err
+	}
+	return admins, nil
+}
+
 func (usecase *AdminUsecaseImpl) UpdateAdminUsecase(request dto.AdminUpdateRequest, id string) (*entity.Admin, error) {
 	if err := usecase.Validate.Struct(request); err != nil {
 		return nil, err

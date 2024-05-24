@@ -10,4 +10,5 @@ import (
 type AdminUsecase interface {
 	AddAdminUsecase(request dto.AdminRequestCreate, file io.Reader) (*entity.Admin, error)
 	UpdateAdminUsecase(request dto.AdminUpdateRequest, id string) (*entity.Admin, error)
+	GetDataAllAdminUsecase(limit int) ([]entity.Admin, error)
 }

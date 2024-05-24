@@ -16,7 +16,9 @@ type AdminDataGetAll struct {
 }
 
 type AdminResponseGetDataAll struct {
-	Data  []AdminDataGetAll `json:"data"`
-	Limit int               `json:"limit"`
-	Total int               `json:"total"`
+	Code    int               `json:"code"`
+	Message string            `json:"message"`
+	Data    []AdminDataGetAll `json:"data"`
+	Limit   int               `json:"limit"`
+	Total   int               `json:"total"`
 }

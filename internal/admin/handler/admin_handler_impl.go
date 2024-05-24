@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -74,6 +75,46 @@ func (handler *adminHandlerImpl) AddAdminHandler(c echo.Context) error {
 	}
 	responseData := helper.ResponseData(http.StatusCreated, "success", data)
 	return c.JSON(http.StatusCreated, responseData)
+}
+
+func (handler *adminHandlerImpl) GetDataAllAdminHandler(c echo.Context) error {
+	limit := c.QueryParam("limit")
+
+	if limit == "" {
+		limit = "10"
+	}
+
+	limitInt, err := strconv.Atoi(limit)
+	if err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	}
+
+	admins, err := handler.Usecase.GetDataAllAdminUsecase(limitInt)
+	if err != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
+	}
+
+	// Create the slice of AdminDataGetAll directly
+	data := []dto.AdminDataGetAll{}
+
+	for _, admin := range admins {
+		data = append(data, dto.AdminDataGetAll{
+			Id:    admin.ID,
+			Name:  admin.Name,
+			Email: admin.Email,
+			Role:  admin.Role,
+		})
+	}
+
+	dataRes := dto.AdminResponseGetDataAll{
+		Code:    http.StatusOK,
+		Message: "success",
+		Data:    data,
+		Limit:   limitInt,
+		Total:   len(admins),
+	}
+
+	return c.JSON(http.StatusOK, dataRes)
 }
 
 func (handler *adminHandlerImpl) UpdateAdminHandler(c echo.Context) error {
