@@ -12,6 +12,13 @@ import (
 	userUsecase "github.com/sawalreverr/recything/internal/user/usecase"
 )
 
+var (
+	SuperAdminMiddleware        = middleware.RoleBasedMiddleware("superadmin")
+	SuperAdminOrAdminMiddleware = middleware.RoleBasedMiddleware("superadmin", "admin")
+	UserMiddleware              = middleware.RoleBasedMiddleware("user")
+	AllRoleMiddleware           = middleware.RoleBasedMiddleware("superadmin", "admin", "user")
+)
+
 func (s *echoServer) publicHttpHandler() {
 	// Healthy Check
 	s.app.GET("/health", func(c echo.Context) error {
@@ -28,7 +35,7 @@ func (s *echoServer) publicHttpHandler() {
 	// Example need user auth
 	s.app.GET("/needUser", func(c echo.Context) error {
 		return c.String(http.StatusOK, "OK")
-	}, middleware.UserMiddleware)
+	}, UserMiddleware)
 }
 
 func (s *echoServer) authHttpHandler() {
