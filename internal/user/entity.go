@@ -14,13 +14,13 @@ type User struct {
 	Email       string    `json:"email"`
 	PhoneNumber string    `json:"phone_number"`
 	Password    string    `json:"-"`
-	Point       uint      `json:"point"`
+	Point       uint      `json:"point" gorm:"default:0"`
 	Gender      string    `json:"gender" gorm:"type:enum('laki-laki', 'perempuan', '-');default:-"`
 	BirthDate   time.Time `json:"birth_date" gorm:"type:datetime"`
 	Address     string    `json:"address"`
 	PictureURL  string    `json:"picture_url"`
 	OTP         uint      `json:"otp"`
-	IsVerified  bool      `json:"is_verified"`
+	IsVerified  bool      `json:"is_verified" gorm:"default:false"`
 
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`
@@ -37,24 +37,25 @@ type UserRepository interface {
 	FindLastID() (string, error)
 	Update(user User) error
 	Delete(userID string) error
+	CountAllUser() (int, error)
 }
 
 type UserUsecase interface {
 	UpdateUserDetail(userID string, user UserDetail) error
 	UpdateUserPicture(userID string, picture_url string) error
 
-	FindUserByID(userID string) (*User, error)
-	FindAllUser(page int, limit int, sortBy string, sortType string) (*[]User, error)
+	FindUserByID(userID string) (*UserResponse, error)
+	FindAllUser(page int, limit int, sortBy string, sortType string) (*UserPaginationResponse, error)
 	DeleteUser(userID string) error
 }
 
 type UserHandler interface {
-	// User
 	Profile(c echo.Context) error
 	UpdateDetail(c echo.Context) error
 	UploadAvatar(c echo.Context) error
 
-	// Manage User
 	FindAllUser(c echo.Context) error
 	DeleteUser(c echo.Context) error
+
+	FindUser(c echo.Context) error
 }

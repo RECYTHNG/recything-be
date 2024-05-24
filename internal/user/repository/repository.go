@@ -93,3 +93,13 @@ func (r *userRepository) Delete(userID string) error {
 
 	return nil
 }
+
+func (r *userRepository) CountAllUser() (int, error) {
+	var totalCount int64
+
+	if err := r.DB.GetDB().Model(&u.User{}).Count(&totalCount).Error; err != nil {
+		return 0, err
+	}
+
+	return int(totalCount), nil
+}
