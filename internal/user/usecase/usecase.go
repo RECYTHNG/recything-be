@@ -97,10 +97,10 @@ func (uc *userUsecase) FindAllUser(page int, limit int, sortBy string, sortType 
 	}
 
 	paginationResponse := u.UserPaginationResponse{
-		TotalCount: totalCount,
-		Page:       page,
-		Limit:      limit,
-		Users:      usersResponse,
+		TotalUser: totalCount,
+		Page:      page,
+		Limit:     limit,
+		Users:     usersResponse,
 	}
 
 	return &paginationResponse, nil

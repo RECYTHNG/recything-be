@@ -62,20 +62,20 @@ func (s *echoServer) userHttpHandler() {
 	handler := userHandler.NewUserHandler(usecase)
 
 	// Profile user based on JWT user token
-	s.gr.GET("/user/profile", handler.Profile, middleware.UserMiddleware)
+	s.gr.GET("/user/profile", handler.Profile, UserMiddleware)
 
 	// Edit detail user based on JWT user token
-	s.gr.PUT("/user/profile", handler.UpdateDetail, middleware.UserMiddleware)
+	s.gr.PUT("/user/profile", handler.UpdateDetail, UserMiddleware)
 
 	// Upload avatar user based on JWT user token
-	s.gr.POST("/user/uploadAvatar", handler.UploadAvatar, middleware.UserMiddleware)
+	s.gr.POST("/user/uploadAvatar", handler.UploadAvatar, UserMiddleware)
 
 	// Find user data using param userId, doesnt need jwt
-	s.gr.GET("/user/:userId", handler.FindUser)
+	s.gr.GET("/user/:userId", handler.FindUser, AllRoleMiddleware)
 
 	// Find all user data with pagination, need JWT admin or superadmin token
-	s.gr.GET("/users", handler.FindAllUser, middleware.AdminMiddleware, middleware.SuperAdminMiddleware)
+	s.gr.GET("/users", handler.FindAllUser, SuperAdminOrAdminMiddleware)
 
 	// Delete user data using param userId
-	s.gr.DELETE("/user/:userId", handler.DeleteUser, middleware.AdminMiddleware, middleware.SuperAdminMiddleware)
+	s.gr.DELETE("/user/:userId", handler.DeleteUser, SuperAdminOrAdminMiddleware)
 }

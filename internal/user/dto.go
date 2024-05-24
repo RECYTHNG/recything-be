@@ -24,8 +24,8 @@ type UserResponse struct {
 	PictureURL  string    `json:"picture_url"`
 }
 type UserPaginationResponse struct {
-	TotalCount int            `json:"total_count"`
-	Page       int            `json:"page"`
-	Limit      int            `json:"limit"`
-	Users      []UserResponse `json:"users"`
+	TotalUser int            `json:"total_user"`
+	Page      int            `json:"page"`
+	Limit     int            `json:"limit"`
+	Users     []UserResponse `json:"users"`
 }
