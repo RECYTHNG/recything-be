@@ -9,6 +9,7 @@ type (
 		Server     *Server
 		DB         *DB
 		Cloudinary *Cloudinary
+		SMTP       *SMTP
 	}
 
 	Server struct {
@@ -28,6 +29,13 @@ type (
 		CloudName string
 		ApiKey    string
 		ApiSecret string
+	}
+
+	SMTP struct {
+		Host         string
+		Port         int
+		AuthEmail    string
+		AuthPassword string
 	}
 )
 
