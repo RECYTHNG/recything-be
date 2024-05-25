@@ -6,4 +6,5 @@ type AdminHandler interface {
 	AddAdminHandler(c echo.Context) error
 	UpdateAdminHandler(c echo.Context) error
 	GetDataAllAdminHandler(c echo.Context) error
+	GetDataAdminByIdHandler(c echo.Context) error
 }

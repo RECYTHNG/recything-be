@@ -22,3 +22,11 @@ type AdminResponseGetDataAll struct {
 	Limit   int               `json:"limit"`
 	Total   int               `json:"total"`
 }
+
+type AdminResponseGetDataById struct {
+	Id           string `json:"id"`
+	Name         string `json:"name"`
+	Email        string `json:"email"`
+	Role         string `json:"role"`
+	ProfilePhoto string `json:"profile_photo"`
+}

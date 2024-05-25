@@ -116,6 +116,30 @@ func (handler *adminHandlerImpl) GetDataAllAdminHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, dataRes)
 }
 
+func (handler *adminHandlerImpl) GetDataAdminByIdHandler(c echo.Context) error {
+	id := c.Param("adminId")
+
+	admin, err := handler.Usecase.GetDataAdminByIdUsecase(id)
+	if err != nil {
+		if errors.Is(err, pkg.ErrAdminNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, err.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
+	}
+
+	data := dto.AdminResponseGetDataById{
+		Id:           admin.ID,
+		Name:         admin.Name,
+		Email:        admin.Email,
+		Role:         admin.Role,
+		ProfilePhoto: admin.ImageUrl,
+	}
+
+	responseData := helper.ResponseData(http.StatusOK, "success", data)
+	return c.JSON(http.StatusOK, responseData)
+
+}
+
 func (handler *adminHandlerImpl) UpdateAdminHandler(c echo.Context) error {
 	return nil
 }
