@@ -76,7 +76,7 @@ func (usecase *AdminUsecaseImpl) UpdateAdminUsecase(request dto.AdminUpdateReque
 		return nil, pkg.ErrAdminNotFound
 	}
 
-	if matchPassword := helper.ComparePassword(findAdmin.Password, request.OldPassword); matchPassword == false {
+	if matchPassword := helper.ComparePassword(findAdmin.Password, request.OldPassword); !matchPassword {
 		return nil, pkg.ErrPasswordInvalid
 	}
 
