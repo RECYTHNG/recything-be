@@ -53,12 +53,12 @@ func (usecase *AdminUsecaseImpl) AddAdminUsecase(request dto.AdminRequestCreate,
 	return admin, nil
 }
 
-func (usecase *AdminUsecaseImpl) GetDataAllAdminUsecase(limit int) ([]entity.Admin, error) {
-	admins, err := usecase.Repository.GetDataAllAdmin(limit)
+func (usecase *AdminUsecaseImpl) GetDataAllAdminUsecase(limit int) ([]entity.Admin, int, error) {
+	admins, totalCount, err := usecase.Repository.GetDataAllAdmin(limit)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	return admins, nil
+	return admins, totalCount, nil
 }
 
 func (usecase *AdminUsecaseImpl) GetDataAdminByIdUsecase(id string) (*entity.Admin, error) {
@@ -99,4 +99,15 @@ func (usecase *AdminUsecaseImpl) UpdateAdminUsecase(request dto.AdminUpdateReque
 		return nil, error
 	}
 	return admin, nil
+}
+
+func (usecase *AdminUsecaseImpl) DeleteAdminUsecase(id string) error {
+	findAdmin, _ := usecase.Repository.FindAdminByID(id)
+	if findAdmin == nil {
+		return pkg.ErrAdminNotFound
+	}
+	if err := usecase.Repository.DeleteAdmin(id); err != nil {
+		return err
+	}
+	return nil
 }

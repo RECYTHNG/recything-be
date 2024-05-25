@@ -7,6 +7,7 @@ type AdminRepository interface {
 	UpdateDataAdmin(admin *entity.Admin, id string) (*entity.Admin, error)
 	FindAdminByEmail(email string) (*entity.Admin, error)
 	FindAdminByID(id string) (*entity.Admin, error)
-	GetDataAllAdmin(limit int) ([]entity.Admin, error)
+	GetDataAllAdmin(limit int) ([]entity.Admin, int, error)
 	FindLastIdAdmin() (string, error)
+	DeleteAdmin(id string) error
 }

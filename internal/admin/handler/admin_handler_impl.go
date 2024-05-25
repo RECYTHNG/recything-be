@@ -63,7 +63,7 @@ func (handler *adminHandlerImpl) AddAdminHandler(c echo.Context) error {
 		if errors.Is(errUc, pkg.ErrUploadCloudinary) {
 			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+errUc.Error())
 	}
 
 	data := dto.AdminResponseRegister{
@@ -89,9 +89,9 @@ func (handler *adminHandlerImpl) GetDataAllAdminHandler(c echo.Context) error {
 		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
 
-	admins, err := handler.Usecase.GetDataAllAdminUsecase(limitInt)
+	admins, totalData, err := handler.Usecase.GetDataAllAdminUsecase(limitInt)
 	if err != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
 
 	data := []dto.AdminDataGetAll{}
@@ -110,7 +110,7 @@ func (handler *adminHandlerImpl) GetDataAllAdminHandler(c echo.Context) error {
 		Message: "success",
 		Data:    data,
 		Limit:   limitInt,
-		Total:   len(admins),
+		Total:   totalData,
 	}
 
 	return c.JSON(http.StatusOK, dataRes)
@@ -200,5 +200,19 @@ func (handler *adminHandlerImpl) UpdateAdminHandler(c echo.Context) error {
 		ProfilePhoto: admin.ImageUrl,
 	}
 	responseData := helper.ResponseData(http.StatusOK, "data successfully updated", data)
+	return c.JSON(http.StatusOK, responseData)
+}
+
+func (handler *adminHandlerImpl) DeleteAdminHandler(c echo.Context) error {
+	id := c.Param("adminId")
+
+	err := handler.Usecase.DeleteAdminUsecase(id)
+	if err != nil {
+		if errors.Is(err, pkg.ErrAdminNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, err.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+	}
+	responseData := helper.ResponseData(http.StatusOK, "data successfully deleted", nil)
 	return c.JSON(http.StatusOK, responseData)
 }

@@ -99,4 +99,7 @@ func (s *echoServer) supAdminHttpHandler() {
 
 	// update admin by super admin
 	s.gr.PUT("/superadmin/admins/:adminId", handler.UpdateAdminHandler, SuperAdminMiddleware)
+
+	// delete admin by super admin
+	s.gr.DELETE("/superadmin/admins/:adminId", handler.DeleteAdminHandler, SuperAdminMiddleware)
 }
