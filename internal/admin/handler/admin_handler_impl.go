@@ -37,7 +37,7 @@ func (handler *adminHandlerImpl) AddAdminHandler(c echo.Context) error {
 
 	file, errFile := c.FormFile("profile_photo")
 	if errFile != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "profile_photo not found")
+		return helper.ErrorHandler(c, http.StatusBadRequest, "profile_photo is required")
 	}
 
 	if file.Size > 2*1024*1024 {
@@ -61,7 +61,7 @@ func (handler *adminHandlerImpl) AddAdminHandler(c echo.Context) error {
 		}
 
 		if errors.Is(errUc, pkg.ErrUploadCloudinary) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrUploadCloudinary.Error())
+			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
 		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
@@ -141,5 +141,64 @@ func (handler *adminHandlerImpl) GetDataAdminByIdHandler(c echo.Context) error {
 }
 
 func (handler *adminHandlerImpl) UpdateAdminHandler(c echo.Context) error {
-	return nil
+	id := c.Param("adminId")
+
+	var request dto.AdminUpdateRequest
+	if err := c.Bind(&request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid request body")
+	}
+
+	if err := c.Validate(&request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	}
+
+	if request.Role != "admin" && request.Role != "super admin" {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "role must be admin or super admin")
+	}
+
+	file, errFile := c.FormFile("profile_photo")
+	if errFile != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "profile_photo is required")
+	}
+
+	if file.Size > 2*1024*1024 {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "file is too large")
+	}
+
+	if !strings.HasPrefix(file.Header.Get("Content-Type"), "image") {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid file type")
+	}
+
+	src, errOpen := file.Open()
+	if errOpen != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "failed to open file: "+errOpen.Error())
+	}
+	defer src.Close()
+
+	admin, errUc := handler.Usecase.UpdateAdminUsecase(request, id, src)
+	if errUc != nil {
+		if errors.Is(errUc, pkg.ErrAdminNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrAdminNotFound.Error())
+		}
+
+		if errors.Is(errUc, pkg.ErrUploadCloudinary) {
+			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
+		}
+
+		if errors.Is(errUc, pkg.ErrPasswordInvalid) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrPasswordInvalid.Error())
+		}
+
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+errUc.Error())
+	}
+
+	data := dto.AdminResponseUpdate{
+		Id:           id,
+		Name:         admin.Name,
+		Email:        admin.Email,
+		Role:         admin.Role,
+		ProfilePhoto: admin.ImageUrl,
+	}
+	responseData := helper.ResponseData(http.StatusOK, "data successfully updated", data)
+	return c.JSON(http.StatusOK, responseData)
 }

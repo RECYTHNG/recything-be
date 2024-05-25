@@ -21,7 +21,7 @@ func (repository *AdminRepositoryImpl) CreateDataAdmin(admin *entity.Admin) (*en
 }
 
 func (repository *AdminRepositoryImpl) UpdateDataAdmin(admin *entity.Admin, id string) (*entity.Admin, error) {
-	if err := repository.DB.GetDB().Save(&admin).Error; err != nil {
+	if err := repository.DB.GetDB().Where("id = ?", id).Updates(&admin).Error; err != nil {
 		return nil, err
 	}
 	return admin, nil

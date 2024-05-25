@@ -70,18 +70,31 @@ func (usecase *AdminUsecaseImpl) GetDataAdminByIdUsecase(id string) (*entity.Adm
 	return admin, nil
 }
 
-func (usecase *AdminUsecaseImpl) UpdateAdminUsecase(request dto.AdminUpdateRequest, id string) (*entity.Admin, error) {
-	if err := usecase.Validate.Struct(request); err != nil {
-		return nil, err
+func (usecase *AdminUsecaseImpl) UpdateAdminUsecase(request dto.AdminUpdateRequest, id string, file io.Reader) (*entity.Admin, error) {
+	findAdmin, _ := usecase.Repository.FindAdminByID(id)
+	if findAdmin == nil {
+		return nil, pkg.ErrAdminNotFound
+	}
+
+	if matchPassword := helper.ComparePassword(findAdmin.Password, request.OldPassword); matchPassword == false {
+		return nil, pkg.ErrPasswordInvalid
+	}
+
+	hashPassword, _ := helper.GenerateHash(request.NewPassword)
+
+	imageUrl, errUpload := helper.UploadToCloudinary(file, "profile_admin_update")
+	if errUpload != nil {
+		return nil, pkg.ErrUploadCloudinary
 	}
 
 	admin, error := usecase.Repository.UpdateDataAdmin(&entity.Admin{
 		Name:      request.Name,
 		Email:     request.Email,
-		Password:  request.NewPassword,
+		Password:  hashPassword,
 		Role:      request.Role,
+		ImageUrl:  imageUrl,
 		DeletedAt: gorm.DeletedAt{},
-	}, request.OldPassword)
+	}, id)
 	if error != nil {
 		return nil, error
 	}

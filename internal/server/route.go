@@ -97,4 +97,6 @@ func (s *echoServer) supAdminHttpHandler() {
 	// get data admin by id by super admin
 	s.gr.GET("/superadmin/admins/:adminId", handler.GetDataAdminByIdHandler, SuperAdminMiddleware)
 
+	// update admin by super admin
+	s.gr.PUT("/superadmin/admins/:adminId", handler.UpdateAdminHandler, SuperAdminMiddleware)
 }

@@ -30,3 +30,11 @@ type AdminResponseGetDataById struct {
 	Role         string `json:"role"`
 	ProfilePhoto string `json:"profile_photo"`
 }
+
+type AdminResponseUpdate struct {
+	Id           string `json:"id"`
+	Name         string `json:"name"`
+	Email        string `json:"email"`
+	Role         string `json:"role"`
+	ProfilePhoto string `json:"profile_photo"`
+}
