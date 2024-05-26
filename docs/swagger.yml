@@ -472,7 +472,7 @@ paths:
   /user/{userId}:
     get:
       tags:
-        - user
+        - manage users
       summary: Get user by id
       description: Endpoint user to get user by id
       operationId: getUserById
