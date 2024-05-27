@@ -42,8 +42,9 @@ func (s *echoServer) publicHttpHandler() {
 }
 
 func (s *echoServer) authHttpHandler() {
-	repository := userRepo.NewUserRepository(s.db)
-	usecase := authUsecase.NewAuthUsecase(repository)
+	userRepository := userRepo.NewUserRepository(s.db)
+	adminRepository := repository.NewAdminRepository(s.db)
+	usecase := authUsecase.NewAuthUsecase(userRepository, adminRepository)
 	handler := authHandler.NewAuthHandler(usecase)
 
 	// Register User
@@ -56,7 +57,10 @@ func (s *echoServer) authHttpHandler() {
 	s.gr.POST("/resend-otp", handler.ResendOTP)
 
 	// Login User
-	s.gr.POST("/login", handler.Login)
+	s.gr.POST("/login", handler.LoginUser)
+
+	// Login Admin
+	s.gr.POST("/admin/login", handler.LoginAdmin)
 }
 
 func (s *echoServer) userHttpHandler() {

@@ -59,6 +59,7 @@ func (uc *userUsecase) FindUserByID(userID string) (*u.UserResponse, error) {
 		Email:       userFound.Email,
 		PhoneNumber: userFound.PhoneNumber,
 		Point:       userFound.Point,
+		Badge:       userFound.Badge,
 		Gender:      userFound.Gender,
 		BirthDate:   userFound.BirthDate,
 		Address:     userFound.Address,
@@ -87,6 +88,7 @@ func (uc *userUsecase) FindAllUser(page int, limit int, sortBy string, sortType 
 			Email:       user.Email,
 			PhoneNumber: user.PhoneNumber,
 			Point:       user.Point,
+			Badge:       user.Badge,
 			Gender:      user.Gender,
 			BirthDate:   user.BirthDate,
 			Address:     user.Address,
@@ -113,6 +115,34 @@ func (uc *userUsecase) DeleteUser(userID string) error {
 	}
 
 	if err := uc.userRepository.Delete(userFound.ID); err != nil {
+		return pkg.ErrStatusInternalError
+	}
+
+	return nil
+}
+
+func (uc *userUsecase) UpdatePointAndBadge(userID string, point uint) error {
+	userFound, err := uc.userRepository.FindByID(userID)
+	if err != nil {
+		return pkg.ErrUserNotFound
+	}
+
+	userFound.Point = point
+
+	// logic untuk badge achievement, membutuhkan table achievement dan saat ini blm ada :)
+	// contoh
+	switch {
+	case userFound.Point >= 300000: // point2nya nnti diambil dri table achievement
+		userFound.Badge = "platinum"
+	case userFound.Point >= 175000:
+		userFound.Badge = "gold"
+	case userFound.Point >= 50000:
+		userFound.Badge = "silver"
+	default:
+		userFound.Badge = "classic"
+	}
+
+	if err := uc.userRepository.Update(*userFound); err != nil {
 		return pkg.ErrStatusInternalError
 	}
 
