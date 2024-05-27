@@ -16,7 +16,7 @@ type User struct {
 	Password    string    `json:"-"`
 	Point       uint      `json:"point" gorm:"default:0"`
 	Gender      string    `json:"gender" gorm:"type:enum('laki-laki', 'perempuan', '-');default:-"`
-	BirthDate   time.Time `json:"birth_date" gorm:"type:datetime"`
+	BirthDate   time.Time `json:"birth_date"`
 	Address     string    `json:"address"`
 	PictureURL  string    `json:"picture_url"`
 	OTP         uint      `json:"otp"`
