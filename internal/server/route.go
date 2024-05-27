@@ -102,4 +102,7 @@ func (s *echoServer) supAdminHttpHandler() {
 
 	// delete admin by super admin
 	s.gr.DELETE("/superadmin/admins/:adminId", handler.DeleteAdminHandler, SuperAdminMiddleware)
+
+	// get profile admin or super admin
+	s.gr.GET("/superadmin/admins/profile", handler.GetProfileAdminHandler, SuperAdminOrAdminMiddleware)
 }

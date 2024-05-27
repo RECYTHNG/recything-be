@@ -217,6 +217,28 @@ func (handler *adminHandlerImpl) UpdateAdminHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, responseData)
 }
 
+func (handler *adminHandlerImpl) GetProfileAdminHandler(c echo.Context) error {
+	claims := c.Get("user").(*helper.JwtCustomClaims)
+	admin, err := handler.Usecase.GetProfileAdmin(claims.UserID)
+	if err != nil {
+		if errors.Is(err, pkg.ErrAdminNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, err.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+	}
+
+	data := dto.AdminResponseGetDataById{
+		Id:           admin.ID,
+		Name:         admin.Name,
+		Email:        admin.Email,
+		Role:         admin.Role,
+		ProfilePhoto: admin.ImageUrl,
+	}
+
+	responseData := helper.ResponseData(http.StatusOK, "success", data)
+	return c.JSON(http.StatusOK, responseData)
+}
+
 func (handler *adminHandlerImpl) DeleteAdminHandler(c echo.Context) error {
 	id := c.Param("adminId")
 
