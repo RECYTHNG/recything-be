@@ -10,6 +10,8 @@ type Article struct {
 	Id          string `gorm:"primary_key"`
 	Title       string
 	Description string
+	Category    string
+	Thumbnail   string
 	CreatedAt   time.Time      `gorm:"type:DATETIME(0)"`
 	UpdatedAt   time.Time      `gorm:"type:DATETIME(0)"`
 	DeletedAt   gorm.DeletedAt `gorm:"index"`
