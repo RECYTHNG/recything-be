@@ -11,6 +11,9 @@ func main() {
 	db := database.NewMySQLDatabase(conf)
 	database.AutoMigrate(db)
 
+	// Init Waste Materials
+	db.InitWasteMaterials()
+
 	app := server.NewEchoServer(conf, db)
 	app.Start()
 }
