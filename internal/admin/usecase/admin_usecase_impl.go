@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/go-playground/validator/v10"
@@ -53,11 +54,12 @@ func (usecase *AdminUsecaseImpl) AddAdminUsecase(request dto.AdminRequestCreate,
 	return admin, nil
 }
 
-func (usecase *AdminUsecaseImpl) GetDataAllAdminUsecase(limit int) ([]entity.Admin, int, error) {
-	admins, totalCount, err := usecase.Repository.GetDataAllAdmin(limit)
+func (usecase *AdminUsecaseImpl) GetDataAllAdminUsecase(limit int, offset int) ([]entity.Admin, int, error) {
+	admins, totalCount, err := usecase.Repository.GetDataAllAdmin(limit, offset)
 	if err != nil {
 		return nil, 0, err
 	}
+	fmt.Println("data admin", admins)
 	return admins, totalCount, nil
 }
 

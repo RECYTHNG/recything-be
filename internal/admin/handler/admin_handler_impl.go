@@ -79,23 +79,30 @@ func (handler *adminHandlerImpl) AddAdminHandler(c echo.Context) error {
 
 func (handler *adminHandlerImpl) GetDataAllAdminHandler(c echo.Context) error {
 	limit := c.QueryParam("limit")
+	page := c.QueryParam("page")
 
 	if limit == "" {
 		limit = "10"
 	}
-
-	limitInt, err := strconv.Atoi(limit)
-	if err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	if page == "" {
+		page = "1"
 	}
 
-	admins, totalData, err := handler.Usecase.GetDataAllAdminUsecase(limitInt)
+	limitInt, errLimit := strconv.Atoi(limit)
+	if errLimit != nil || limitInt <= 0 {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid limit parameter")
+	}
+	pageInt, errPage := strconv.Atoi(page)
+	if errPage != nil || pageInt <= 0 {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid page parameter")
+	}
+
+	admins, totalData, err := handler.Usecase.GetDataAllAdminUsecase(limitInt, pageInt)
 	if err != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
 	data := []dto.AdminDataGetAll{}
-
 	for _, admin := range admins {
 		data = append(data, dto.AdminDataGetAll{
 			Id:    admin.ID,
@@ -105,12 +112,19 @@ func (handler *adminHandlerImpl) GetDataAllAdminHandler(c echo.Context) error {
 		})
 	}
 
+	totalPage := totalData / limitInt
+	if totalData%limitInt != 0 {
+		totalPage++
+	}
+
 	dataRes := dto.AdminResponseGetDataAll{
-		Code:    http.StatusOK,
-		Message: "success",
-		Data:    data,
-		Limit:   limitInt,
-		Total:   totalData,
+		Code:      http.StatusOK,
+		Message:   "success",
+		Data:      data,
+		Page:      pageInt,
+		Limit:     limitInt,
+		TotalData: totalData,
+		TotalPage: totalPage,
 	}
 
 	return c.JSON(http.StatusOK, dataRes)

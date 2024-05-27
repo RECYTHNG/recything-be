@@ -43,16 +43,20 @@ func (repository *AdminRepositoryImpl) FindAdminByID(id string) (*entity.Admin, 
 	return &admin, nil
 }
 
-func (repository *AdminRepositoryImpl) GetDataAllAdmin(limit int) ([]entity.Admin, int, error) {
+func (repository *AdminRepositoryImpl) GetDataAllAdmin(limit int, offset int) ([]entity.Admin, int, error) {
 	var admins []entity.Admin
-	var totalCount int64
-	if err := repository.DB.GetDB().Model(&entity.Admin{}).Count(&totalCount).Error; err != nil {
+	var count int64
+	page := (offset - 1) * limit
+
+	if err := repository.DB.GetDB().Model(&entity.Admin{}).Count(&count).Error; err != nil {
 		return nil, 0, err
 	}
-	if err := repository.DB.GetDB().Order("id desc").Limit(limit).Find(&admins).Error; err != nil {
-		return admins, 0, err
+
+	if err := repository.DB.GetDB().Limit(limit).Offset(page).Find(&admins).Error; err != nil {
+		return nil, 0, err
 	}
-	return admins, int(totalCount), nil
+
+	return admins, int(count), nil
 }
 
 func (repository *AdminRepositoryImpl) FindLastIdAdmin() (string, error) {
