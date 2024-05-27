@@ -70,6 +70,14 @@ func (usecase *AdminUsecaseImpl) GetDataAdminByIdUsecase(id string) (*entity.Adm
 	return admin, nil
 }
 
+func (usecase *AdminUsecaseImpl) GetDataAdminByEmailUsecase(email string) (*entity.Admin, error) {
+	admin, err := usecase.Repository.FindAdminByEmail(email)
+	if err != nil {
+		return nil, pkg.ErrAdminNotFound
+	}
+	return admin, nil
+}
+
 func (usecase *AdminUsecaseImpl) UpdateAdminUsecase(request dto.AdminUpdateRequest, id string, file io.Reader) (*entity.Admin, error) {
 	findAdmin, _ := usecase.Repository.FindAdminByID(id)
 	if findAdmin == nil {

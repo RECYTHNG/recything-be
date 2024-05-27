@@ -13,4 +13,5 @@ type AdminUsecase interface {
 	GetDataAdminByIdUsecase(id string) (*entity.Admin, error)
 	UpdateAdminUsecase(request dto.AdminUpdateRequest, id string, file io.Reader) (*entity.Admin, error)
 	DeleteAdminUsecase(id string) error
+	GetDataAdminByEmailUsecase(email string) (*entity.Admin, error)
 }
