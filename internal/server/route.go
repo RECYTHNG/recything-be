@@ -89,20 +89,20 @@ func (s *echoServer) supAdminHttpHandler() {
 	handler := handler.NewAdminHandler(usecase)
 
 	// register admin by super admin
-	s.gr.POST("/superadmin/admins", handler.AddAdminHandler, SuperAdminMiddleware)
+	s.gr.POST("/admins", handler.AddAdminHandler, SuperAdminMiddleware)
 
 	// get all admin by super admin
-	s.gr.GET("/superadmin/admins", handler.GetDataAllAdminHandler, SuperAdminMiddleware)
+	s.gr.GET("/admins", handler.GetDataAllAdminHandler, SuperAdminMiddleware)
 
 	// get data admin by id by super admin
-	s.gr.GET("/superadmin/admins/:adminId", handler.GetDataAdminByIdHandler, SuperAdminMiddleware)
+	s.gr.GET("/admins/:adminId", handler.GetDataAdminByIdHandler, SuperAdminMiddleware)
 
 	// update admin by super admin
-	s.gr.PUT("/superadmin/admins/:adminId", handler.UpdateAdminHandler, SuperAdminMiddleware)
+	s.gr.PUT("/admins/:adminId", handler.UpdateAdminHandler, SuperAdminMiddleware)
 
 	// delete admin by super admin
-	s.gr.DELETE("/superadmin/admins/:adminId", handler.DeleteAdminHandler, SuperAdminMiddleware)
+	s.gr.DELETE("/admins/:adminId", handler.DeleteAdminHandler, SuperAdminMiddleware)
 
 	// get profile admin or super admin
-	s.gr.GET("/superadmin/admins/profile", handler.GetProfileAdminHandler, SuperAdminOrAdminMiddleware)
+	s.gr.GET("/profile", handler.GetProfileAdminHandler, SuperAdminOrAdminMiddleware)
 }
