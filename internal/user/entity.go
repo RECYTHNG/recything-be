@@ -21,6 +21,7 @@ type User struct {
 	PictureURL  string    `json:"picture_url"`
 	OTP         uint      `json:"otp"`
 	IsVerified  bool      `json:"is_verified" gorm:"default:false"`
+	Badge       string    `json:"badge" gorm:"type:enum('classic', 'silver', 'gold', 'platinum');default:classic"`
 
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`
@@ -43,6 +44,7 @@ type UserRepository interface {
 type UserUsecase interface {
 	UpdateUserDetail(userID string, user UserDetail) error
 	UpdateUserPicture(userID string, picture_url string) error
+	UpdatePointAndBadge(userID string, point uint) error
 
 	FindUserByID(userID string) (*UserResponse, error)
 	FindAllUser(page int, limit int, sortBy string, sortType string) (*UserPaginationResponse, error)

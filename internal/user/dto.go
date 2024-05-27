@@ -18,6 +18,7 @@ type UserResponse struct {
 	Email       string    `json:"email"`
 	PhoneNumber string    `json:"phone_number"`
 	Point       uint      `json:"point"`
+	Badge       string    `json:"badge"`
 	Gender      string    `json:"gender"`
 	BirthDate   time.Time `json:"birth_date"`
 	Address     string    `json:"address"`
