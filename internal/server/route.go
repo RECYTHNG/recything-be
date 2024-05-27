@@ -4,6 +4,9 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/sawalreverr/recything/internal/admin/handler"
+	"github.com/sawalreverr/recything/internal/admin/repository"
+	"github.com/sawalreverr/recything/internal/admin/usecase"
 	authHandler "github.com/sawalreverr/recything/internal/auth/handler"
 	authUsecase "github.com/sawalreverr/recything/internal/auth/usecase"
 	"github.com/sawalreverr/recything/internal/middleware"
@@ -78,4 +81,28 @@ func (s *echoServer) userHttpHandler() {
 
 	// Delete user data using param userId
 	s.gr.DELETE("/user/:userId", handler.DeleteUser, SuperAdminOrAdminMiddleware)
+}
+
+func (s *echoServer) supAdminHttpHandler() {
+	repository := repository.NewAdminRepository(s.db)
+	usecase := usecase.NewAdminUsecase(repository)
+	handler := handler.NewAdminHandler(usecase)
+
+	// register admin by super admin
+	s.gr.POST("/admins", handler.AddAdminHandler, SuperAdminMiddleware)
+
+	// get all admin by super admin
+	s.gr.GET("/admins", handler.GetDataAllAdminHandler, SuperAdminMiddleware)
+
+	// get data admin by id by super admin
+	s.gr.GET("/admins/:adminId", handler.GetDataAdminByIdHandler, SuperAdminMiddleware)
+
+	// update admin by super admin
+	s.gr.PUT("/admins/:adminId", handler.UpdateAdminHandler, SuperAdminMiddleware)
+
+	// delete admin by super admin
+	s.gr.DELETE("/admins/:adminId", handler.DeleteAdminHandler, SuperAdminMiddleware)
+
+	// get profile admin or super admin
+	s.gr.GET("/profile", handler.GetProfileAdminHandler, SuperAdminOrAdminMiddleware)
 }

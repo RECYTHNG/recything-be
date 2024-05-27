@@ -15,4 +15,10 @@ var (
 	ErrOTPInvalid               = errors.New("otp invalid")
 	ErrNeedToVerify             = errors.New("verify account false")
 	ErrUserAlreadyVerified      = errors.New("user already verified")
+
+	// Upload Cloudinary
+	ErrUploadCloudinary = errors.New("upload cloudinary server error")
+
+	// admin
+	ErrAdminNotFound = errors.New("admin not found")
 )
