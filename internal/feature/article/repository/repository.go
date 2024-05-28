@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/sawalreverr/recything/internal/article/entity"
+	"github.com/sawalreverr/recything/internal/feature/article/entity"
 	"gorm.io/gorm"
 )
 

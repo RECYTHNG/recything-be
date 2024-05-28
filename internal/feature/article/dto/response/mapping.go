@@ -1,6 +1,6 @@
 package response
 
-import "github.com/sawalreverr/recything/internal/article/entity"
+import "github.com/sawalreverr/recything/internal/feature/article/entity"
 
 func CategoryCoreToCategoryResponse(category entity.ArticleTrashCategoryCore) TrashCategoryResponse {
 	return TrashCategoryResponse{

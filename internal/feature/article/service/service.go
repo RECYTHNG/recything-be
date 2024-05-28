@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"mime/multipart"
 
-	"github.com/sawalreverr/recything/internal/article/entity"
+	"github.com/sawalreverr/recything/internal/feature/article/entity"
 )
 
 type articleService struct {

@@ -1,7 +1,8 @@
 package entity
 
 import (
-	tcm "github.com/sawalreverr/recything/internal/trash_category/model"
+	"github.com/sawalreverr/recything/internal/feature/article/model"
+	tcm "github.com/sawalreverr/recything/internal/feature/trash_category/model"
 )
 
 func CategoryModelToCategoryCore(category tcm.TrashCategory) ArticleTrashCategoryCore {
@@ -34,4 +35,43 @@ func ListCategoryCoreToCategoryModel(category []ArticleTrashCategoryCore) []tcm.
 		coreCategorys = append(coreCategorys, categorys)
 	}
 	return coreCategorys
+}
+
+func ArticleCoreToCategoryModel(article ArticleCore) model.Article {
+	articleModel := model.Article{
+		Id:          article.ID,
+		Title:       article.Title,
+		Description: article.Description,
+		Thumbnail:   article.Thumbnail,
+		CreatedAt:   article.CreatedAt,
+		UpdatedAt:   article.UpdatedAt,
+	}
+	category := ListCategoryCoreToCategoryModel(article.Categories)
+	articleModel.Categories = category
+	return articleModel
+
+}
+
+func ArticleModelToArticleCore(article model.Article) ArticleCore {
+	articleCore := ArticleCore{
+		ID:          article.Id,
+		Title:       article.Title,
+		Description: article.Description,
+		Thumbnail:   article.Thumbnail,
+		CreatedAt:   article.CreatedAt,
+		UpdatedAt:   article.UpdatedAt,
+	}
+	category := ListCategoryModelToCategoryCore(article.Categories)
+	articleCore.Categories = category
+	return articleCore
+
+}
+
+func ListArticleModelToArticleCore(article []model.Article) []ArticleCore {
+	coreArticle := []ArticleCore{}
+	for _, v := range article {
+		articles := ArticleModelToArticleCore(v)
+		coreArticle = append(coreArticle, articles)
+	}
+	return coreArticle
 }

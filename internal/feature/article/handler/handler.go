@@ -7,8 +7,8 @@ import (
 
 	"github.com/golang-jwt/jwt/request"
 	"github.com/labstack/echo/v4"
-	"github.com/sawalreverr/recything/internal/article/dto/response"
-	"github.com/sawalreverr/recything/internal/article/entity"
+	"github.com/sawalreverr/recything/internal/feature/article/dto/response"
+	"github.com/sawalreverr/recything/internal/feature/article/entity"
 
 	"github.com/sawalreverr/recything/internal/helper"
 	"github.com/sawalreverr/recything/pkg"
