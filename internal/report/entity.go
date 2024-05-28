@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
@@ -14,11 +15,12 @@ type Report struct {
 	ReportType  string  `json:"report_type" gorm:"type:enum('littering', 'rubbish');"`
 	Title       string  `json:"title"`
 	Description string  `json:"description"`
-	WasteType   string  `json:"waste_type" gorm:"type:enum('sampah basah', 'sampah kering', 'organik', 'anorganik', 'berbahaya');" `
+	WasteType   string  `json:"waste_type" gorm:"type:enum('sampah basah', 'sampah kering', 'sampah basah,sampah kering', 'organik', 'anorganik', 'berbahaya');" `
 	Latitude    float64 `json:"latitude"`
 	Longitude   float64 `json:"longitude"`
 	Address     string  `json:"address"`
-	Location    string  `json:"location"`
+	City        string  `json:"city"`
+	Province    string  `json:"province"`
 	Status      string  `json:"status" gorm:"type:enum('need review', 'approve', 'reject');default:'need review'"`
 
 	CreatedAt time.Time      `json:"-"`
@@ -59,7 +61,7 @@ type ReportImage struct {
 type ReportRepository interface {
 	Create(report Report) (*Report, error)
 	FindByID(reportID string) (*Report, error)
-	FindAll() (*[]Report, error)
+	FindAll(page, limit int, reportType, status string, date time.Time) (*[]Report, int64, error)
 	FindLastID() (string, error)
 	Update(report Report) error
 	Delete(reportID string) error
@@ -67,15 +69,24 @@ type ReportRepository interface {
 	AddImage(image ReportImage) (*ReportImage, error)
 	DeleteImage(imageID string, reportID string) error
 	DeleteAllImage(reportID string) error
-	FindAllImage(reportID string) (*[]ReportImage, error)
+	FindAllImage(reportID string) (*[]string, error)
 
 	AddReportMaterial(material ReportWasteMaterial) (*ReportWasteMaterial, error)
 	DeleteAllReportMaterial(reportID string) error
-	FindAllReportMaterial(reportID string) (*[]ReportWasteMaterial, error)
+	FindAllReportMaterial(reportID string) (*[]WasteMaterial, error)
+
+	FindWasteMaterialByID(materialID string) (*WasteMaterial, error)
+	FindWasteMaterialByType(materialType string) (*WasteMaterial, error)
 }
 
 type ReportUsecase interface {
+	CreateReport(report ReportInput, authorID string, imageURLs []string) (*ReportDetail, error)
+	UpdateStatusReport(report UpdateStatus) error
+	FindAllReports(page, limit int, reportType, status string, date time.Time) (*[]ReportDetail, int64, error)
 }
 
 type ReportHandler interface {
+	NewReport(c echo.Context) error
+	UpdateStatus(c echo.Context) error
+	GetAllReports(c echo.Context) error
 }

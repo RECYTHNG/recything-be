@@ -1,6 +1,8 @@
 package report
 
 import (
+	"time"
+
 	"github.com/sawalreverr/recything/internal/database"
 	rpt "github.com/sawalreverr/recything/internal/report"
 )
@@ -57,9 +59,29 @@ func (r *reportRepository) Delete(reportID string) error {
 	return nil
 }
 
-func (r *reportRepository) FindAll() (*[]rpt.Report, error) {
+func (r *reportRepository) FindAll(page, limit int, reportType, status string, date time.Time) (*[]rpt.Report, int64, error) {
+	var reports []rpt.Report
+	var total int64
 
-	return nil, nil
+	db := r.DB.GetDB().Model(&rpt.Report{})
+
+	if reportType != "" {
+		db = db.Where("report_type = ?", reportType)
+	}
+	if status != "" {
+		db = db.Where("status = ?", status)
+	}
+	if !date.IsZero() {
+		db = db.Where("DATE(created_at) = ?", date)
+	}
+
+	db.Count(&total)
+	offset := (page - 1) * limit
+	if err := db.Offset(offset).Limit(limit).Find(&reports).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return &reports, total, nil
 }
 
 // Report Image
@@ -89,13 +111,19 @@ func (r *reportRepository) DeleteAllImage(reportID string) error {
 	return nil
 }
 
-func (r *reportRepository) FindAllImage(reportID string) (*[]rpt.ReportImage, error) {
+func (r *reportRepository) FindAllImage(reportID string) (*[]string, error) {
 	var reportImages []rpt.ReportImage
+	var imageURLs []string
+
 	if err := r.DB.GetDB().Where("report_id = ?", reportID).Find(&reportImages).Error; err != nil {
 		return nil, err
 	}
 
-	return &reportImages, nil
+	for _, report := range reportImages {
+		imageURLs = append(imageURLs, report.ImageURL)
+	}
+
+	return &imageURLs, nil
 }
 
 // Report Waste Materials
@@ -116,11 +144,36 @@ func (r *reportRepository) DeleteAllReportMaterial(reportID string) error {
 	return nil
 }
 
-func (r *reportRepository) FindAllReportMaterial(reportID string) (*[]rpt.ReportWasteMaterial, error) {
+func (r *reportRepository) FindAllReportMaterial(reportID string) (*[]rpt.WasteMaterial, error) {
 	var reportMaterials []rpt.ReportWasteMaterial
+	var wasteMaterials []rpt.WasteMaterial
+
 	if err := r.DB.GetDB().Where("report_id = ?", reportID).Find(&reportMaterials).Error; err != nil {
 		return nil, err
 	}
 
-	return &reportMaterials, nil
+	for _, report := range reportMaterials {
+		wasteMaterial, _ := r.FindWasteMaterialByID(report.WasteMaterialID)
+		wasteMaterials = append(wasteMaterials, *wasteMaterial)
+	}
+
+	return &wasteMaterials, nil
+}
+
+func (r *reportRepository) FindWasteMaterialByID(materialID string) (*rpt.WasteMaterial, error) {
+	var wasteMaterial rpt.WasteMaterial
+	if err := r.DB.GetDB().Where("id = ?", materialID).First(&wasteMaterial).Error; err != nil {
+		return nil, err
+	}
+
+	return &wasteMaterial, nil
+}
+
+func (r *reportRepository) FindWasteMaterialByType(materialType string) (*rpt.WasteMaterial, error) {
+	var wasteMaterial rpt.WasteMaterial
+	if err := r.DB.GetDB().Where("type = ?", materialType).First(&wasteMaterial).Error; err != nil {
+		return nil, err
+	}
+
+	return &wasteMaterial, nil
 }
