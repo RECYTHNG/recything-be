@@ -17,7 +17,7 @@ func NewReportUsecase(repo rpt.ReportRepository) rpt.ReportUsecase {
 	return &reportUsecase{reportRepository: repo}
 }
 
-func (uc *reportUsecase) CreateReport(report rpt.ReportInput, authorID string, imageURLs []string) (*rpt.Report, error) {
+func (uc *reportUsecase) CreateReport(report rpt.ReportInput, authorID string, imageURLs []string) (*rpt.ReportDetail, error) {
 	lastID, _ := uc.reportRepository.FindLastID()
 	newID := helper.GenerateCustomID(lastID, "RPT")
 
@@ -73,7 +73,34 @@ func (uc *reportUsecase) CreateReport(report rpt.ReportInput, authorID string, i
 		}
 	}
 
-	return createdReport, nil
+	images, err := uc.reportRepository.FindAllImage(createdReport.ID)
+	if err != nil {
+		return nil, pkg.ErrStatusInternalError
+	}
+
+	materials, err := uc.reportRepository.FindAllReportMaterial(createdReport.ID)
+	if err != nil {
+		return nil, pkg.ErrStatusInternalError
+	}
+
+	reportDetail := rpt.ReportDetail{
+		ID:             createdReport.ID,
+		AuthorID:       createdReport.AuthorID,
+		ReportType:     createdReport.ReportType,
+		Title:          createdReport.Title,
+		Description:    createdReport.Description,
+		WasteType:      createdReport.WasteType,
+		Latitude:       createdReport.Latitude,
+		Longitude:      createdReport.Longitude,
+		Address:        createdReport.Address,
+		City:           createdReport.City,
+		Province:       createdReport.Province,
+		CreatedAt:      createdReport.CreatedAt,
+		WasteMaterials: *materials,
+		ReportImages:   *images,
+	}
+
+	return &reportDetail, nil
 }
 
 func (uc *reportUsecase) UpdateStatusReport(report rpt.UpdateStatus) error {
