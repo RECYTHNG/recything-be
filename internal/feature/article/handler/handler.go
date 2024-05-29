@@ -6,7 +6,9 @@ import (
 	"strings"
 
 	"github.com/golang-jwt/jwt/request"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
+	"github.com/sawalreverr/recything/internal/feature/article/dto/request"
 	"github.com/sawalreverr/recything/internal/feature/article/dto/response"
 	"github.com/sawalreverr/recything/internal/feature/article/entity"
 
@@ -24,17 +26,17 @@ func NewArticleHandler(article entity.ArticleServiceInterface) *articleHandler {
 	}
 }
 
-func (a *articleHandler) CreateArticle(e echo.Context) error {
-	Id, role, _ := helper.JwtCustomClaims(e)
+func (article *articleHandler) CreateArticle(e echo.Context) error {
+	Id, role, _ := jwt.JwtCustomClaims(e)
 	if Id == "" {
 		return e.JSON(http.StatusBadRequest, helper.ErrorResponse("gagal mendapatkan id"))
-
 	}
 	if role == "" {
 		return e.JSON(http.StatusBadRequest, helper.ErrorResponse("gagal mendapatkan role"))
 	}
-	if role == "admin" && role != "super_admin" {
-		return e.JSON(http.StatusBadRequest, helper.ErrorResponse("role tidak sesuai, akses di tolak"))
+
+	if role != "admin" && role != "super_admin" {
+		return e.JSON(http.StatusBadRequest, helper.ErrorResponse("akses ditolak"))
 	}
 
 	newArticle := request.ArticleRequest{}
@@ -43,7 +45,7 @@ func (a *articleHandler) CreateArticle(e echo.Context) error {
 		return e.JSON(http.StatusBadRequest, helper.ErrorResponse(err.Error()))
 	}
 
-	thumbnail, err := e.FormFile("thumbnail")
+	image, err := e.FormFile("image")
 	if err != nil {
 		if err == http.ErrMissingFile {
 			return e.JSON(http.StatusBadRequest, helper.ErrorResponse("tidak ada file yang di upload"))
@@ -52,7 +54,7 @@ func (a *articleHandler) CreateArticle(e echo.Context) error {
 	}
 
 	articleInput := request.ArticleRequestToArticleCore(newArticle)
-	_, errCreate := a.articleService.CreateArticle(articleInput, thumbnail)
+	_, errCreate := article.articleService.CreateArticle(articleInput, image)
 	if errCreate != nil {
 		if strings.Contains(errCreate.Error(), pkg.ERROR_RECORD_NOT_FOUND) {
 			return e.JSON(http.StatusNotFound, helper.ErrorResponse("kategori tidak ditemukan"))
@@ -66,10 +68,10 @@ func (a *articleHandler) CreateArticle(e echo.Context) error {
 	}
 
 	return e.JSON(http.StatusCreated, helper.SuccessResponse("berhasil menambahkan artikel"))
-
 }
 
 func (a *articleHandler) GetAllArticle(e echo.Context) error {
+	filter := e.QueryParam("filter")
 	search := e.QueryParam("search")
 	page, _ := strconv.Atoi(e.QueryParam("page"))
 	limit, _ := strconv.Atoi(e.QueryParam("limit"))
@@ -82,7 +84,7 @@ func (a *articleHandler) GetAllArticle(e echo.Context) error {
 		return e.JSON(http.StatusBadRequest, helper.ErrorResponse(pkg.ERROR_ID_INVALID))
 	}
 
-	articleData, paginationInfo, count, err := a.articleService.GetAllArticle(page, limit, search, "")
+	articleData, paginationInfo, count, err := a.articleService.GetAllArticle(page, limit, search, filter)
 	if err != nil {
 		return e.JSON(http.StatusBadRequest, helper.ErrorResponse("gagal mendapatkan artikel"))
 	}

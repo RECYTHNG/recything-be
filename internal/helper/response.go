@@ -81,3 +81,20 @@ func SuccessResponse(message string) SuccessResponseJson {
 		Message: message,
 	}
 }
+
+func SuccessWithPagnationAndCount(message string, data interface{}, pagnation interface{}, count int) SuccessResponseJsonWithPagenationAndCount {
+	return SuccessResponseJsonWithPagenationAndCount{
+		Status:     true,
+		Message:    message,
+		Data:       data,
+		Pagination: pagnation,
+		Count:      count,
+	}
+}
+func SuccessWithDataResponse(message string, data interface{}) SuccessResponseJson {
+	return SuccessResponseJson{
+		Status:  true,
+		Message: message,
+		Data:    data,
+	}
+}

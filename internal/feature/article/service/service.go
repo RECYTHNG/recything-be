@@ -3,9 +3,13 @@ package service
 import (
 	"errors"
 	"fmt"
+	"log"
 	"mime/multipart"
 
 	"github.com/sawalreverr/recything/internal/feature/article/entity"
+	"github.com/sawalreverr/recything/pagination"
+	"github.com/sawalreverr/recything/pkg"
+	"github.com/sawalreverr/recything/validation"
 )
 
 type articleService struct {
@@ -19,12 +23,12 @@ func NewArticleService(article entity.ArticleRepositoryInterface) entity.Article
 }
 
 // DeleteArticle implements entity.ArticleServiceInterface.
-func (c *articleService) DeleteArticle(id string) error {
+func (ac *articleService) DeleteArticle(id string) error {
 	if id == "" {
 		return errors.New("id artikel tidak ditemukan")
 	}
 
-	errArticle := c.ArticleRepository.DeleteArticle(id)
+	errArticle := ac.ArticleRepository.DeleteArticle(id)
 	if errArticle != nil {
 		return errors.New("gagal menghapus artikel " + errArticle.Error())
 	}
@@ -33,12 +37,12 @@ func (c *articleService) DeleteArticle(id string) error {
 }
 
 // GetSpecificArticle implements entity.ArticleServiceInterface.
-func (c *articleService) GetSpecificArticle(idArticle string) (entity.ArticleCore, error) {
+func (ac *articleService) GetSpecificArticle(idArticle string) (entity.ArticleCore, error) {
 	if idArticle == "" {
 		return entity.ArticleCore{}, errors.New("id tidak cocok")
 	}
 
-	articleData, err := c.ArticleRepository.GetSpecificArticle(idArticle)
+	articleData, err := ac.ArticleRepository.GetSpecificArticle(idArticle)
 	if err != nil {
 		fmt.Println("service", err)
 		return entity.ArticleCore{}, errors.New("gagal membaca data")
@@ -47,7 +51,8 @@ func (c *articleService) GetSpecificArticle(idArticle string) (entity.ArticleCor
 	return articleData, nil
 }
 
-func (article *articleService) UpdateArticle(idArticle string, articleInput entity.ArticleCore, thumbnail *multipart.FileHeader) (entity.ArticleCore, error) {
+// UpdateArticle implements entity.ArticleServiceInterface.
+func (article *articleService) UpdateArticle(idArticle string, articleInput entity.ArticleCore, image *multipart.FileHeader) (entity.ArticleCore, error) {
 
 	if idArticle == "" {
 		return entity.ArticleCore{}, errors.New("id tidak ditemukan")
@@ -61,16 +66,65 @@ func (article *articleService) UpdateArticle(idArticle string, articleInput enti
 		return entity.ArticleCore{}, errors.New("kategori tidak boleh kosong")
 	}
 
-	if thumbnail != nil && thumbnail.Size > 5*1024*1024 {
+	if image != nil && image.Size > 5*1024*1024 {
 		return entity.ArticleCore{}, errors.New("ukuran file tidak boleh lebih dari 5 MB")
 	}
 
-	articleUpdate, errinsert := article.ArticleRepository.UpdateArticle(idArticle, articleInput, thumbnail)
+	articleUpdate, errinsert := article.ArticleRepository.UpdateArticle(idArticle, articleInput, image)
 	if errinsert != nil {
 		return entity.ArticleCore{}, errinsert
 	}
 
 	return articleUpdate, nil
+}
+
+// GetAllArticle implements entity.ArticleServiceInterface.
+func (ac *articleService) GetAllArticle(page, limit int, search, filter string) ([]entity.ArticleCore, pagination.Pageinfo, int, error) {
+
+	if limit > 10 {
+		return nil, pagination.Pageinfo{}, 0, errors.New("limit tidak boleh lebih dari 10")
+	}
+
+	page, limit = validation.ValidateCountLimitAndPage(page, limit)
+
+	if filter != "" {
+		category, errEqual := validation.CheckEqualData(filter, pkg.CATEGORY_ARTICLE)
+		if errEqual != nil {
+			return []entity.ArticleCore{}, pagination.Pageinfo{}, 0, errors.New("error : kategori tidak valid")
+		}
+		filter = category
+	}
+	log.Println("ini:", filter)
+
+	article, pageInfo, count, err := ac.ArticleRepository.GetAllArticle(page, limit, search, filter)
+	if err != nil {
+		return []entity.ArticleCore{}, pagination.Pageinfo{}, 0, err
+	}
+
+	return article, pageInfo, count, nil
+}
+
+// CreateArticle implements entity.ArticleServiceInterface.
+func (article *articleService) CreateArticle(articleInput entity.ArticleCore, image *multipart.FileHeader) (entity.ArticleCore, error) {
+
+	if articleInput.Title == "" || articleInput.Description == "" {
+		return entity.ArticleCore{}, errors.New("judul dan konten artikel tidak boleh kosong")
+	}
+
+	if len(articleInput.Category_id) == 0 {
+		return entity.ArticleCore{}, errors.New("kategori tidak boleh kosong")
+	}
+
+	if image != nil && image.Size > 5*1024*1024 {
+		return entity.ArticleCore{}, errors.New("ukuran file tidak boleh lebih dari 5 MB")
+	}
+
+	articleCreate, errinsert := article.ArticleRepository.CreateArticle(articleInput, image)
+	if errinsert != nil {
+		return entity.ArticleCore{}, errinsert
+	}
+
+	return articleCreate, nil
 }
 
 // GetPopularArticle implements entity.ArticleServiceInterface.

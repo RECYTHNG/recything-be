@@ -21,6 +21,15 @@ const (
 	ERROR_INVALID_UPDATE   = "error: data harus berberbeda dengan data sebelumnya"
 	ERROR_INVALID_INPUT    = "data yang diinput tidak sesuai"
 	ERROR_NOT_FOUND        = "data tidak ditemukan"
+	ERROR_RECORD_NOT_FOUND = "record not found"
+)
+
+const (
+	ALREADY = "sudah"
+	NO      = "tidak"
+	MUST    = "harus"
+	FAILED  = "gagal"
+	ERROR   = "error"
 )
 
 const (
@@ -34,4 +43,16 @@ var (
 	ErrStatusForbidden     = errors.New("forbidden")
 	ErrStatusInternalError = errors.New("internal server error")
 	ErrNoPrivilege         = errors.New("no permission to doing this task")
+)
+
+const (
+	SUCCESS_LOGIN       = "berhasil melakukan login"
+	SUCCESS_NULL        = "data belum tersedia"
+	SUCCESS_CREATE_DATA = "berhasil membuat data"
+	SUCCESS_DELETE_DATA = "berhasil menghapus data"
+	SUCCESS_GET_DATA    = "berhasil mendapatkan data"
+)
+
+var (
+	CATEGORY_ARTICLE = []string{"Organik", "Plastik", "Kertas", "Kaleng", "Kaca", "Tektil", "Elektronik"}
 )

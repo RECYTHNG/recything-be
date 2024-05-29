@@ -21,9 +21,9 @@ func ArticleCoreToArticleResponse(article entity.ArticleCore) ArticleCreateRespo
 	articleResp := ArticleCreateResponse{
 		Id:          article.ID,
 		Title:       article.Title,
+		Image:       article.Image,
 		Description: article.Description,
 		Category_id: article.Category_id,
-		Thumbnail:   article.Thumbnail,
 		CreatedAt:   article.CreatedAt,
 		UpdatedAt:   article.UpdatedAt,
 	}

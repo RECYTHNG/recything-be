@@ -5,10 +5,11 @@ import "time"
 type ArticleCore struct {
 	ID          string
 	Title       string
+	SubTitle    string
 	Description string
+	Image       string
 	Categories  []ArticleTrashCategoryCore
 	Category_id []string
-	Thumbnail   string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }

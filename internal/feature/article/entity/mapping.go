@@ -37,12 +37,12 @@ func ListCategoryCoreToCategoryModel(category []ArticleTrashCategoryCore) []tcm.
 	return coreCategorys
 }
 
-func ArticleCoreToCategoryModel(article ArticleCore) model.Article {
+func ArticleCoreToArticleModel(article ArticleCore) model.Article {
 	articleModel := model.Article{
 		Id:          article.ID,
 		Title:       article.Title,
 		Description: article.Description,
-		Thumbnail:   article.Thumbnail,
+		Image:       article.Image,
 		CreatedAt:   article.CreatedAt,
 		UpdatedAt:   article.UpdatedAt,
 	}
@@ -56,15 +56,14 @@ func ArticleModelToArticleCore(article model.Article) ArticleCore {
 	articleCore := ArticleCore{
 		ID:          article.Id,
 		Title:       article.Title,
+		Image:       article.Image,
 		Description: article.Description,
-		Thumbnail:   article.Thumbnail,
 		CreatedAt:   article.CreatedAt,
 		UpdatedAt:   article.UpdatedAt,
 	}
 	category := ListCategoryModelToCategoryCore(article.Categories)
 	articleCore.Categories = category
 	return articleCore
-
 }
 
 func ListArticleModelToArticleCore(article []model.Article) []ArticleCore {
