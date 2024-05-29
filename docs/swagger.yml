@@ -192,6 +192,48 @@ paths:
         '400':
           description: Login Failed (invalid email / password)
 
+  /admin/login:
+    post:
+      tags:
+        - authentication
+      summary: Login Super admin / Admin
+      description: Login account
+      operationId: loginAdmin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+        required: true
+      responses:
+        '200':
+          description: Login Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: login successfully!
+                  data:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                        example: john.doe@gmail.com
+                      token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiVVNSMDAwMSIsInJvbGUiOiJ1c2VyIiwiZXhwIjoxNzE2ODI3NDE1fQ.o4rXzRLdWGS3iqtznZg9hhJyOklWyrNUA0MgOmUkfis
+        '400':
+          description: Login Failed (invalid email / password)
+
   /user/profile:
     get:
       tags:

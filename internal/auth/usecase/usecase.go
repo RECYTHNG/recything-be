@@ -1,6 +1,7 @@
 package auth
 
 import (
+	adm "github.com/sawalreverr/recything/internal/admin/repository"
 	a "github.com/sawalreverr/recything/internal/auth"
 	"github.com/sawalreverr/recything/internal/helper"
 	u "github.com/sawalreverr/recything/internal/user"
@@ -8,11 +9,12 @@ import (
 )
 
 type authUsecase struct {
-	userRepository u.UserRepository
+	userRepository  u.UserRepository
+	adminRepository adm.AdminRepository
 }
 
-func NewAuthUsecase(userRepo u.UserRepository) a.AuthUsecase {
-	return &authUsecase{userRepository: userRepo}
+func NewAuthUsecase(userRepo u.UserRepository, admRepo adm.AdminRepository) a.AuthUsecase {
+	return &authUsecase{userRepository: userRepo, adminRepository: admRepo}
 }
 
 func (uc *authUsecase) RegisterUser(user a.Register) (*u.User, error) {
@@ -108,4 +110,24 @@ func (uc *authUsecase) UpdateOTP(email string) (uint, error) {
 	}
 
 	return userFound.OTP, nil
+}
+
+func (uc *authUsecase) LoginAdmin(admin a.Login) (string, error) {
+	adminFound, err := uc.adminRepository.FindAdminByEmail(admin.Email)
+	if err != nil {
+		return "", pkg.ErrUserNotFound
+	}
+
+	ok := helper.ComparePassword(adminFound.Password, admin.Password)
+	if !ok {
+		return "", pkg.ErrPasswordInvalid
+	}
+
+	token, err := helper.GenerateTokenJWT(adminFound.ID, "admin")
+
+	if adminFound.Role == "super admin" {
+		token, err = helper.GenerateTokenJWT(adminFound.ID, "super admin")
+	}
+
+	return token, err
 }

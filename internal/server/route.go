@@ -19,10 +19,10 @@ import (
 )
 
 var (
-	SuperAdminMiddleware        = middleware.RoleBasedMiddleware("superadmin")
-	SuperAdminOrAdminMiddleware = middleware.RoleBasedMiddleware("superadmin", "admin")
+	SuperAdminMiddleware        = middleware.RoleBasedMiddleware("super admin")
+	SuperAdminOrAdminMiddleware = middleware.RoleBasedMiddleware("super admin", "admin")
 	UserMiddleware              = middleware.RoleBasedMiddleware("user")
-	AllRoleMiddleware           = middleware.RoleBasedMiddleware("superadmin", "admin", "user")
+	AllRoleMiddleware           = middleware.RoleBasedMiddleware("super admin", "admin", "user")
 )
 
 func (s *echoServer) publicHttpHandler() {
@@ -45,8 +45,9 @@ func (s *echoServer) publicHttpHandler() {
 }
 
 func (s *echoServer) authHttpHandler() {
-	repository := userRepo.NewUserRepository(s.db)
-	usecase := authUsecase.NewAuthUsecase(repository)
+	userRepository := userRepo.NewUserRepository(s.db)
+	adminRepository := repository.NewAdminRepository(s.db)
+	usecase := authUsecase.NewAuthUsecase(userRepository, adminRepository)
 	handler := authHandler.NewAuthHandler(usecase)
 
 	// Register User
@@ -59,7 +60,10 @@ func (s *echoServer) authHttpHandler() {
 	s.gr.POST("/resend-otp", handler.ResendOTP)
 
 	// Login User
-	s.gr.POST("/login", handler.Login)
+	s.gr.POST("/login", handler.LoginUser)
+
+	// Login Admin
+	s.gr.POST("/admin/login", handler.LoginAdmin)
 }
 
 func (s *echoServer) userHttpHandler() {
@@ -92,11 +96,22 @@ func (s *echoServer) supAdminHttpHandler() {
 	handler := handler.NewAdminHandler(usecase)
 
 	// register admin by super admin
-	s.gr.POST("/superadmin/admins", handler.AddAdminHandler, SuperAdminMiddleware)
+	s.gr.POST("/admins", handler.AddAdminHandler, SuperAdminMiddleware)
 
 	// get all admin by super admin
-	s.gr.GET("/superadmin/admins", handler.GetDataAllAdminHandler, SuperAdminMiddleware)
+	s.gr.GET("/admins", handler.GetDataAllAdminHandler, SuperAdminMiddleware)
 
+	// get data admin by id by super admin
+	s.gr.GET("/admins/:adminId", handler.GetDataAdminByIdHandler, SuperAdminMiddleware)
+
+	// update admin by super admin
+	s.gr.PUT("/admins/:adminId", handler.UpdateAdminHandler, SuperAdminMiddleware)
+
+	// delete admin by super admin
+	s.gr.DELETE("/admins/:adminId", handler.DeleteAdminHandler, SuperAdminMiddleware)
+
+	// get profile admin or super admin
+	s.gr.GET("/profile", handler.GetProfileAdminHandler, SuperAdminOrAdminMiddleware)
 }
 
 func (s *echoServer) reportHttpHandler() {

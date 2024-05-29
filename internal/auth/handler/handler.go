@@ -101,7 +101,7 @@ func (h *authHandler) ResendOTP(c echo.Context) error {
 	return helper.ResponseHandler(c, http.StatusOK, "new otp sent to your email!", nil)
 }
 
-func (h *authHandler) Login(c echo.Context) error {
+func (h *authHandler) LoginUser(c echo.Context) error {
 	var request a.Login
 
 	if err := c.Bind(&request); err != nil {
@@ -120,6 +120,34 @@ func (h *authHandler) Login(c echo.Context) error {
 
 		if errors.Is(err, pkg.ErrNeedToVerify) {
 			return helper.ErrorHandler(c, http.StatusUnauthorized, "verify your account!")
+		}
+
+		return helper.ErrorHandler(c, http.StatusUnauthorized, "email or password invalid!")
+	}
+
+	response := a.LoginResponse{
+		Email: request.Email,
+		Token: token,
+	}
+
+	return helper.ResponseHandler(c, http.StatusOK, "login successfully!", response)
+}
+
+func (h *authHandler) LoginAdmin(c echo.Context) error {
+	var request a.Login
+
+	if err := c.Bind(&request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	}
+
+	if err := c.Validate(&request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	}
+
+	token, err := h.authUsecase.LoginAdmin(request)
+	if err != nil {
+		if errors.Is(err, pkg.ErrStatusInternalError) {
+			return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
 		}
 
 		return helper.ErrorHandler(c, http.StatusUnauthorized, "email or password invalid!")

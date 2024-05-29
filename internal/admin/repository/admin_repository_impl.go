@@ -21,7 +21,7 @@ func (repository *AdminRepositoryImpl) CreateDataAdmin(admin *entity.Admin) (*en
 }
 
 func (repository *AdminRepositoryImpl) UpdateDataAdmin(admin *entity.Admin, id string) (*entity.Admin, error) {
-	if err := repository.DB.GetDB().Save(&admin).Error; err != nil {
+	if err := repository.DB.GetDB().Where("id = ?", id).Updates(&admin).Error; err != nil {
 		return nil, err
 	}
 	return admin, nil
@@ -43,12 +43,20 @@ func (repository *AdminRepositoryImpl) FindAdminByID(id string) (*entity.Admin, 
 	return &admin, nil
 }
 
-func (repository *AdminRepositoryImpl) GetDataAllAdmin(limit int) ([]entity.Admin, error) {
+func (repository *AdminRepositoryImpl) GetDataAllAdmin(limit int, offset int) ([]entity.Admin, int, error) {
 	var admins []entity.Admin
-	if err := repository.DB.GetDB().Order("id desc").Limit(limit).Find(&admins).Error; err != nil {
-		return nil, err
+	var count int64
+	page := (offset - 1) * limit
+
+	if err := repository.DB.GetDB().Model(&entity.Admin{}).Count(&count).Error; err != nil {
+		return nil, 0, err
 	}
-	return admins, nil
+
+	if err := repository.DB.GetDB().Limit(limit).Offset(page).Find(&admins).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return admins, int(count), nil
 }
 
 func (repository *AdminRepositoryImpl) FindLastIdAdmin() (string, error) {
@@ -57,4 +65,11 @@ func (repository *AdminRepositoryImpl) FindLastIdAdmin() (string, error) {
 		return "AD0000", err
 	}
 	return admin.ID, nil
+}
+
+func (repository *AdminRepositoryImpl) DeleteAdmin(id string) error {
+	if err := repository.DB.GetDB().Where("id = ?", id).Delete(&entity.Admin{}).Error; err != nil {
+		return err
+	}
+	return nil
 }

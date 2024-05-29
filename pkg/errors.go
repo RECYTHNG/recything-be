@@ -19,6 +19,9 @@ var (
 	// Upload Cloudinary
 	ErrUploadCloudinary = errors.New("upload cloudinary server error")
 
+	// admin
+	ErrAdminNotFound = errors.New("admin not found")
+
 	// Report
 	ErrReportNotFound = errors.New("report not found")
 
