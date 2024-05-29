@@ -103,6 +103,47 @@ func (uc *reportUsecase) CreateReport(report rpt.ReportInput, authorID string, i
 	return &reportDetail, nil
 }
 
+func (uc *reportUsecase) FindHistoryUserReports(authorID string) (*[]rpt.ReportDetail, error) {
+	var reportDetails []rpt.ReportDetail
+	reports, err := uc.reportRepository.FindAllReportsByUser(authorID, 10)
+	if err != nil {
+		return nil, pkg.ErrStatusInternalError
+	}
+
+	for _, report := range *reports {
+		images, err := uc.reportRepository.FindAllImage(report.ID)
+		if err != nil {
+			return nil, pkg.ErrStatusInternalError
+		}
+
+		materials, err := uc.reportRepository.FindAllReportMaterial(report.ID)
+		if err != nil {
+			return nil, pkg.ErrStatusInternalError
+		}
+
+		reportDetail := rpt.ReportDetail{
+			ID:             report.ID,
+			AuthorID:       report.AuthorID,
+			ReportType:     report.ReportType,
+			Title:          report.Title,
+			Description:    report.Description,
+			WasteType:      report.WasteType,
+			Latitude:       report.Latitude,
+			Longitude:      report.Longitude,
+			Address:        report.Address,
+			City:           report.City,
+			Province:       report.Province,
+			CreatedAt:      report.CreatedAt,
+			WasteMaterials: *materials,
+			ReportImages:   *images,
+		}
+
+		reportDetails = append(reportDetails, reportDetail)
+	}
+
+	return &reportDetails, nil
+}
+
 func (uc *reportUsecase) UpdateStatusReport(report rpt.UpdateStatus) error {
 	reportFound, err := uc.reportRepository.FindByID(report.ID)
 	if err != nil {

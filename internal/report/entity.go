@@ -62,6 +62,7 @@ type ReportRepository interface {
 	Create(report Report) (*Report, error)
 	FindByID(reportID string) (*Report, error)
 	FindAll(page, limit int, reportType, status string, date time.Time) (*[]Report, int64, error)
+	FindAllReportsByUser(userID string, limit int) (*[]Report, error)
 	FindLastID() (string, error)
 	Update(report Report) error
 	Delete(reportID string) error
@@ -81,12 +82,16 @@ type ReportRepository interface {
 
 type ReportUsecase interface {
 	CreateReport(report ReportInput, authorID string, imageURLs []string) (*ReportDetail, error)
+	FindHistoryUserReports(authorID string) (*[]ReportDetail, error)
+
 	UpdateStatusReport(report UpdateStatus) error
 	FindAllReports(page, limit int, reportType, status string, date time.Time) (*[]ReportDetail, int64, error)
 }
 
 type ReportHandler interface {
 	NewReport(c echo.Context) error
+	GetHistoryUserReports(c echo.Context) error
+
 	UpdateStatus(c echo.Context) error
 	GetAllReports(c echo.Context) error
 }

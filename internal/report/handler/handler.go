@@ -18,6 +18,7 @@ func NewReportHandler(usecase rpt.ReportUsecase) rpt.ReportHandler {
 	return &reportHandler{ReportUsecase: usecase}
 }
 
+// for user
 func (h *reportHandler) NewReport(c echo.Context) error {
 	var request rpt.ReportInput
 
@@ -56,6 +57,18 @@ func (h *reportHandler) NewReport(c echo.Context) error {
 	return helper.ResponseHandler(c, http.StatusCreated, "report created!", newReport)
 }
 
+func (h *reportHandler) GetHistoryUserReports(c echo.Context) error {
+	authorID := c.Get("user").(*helper.JwtCustomClaims).UserID
+
+	reports, err := h.ReportUsecase.FindHistoryUserReports(authorID)
+	if err != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
+	}
+
+	return helper.ResponseHandler(c, http.StatusOK, "ok", reports)
+}
+
+// for admin
 func (h *reportHandler) UpdateStatus(c echo.Context) error {
 	var request rpt.UpdateStatus
 

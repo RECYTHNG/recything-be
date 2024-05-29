@@ -84,6 +84,15 @@ func (r *reportRepository) FindAll(page, limit int, reportType, status string, d
 	return &reports, total, nil
 }
 
+func (r *reportRepository) FindAllReportsByUser(userID string, limit int) (*[]rpt.Report, error) {
+	var reports []rpt.Report
+	if err := r.DB.GetDB().Where("author_id = ?", userID).Order("created_at desc").Limit(10).Find(&reports).Error; err != nil {
+		return nil, err
+	}
+
+	return &reports, nil
+}
+
 // Report Image
 func (r *reportRepository) AddImage(image rpt.ReportImage) (*rpt.ReportImage, error) {
 	if err := r.DB.GetDB().Create(&image).Error; err != nil {
