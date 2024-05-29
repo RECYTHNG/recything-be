@@ -1,10 +1,12 @@
 package user
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/sawalreverr/recything/internal/database"
 	u "github.com/sawalreverr/recything/internal/user"
+	"gorm.io/gorm"
 )
 
 type userRepository struct {
@@ -70,8 +72,11 @@ func (r *userRepository) FindAll(page int, limit int, sortBy string, sortType st
 
 func (r *userRepository) FindLastID() (string, error) {
 	var user u.User
-	if err := r.DB.GetDB().Order("id DESC").First(&user).Error; err != nil {
-		return "USR0000", err
+	if err := r.DB.GetDB().Where("deleted_at IS NULL").Order("id DESC").First(&user).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return "USR0000", nil
+		}
+		return "", err
 	}
 
 	return user.ID, nil
