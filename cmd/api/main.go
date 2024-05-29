@@ -11,6 +11,9 @@ func main() {
 	db := database.NewMySQLDatabase(conf)
 	database.AutoMigrate(db)
 
+	// Init super admin
+	db.InitSuperAdmin()
+
 	app := server.NewEchoServer(conf, db)
 	app.Start()
 }
