@@ -20,8 +20,7 @@ type ReportInput struct {
 }
 
 type UpdateStatus struct {
-	ID     string `json:"id" validate:"required"`
-	Status string `json:"status" validate:"required,oneof='approved' 'reject'"`
+	Status string `json:"status" validate:"required,oneof='approve' 'reject'"`
 }
 
 type ReportDetail struct {
@@ -41,4 +40,11 @@ type ReportDetail struct {
 	CreatedAt      time.Time       `json:"created_at"`
 	WasteMaterials []WasteMaterial `json:"waste_materials"`
 	ReportImages   []string        `json:"report_images"`
+}
+
+type ReportResponsePagination struct {
+	Total  int64          `json:"total"`
+	Page   int            `json:"page"`
+	Limit  int            `json:"limit"`
+	Report []ReportDetail `json:"reports"`
 }

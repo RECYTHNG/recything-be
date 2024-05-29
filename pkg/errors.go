@@ -21,4 +21,7 @@ var (
 
 	// Report
 	ErrReportNotFound = errors.New("report not found")
+
+	// Date
+	ErrDateFormat = errors.New("invalid date format")
 )

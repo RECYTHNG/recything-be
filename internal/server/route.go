@@ -10,6 +10,9 @@ import (
 	authHandler "github.com/sawalreverr/recything/internal/auth/handler"
 	authUsecase "github.com/sawalreverr/recything/internal/auth/usecase"
 	"github.com/sawalreverr/recything/internal/middleware"
+	reportHandler "github.com/sawalreverr/recything/internal/report/handler"
+	reportRepo "github.com/sawalreverr/recything/internal/report/repository"
+	reportUsecase "github.com/sawalreverr/recything/internal/report/usecase"
 	userHandler "github.com/sawalreverr/recything/internal/user/handler"
 	userRepo "github.com/sawalreverr/recything/internal/user/repository"
 	userUsecase "github.com/sawalreverr/recything/internal/user/usecase"
@@ -94,4 +97,22 @@ func (s *echoServer) supAdminHttpHandler() {
 	// get all admin by super admin
 	s.gr.GET("/superadmin/admins", handler.GetDataAllAdminHandler, SuperAdminMiddleware)
 
+}
+
+func (s *echoServer) reportHttpHandler() {
+	repository := reportRepo.NewReportRepository(s.db)
+	usecase := reportUsecase.NewReportUsecase(repository)
+	handler := reportHandler.NewReportHandler(usecase)
+
+	// User create new report
+	s.gr.POST("/report", handler.NewReport, UserMiddleware)
+
+	// User get all history reports
+	s.gr.GET("/report", handler.GetHistoryUserReports, UserMiddleware)
+
+	// Admin update status approved or reject
+	s.gr.PUT("/report/:reportId", handler.UpdateStatus, SuperAdminOrAdminMiddleware)
+
+	// Admin get all with pagination and filter
+	s.gr.GET("/reports", handler.GetAllReports, SuperAdminOrAdminMiddleware)
 }

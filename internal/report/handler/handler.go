@@ -3,6 +3,8 @@ package report
 import (
 	"errors"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sawalreverr/recything/internal/helper"
@@ -11,11 +13,11 @@ import (
 )
 
 type reportHandler struct {
-	ReportUsecase rpt.ReportUsecase
+	reportUsecase rpt.ReportUsecase
 }
 
 func NewReportHandler(usecase rpt.ReportUsecase) rpt.ReportHandler {
-	return &reportHandler{ReportUsecase: usecase}
+	return &reportHandler{reportUsecase: usecase}
 }
 
 // for user
@@ -49,7 +51,7 @@ func (h *reportHandler) NewReport(c echo.Context) error {
 		imageURLs = append(imageURLs, resultURL)
 	}
 
-	newReport, err := h.ReportUsecase.CreateReport(request, authorID, imageURLs)
+	newReport, err := h.reportUsecase.CreateReport(request, authorID, imageURLs)
 	if err != nil {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
 	}
@@ -60,7 +62,7 @@ func (h *reportHandler) NewReport(c echo.Context) error {
 func (h *reportHandler) GetHistoryUserReports(c echo.Context) error {
 	authorID := c.Get("user").(*helper.JwtCustomClaims).UserID
 
-	reports, err := h.ReportUsecase.FindHistoryUserReports(authorID)
+	reports, err := h.reportUsecase.FindHistoryUserReports(authorID)
 	if err != nil {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
 	}
@@ -72,6 +74,8 @@ func (h *reportHandler) GetHistoryUserReports(c echo.Context) error {
 func (h *reportHandler) UpdateStatus(c echo.Context) error {
 	var request rpt.UpdateStatus
 
+	reportID := c.Param("reportId")
+
 	if err := c.Bind(&request); err != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
@@ -80,7 +84,7 @@ func (h *reportHandler) UpdateStatus(c echo.Context) error {
 		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
 
-	if err := h.ReportUsecase.UpdateStatusReport(request); err != nil {
+	if err := h.reportUsecase.UpdateStatusReport(request, reportID); err != nil {
 		if errors.Is(err, pkg.ErrReportNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, err.Error())
 		}
@@ -92,6 +96,42 @@ func (h *reportHandler) UpdateStatus(c echo.Context) error {
 }
 
 func (h *reportHandler) GetAllReports(c echo.Context) error {
+	var date time.Time
+	var err error
 
-	return helper.ResponseHandler(c, http.StatusOK, "ok", nil)
+	page, _ := strconv.Atoi(c.QueryParam("page"))
+	if page == 0 {
+		page = 1
+	}
+	limit, _ := strconv.Atoi(c.QueryParam("limit"))
+	if limit == 0 {
+		limit = 10
+	}
+
+	reportType := c.QueryParam("report_type")
+	status := c.QueryParam("status")
+	dateParam := c.QueryParam("date")
+
+	if dateParam != "" {
+		date, err = time.Parse("2006-01-02", dateParam)
+		if err != nil {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrDateFormat.Error())
+		}
+	} else {
+		date = time.Time{}
+	}
+
+	reportDetails, total, err := h.reportUsecase.FindAllReports(page, limit, reportType, status, date)
+	if err != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
+	}
+
+	response := rpt.ReportResponsePagination{
+		Total:  total,
+		Page:   page,
+		Limit:  limit,
+		Report: *reportDetails,
+	}
+
+	return helper.ResponseHandler(c, http.StatusOK, "ok", response)
 }

@@ -144,8 +144,8 @@ func (uc *reportUsecase) FindHistoryUserReports(authorID string) (*[]rpt.ReportD
 	return &reportDetails, nil
 }
 
-func (uc *reportUsecase) UpdateStatusReport(report rpt.UpdateStatus) error {
-	reportFound, err := uc.reportRepository.FindByID(report.ID)
+func (uc *reportUsecase) UpdateStatusReport(report rpt.UpdateStatus, reportID string) error {
+	reportFound, err := uc.reportRepository.FindByID(reportID)
 	if err != nil {
 		return pkg.ErrReportNotFound
 	}

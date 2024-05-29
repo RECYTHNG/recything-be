@@ -84,7 +84,7 @@ type ReportUsecase interface {
 	CreateReport(report ReportInput, authorID string, imageURLs []string) (*ReportDetail, error)
 	FindHistoryUserReports(authorID string) (*[]ReportDetail, error)
 
-	UpdateStatusReport(report UpdateStatus) error
+	UpdateStatusReport(report UpdateStatus, reportID string) error
 	FindAllReports(page, limit int, reportType, status string, date time.Time) (*[]ReportDetail, int64, error)
 }
 
