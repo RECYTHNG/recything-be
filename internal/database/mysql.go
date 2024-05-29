@@ -3,8 +3,11 @@ package database
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/sawalreverr/recything/config"
+	adminEntity "github.com/sawalreverr/recything/internal/admin/entity"
+	"github.com/sawalreverr/recything/internal/helper"
 	"github.com/sawalreverr/recything/internal/report"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -49,6 +52,24 @@ func (m *mysqlDatabase) InitWasteMaterials() {
 	for _, material := range initialWasteMaterials {
 		m.DB.FirstOrCreate(&material, material)
 	}
+}
+
+func (m *mysqlDatabase) InitSuperAdmin() {
+	hashed, _ := helper.GenerateHash("superadmin@123")
+
+	admin := adminEntity.Admin{
+		ID:        "AD0001",
+		Name:      "John Doe Senior",
+		Email:     "john.doe.sr@gmail.com",
+		Password:  hashed,
+		Role:      "super admin",
+		ImageUrl:  "",
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	m.GetDB().Create(&admin)
+	log.Println("Super admin data added!")
 }
 
 func (m *mysqlDatabase) GetDB() *gorm.DB {

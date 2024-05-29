@@ -11,6 +11,9 @@ func main() {
 	db := database.NewMySQLDatabase(conf)
 	database.AutoMigrate(db)
 
+	// Init super admin
+	db.InitSuperAdmin()
+
 	// Init Waste Materials
 	db.InitWasteMaterials()
 
