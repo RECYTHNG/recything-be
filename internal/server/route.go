@@ -10,6 +10,9 @@ import (
 	authHandler "github.com/sawalreverr/recything/internal/auth/handler"
 	authUsecase "github.com/sawalreverr/recything/internal/auth/usecase"
 	"github.com/sawalreverr/recything/internal/middleware"
+	taskHandler "github.com/sawalreverr/recything/internal/task/manage_task/handler"
+	taskRepo "github.com/sawalreverr/recything/internal/task/manage_task/repository"
+	taskUsecase "github.com/sawalreverr/recything/internal/task/manage_task/usecase"
 	userHandler "github.com/sawalreverr/recything/internal/user/handler"
 	userRepo "github.com/sawalreverr/recything/internal/user/repository"
 	userUsecase "github.com/sawalreverr/recything/internal/user/usecase"
@@ -109,4 +112,13 @@ func (s *echoServer) supAdminHttpHandler() {
 
 	// get profile admin or super admin
 	s.gr.GET("/profile", handler.GetProfileAdminHandler, SuperAdminOrAdminMiddleware)
+}
+
+func (s *echoServer) manageTask() {
+	repository := taskRepo.NewManageTaskRepository(s.db)
+	usecase := taskUsecase.NewManageTaskUsecase(repository)
+	handler := taskHandler.NewManageTaskHandler(usecase)
+
+	// create task by admin or super admin
+	s.gr.POST("/tasks", handler.CreateTaskHandler, SuperAdminOrAdminMiddleware)
 }

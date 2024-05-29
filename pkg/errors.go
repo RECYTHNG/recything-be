@@ -21,4 +21,7 @@ var (
 
 	// admin
 	ErrAdminNotFound = errors.New("admin not found")
+
+	// Manage Task
+	ErrTaskStepsNull = errors.New("steps cannot be null")
 )
