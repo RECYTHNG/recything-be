@@ -6,11 +6,11 @@ import (
 )
 
 type ReportInput struct {
-	ReportType     string                  `json:"report_type" validate:"required,oneof='littering' 'rubbish'"`
-	Title          string                  `json:"title" validate:"required,min=3,max=100"`
+	ReportType     string                  `json:"report_type" validate:"required"`
+	Title          string                  `json:"title" validate:"max=100"`
 	Description    string                  `json:"description" validate:"required"`
-	WasteType      string                  `json:"waste_type" validate:"required,oneof='sampah basah' 'sampah kering' 'sampah basah,sampah kering' 'organik' 'anorganik' 'berbahaya'"`
-	WasteMaterials []string                `json:"waste_materials" form:"waste_materials" validate:"required,dive,oneof='plastik' 'kaca' 'kayu' 'kertas' 'baterai' 'besi' 'limbah berbahaya' 'limbah beracun' 'sisa makanan' 'tak terdeteksi'"`
+	WasteType      string                  `json:"waste_type" validate:"required"`
+	WasteMaterials []string                `json:"waste_materials"`
 	Latitude       float64                 `json:"latitude" validate:"required,latitude"`
 	Longitude      float64                 `json:"longitude" validate:"required,longitude"`
 	Address        string                  `json:"address" validate:"required"`
@@ -37,9 +37,9 @@ type ReportDetail struct {
 	Province    string  `json:"province"`
 	Status      string  `json:"status"`
 
-	CreatedAt      time.Time       `json:"created_at"`
 	WasteMaterials []WasteMaterial `json:"waste_materials"`
 	ReportImages   []string        `json:"report_images"`
+	CreatedAt      time.Time       `json:"created_at"`
 }
 
 type ReportResponsePagination struct {

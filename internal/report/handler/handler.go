@@ -1,6 +1,7 @@
 package report
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 	"strconv"
@@ -26,7 +27,8 @@ func (h *reportHandler) NewReport(c echo.Context) error {
 
 	authorID := c.Get("user").(*helper.JwtCustomClaims).UserID
 
-	if err := c.Bind(&request); err != nil {
+	jsonData := c.FormValue("json_data")
+	if err := json.Unmarshal([]byte(jsonData), &request); err != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
 

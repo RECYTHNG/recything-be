@@ -35,7 +35,7 @@ func (r *reportRepository) FindByID(reportID string) (*rpt.Report, error) {
 
 func (r *reportRepository) FindLastID() (string, error) {
 	var report rpt.Report
-	if err := r.DB.GetDB().Order("id DESC").First(&report).Error; err != nil {
+	if err := r.DB.GetDB().Unscoped().Order("id DESC").First(&report).Error; err != nil {
 		return "RPT0000", err
 	}
 
