@@ -12,10 +12,6 @@ tags:
     description: Endpoint for user account
   - name: reporting
     description: Endpoint for user reporting littering & rubbish
-  - name: chatbot AI
-    description: Endpoint for user chatbot (coming soon)
-  - name: virtual assistant AI
-    description: Endpoint for user virtual assistant (coming soon)
 
   - name: manage users
     description: Endpoint for admin manage users account
@@ -380,11 +376,52 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Report'
+              type: object
+              properties:
+                report_type:
+                  type: string
+                  description: Type of the report (required)
+                title:
+                  type: string
+                  description: Title of the report (max 100 characters)
+                description:
+                  type: string
+                  description: Description of the report (required)
+                waste_type:
+                  type: string
+                  description: Type of waste (required)
+                waste_materials:
+                  type: array
+                  items:
+                    type: string
+                  description: List of waste materials
+                latitude:
+                  type: number
+                  format: float
+                  description: Latitude coordinate (required)
+                longitude:
+                  type: number
+                  format: float
+                  description: Longitude coordinate (required)
+                address:
+                  type: string
+                  description: Address of the report (required)
+                city:
+                  type: string
+                  description: City of the report (required)
+                province:
+                  type: string
+                  description: Province of the report (required)
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: List of image files
         required: true
       responses:
         '201':
-          description: Upload Success
+          description: Report Created
           content:
             application/json:
               schema:
@@ -397,13 +434,40 @@ paths:
                     type: string
                     example: report created!
                   data:
-                    type: object
-                    properties:
-                      avatar_url:
-                        type: string
-                        example: http://example.com/yourimage.png
+                    $ref: '#/components/schemas/ReportResponse'
         '400':
-          description: Upload Failed (filetype error, filesize to large error, dll)
+          description: Invalid request, Upload Image Failed (filetype error, filesize to large error, dll)
+      security:
+        - Bearer: []
+
+    get:
+      tags:
+        - reporting
+      summary: Get all history user reports limit 10
+      description: Endpoint for Get all reports from user history
+      operationId: historyUserReports
+      responses:
+        '200':
+          description: Get History User Reports
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: 
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReportResponse'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Status internal error               
       security:
         - Bearer: []
 
@@ -608,7 +672,7 @@ paths:
         '404':
           description: User not found
 
-  /admin/reports:
+  /reports:
     get:
       tags:
         - manage reports
@@ -616,45 +680,44 @@ paths:
       description: Endpoint admin to view all reports with filters and pagination
       operationId: viewAllReports
       parameters:
-        - name: category
+        - name: page
           in: query
+          description: Page number of the result set
+          required: false
+          schema:
+            type: integer
+            example: 1
+        - name: limit
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            example: 10
+        - name: report_type
+          in: query
+          description: Type of the report (littering or rubbish) -- OPTIONAL
           required: false
           schema:
             type: string
-            description: Filter by report category
-            example: rubbish
+            enum: [littering, rubbish]
+            example: littering
         - name: status
           in: query
+          description: Status of the report (need review, approve, or reject)  -- OPTIONAL
           required: false
           schema:
             type: string
             enum: [need review, approve, reject]
-            description: Filter by report status
             example: need review
         - name: date
           in: query
+          description: Date of the report in YYYY-MM-DD format  -- OPTIONAL
           required: false
           schema:
             type: string
             format: date
-            description: Filter by date
-            example: "2024-01-01"
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            default: 1
-          description: Page number for pagination
-          example: 1
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
-            default: 10
-          description: Number of reports per page
-          example: 10
+            example: 2024-05-24
       security:
         - Bearer: []
       responses:
@@ -687,56 +750,10 @@ paths:
                         type: array
                         items:
                           type: object
-                          properties:
-                            id:
-                              type: string
-                              example: "67890"
-                            report_type:
-                              type: string
-                              example: "rubbish"
-                            title:
-                              type: string
-                              example: "Litter in the park"
-                            description:
-                              type: string
-                              example: "There is litter scattered around the central park."
-                            images:
-                              type: array
-                              items:
-                                type: string
-                                example: "image1.jpg"
-                            waste_type:
-                              type: string
-                              example: "inorganic"
-                            waste_materials:
-                              type: array
-                              items:
-                                type: string
-                                example: "plastic, paper"
-                            lat:
-                              type: number
-                              format: float
-                              example: -6.200000
-                            long:
-                              type: number
-                              format: float
-                              example: 106.816666
-                            location:
-                              type: string
-                              example: "Central Park, Jakarta"
-                            address:
-                              type: string
-                              example: "Jl. Medan Merdeka Selatan, Jakarta"
-                            status:
-                              type: string
-                              example: "need review"
-                            createdDate:
-                              type: string
-                              format: date
-                              example: "2024-04-01"
+                          $ref: '#/components/schemas/ReportResponse'
         '400':
-          description: Invalid request parameters
-  /admin/reports/{reportId}/verify:
+          description: Invalid request parameters dll
+  /report/{reportId}:
     put:
       tags:
         - manage reports
@@ -1358,6 +1375,88 @@ components:
           default: need review
           description: Status of the report
           example: need review
+    ReportResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the created report
+          example: RPT0006
+        author_id:
+          type: string
+          description: ID of the report author
+          example: USR0003
+        report_type:
+          type: string
+          description: Type of the report
+          example: rubbish
+        title:
+          type: string
+          description: Title of the report
+          example: ""
+        description:
+          type: string
+          description: Description of the report
+          example: Tempat sampah di dekat halte bus sudah penuh dengan sampah.
+        waste_type:
+          type: string
+          description: Type of waste
+          example: sampah basah,sampah kering
+        latitude:
+          type: number
+          format: float
+          description: Latitude coordinate
+          example: -6.1754
+        longitude:
+          type: number
+          format: float
+          description: Longitude coordinate
+          example: 106.8272
+        address:
+          type: string
+          description: Address of the report
+          example: Jl. Sudirman
+        city:
+          type: string
+          description: City of the report
+          example: Jakarta
+        province:
+          type: string
+          description: Province of the report
+          example: DKI Jakarta
+        status:
+          type: string
+          description: Status of the report
+          example: need review
+        waste_materials:
+          type: array
+          items:
+            $ref: '#/components/schemas/WasteMaterial'
+        report_images:
+          type: array
+          items:
+            type: string
+            format: uri
+            description: URL of the report images
+          example:
+            - https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717008205/recything/reports/dpz5ztmx9lo65ivcqbot.jpg
+            - https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717008205/recything/reports/zwk2gotn8tywjewpzkhn.jpg
+        created_at:
+          type: string
+          format: date-time
+          description: Date and time when the report was created
+          example: "2024-05-30T01:43:26.482+07:00"
+    WasteMaterial:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the waste material
+          example: MTR04
+        type:
+          type: string
+          description: Type of the waste material
+          example: kertas
     Article:
       type: object
       properties:

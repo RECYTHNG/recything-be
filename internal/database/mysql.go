@@ -52,6 +52,8 @@ func (m *mysqlDatabase) InitWasteMaterials() {
 	for _, material := range initialWasteMaterials {
 		m.DB.FirstOrCreate(&material, material)
 	}
+
+	log.Println("Waste material data added!")
 }
 
 func (m *mysqlDatabase) InitSuperAdmin() {
@@ -68,7 +70,7 @@ func (m *mysqlDatabase) InitSuperAdmin() {
 		UpdatedAt: time.Now(),
 	}
 
-	m.GetDB().Create(&admin)
+	m.GetDB().FirstOrCreate(&admin)
 	log.Println("Super admin data added!")
 }
 

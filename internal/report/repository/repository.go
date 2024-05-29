@@ -72,7 +72,8 @@ func (r *reportRepository) FindAll(page, limit int, reportType, status string, d
 		db = db.Where("status = ?", status)
 	}
 	if !date.IsZero() {
-		db = db.Where("DATE(created_at) = ?", date)
+		dateStr := date.Format("2006-01-02")
+		db = db.Where("DATE(created_at) = ?", dateStr)
 	}
 
 	db.Count(&total)
