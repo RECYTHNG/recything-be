@@ -21,7 +21,7 @@ type ReportInput struct {
 
 type UpdateStatus struct {
 	ID     string `json:"id" validate:"required"`
-	Status string `json:"status" validate:"required,oneof='approved' 'rejected'"`
+	Status string `json:"status" validate:"required,oneof='approved' 'reject'"`
 }
 
 type ReportDetail struct {
