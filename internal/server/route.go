@@ -16,10 +16,10 @@ import (
 )
 
 var (
-	SuperAdminMiddleware        = middleware.RoleBasedMiddleware("superadmin")
-	SuperAdminOrAdminMiddleware = middleware.RoleBasedMiddleware("superadmin", "admin")
+	SuperAdminMiddleware        = middleware.RoleBasedMiddleware("super admin")
+	SuperAdminOrAdminMiddleware = middleware.RoleBasedMiddleware("super admin", "admin")
 	UserMiddleware              = middleware.RoleBasedMiddleware("user")
-	AllRoleMiddleware           = middleware.RoleBasedMiddleware("superadmin", "admin", "user")
+	AllRoleMiddleware           = middleware.RoleBasedMiddleware("super admin", "admin", "user")
 )
 
 func (s *echoServer) publicHttpHandler() {

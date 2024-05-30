@@ -37,7 +37,8 @@ func (handler *adminHandlerImpl) AddAdminHandler(c echo.Context) error {
 
 	file, errFile := c.FormFile("profile_photo")
 	if errFile != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "profile_photo is required")
+
+		return helper.ErrorHandler(c, http.StatusBadRequest, "profile_photo is required, detail : "+errFile.Error())
 	}
 
 	if file.Size > 2*1024*1024 {
@@ -67,11 +68,11 @@ func (handler *adminHandlerImpl) AddAdminHandler(c echo.Context) error {
 	}
 
 	data := dto.AdminResponseRegister{
-		Id:    admin.ID,
-		Name:  admin.Name,
-		Email: admin.Email,
-		Role:  admin.Role,
-		ProfilePhoto: admin.ProfilePhoto,
+		Id:           admin.ID,
+		Name:         admin.Name,
+		Email:        admin.Email,
+		Role:         admin.Role,
+		ProfilePhoto: admin.ImageUrl,
 	}
 	responseData := helper.ResponseData(http.StatusCreated, "success", data)
 	return c.JSON(http.StatusCreated, responseData)
