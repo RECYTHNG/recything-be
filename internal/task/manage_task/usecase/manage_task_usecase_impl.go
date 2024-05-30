@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"io"
+
 	"github.com/sawalreverr/recything/internal/helper"
 	"github.com/sawalreverr/recything/internal/task/manage_task/dto"
 	task "github.com/sawalreverr/recything/internal/task/manage_task/entity"
@@ -57,4 +59,19 @@ func (usecase *ManageTaskUsecaseImpl) GetTaskChallengePagination(page int, limit
 		return nil, 0, err
 	}
 	return tasks, total, nil
+}
+
+func (usecase *ManageTaskUsecaseImpl) UploadThumbnailUsecae(taskId string, thumbnail io.Reader) (string, error) {
+	if _, err := usecase.ManageTaskRepository.FindTaskById(taskId); err != nil {
+		return "", pkg.ErrTaskNotFound
+	}
+	thumbnailUrl, errUpload := helper.UploadToCloudinary(thumbnail, "task_thumbnail")
+	if errUpload != nil {
+		return "", pkg.ErrUploadCloudinary
+	}
+
+	if err := usecase.ManageTaskRepository.UploadThumbnail(taskId, thumbnailUrl); err != nil {
+		return "", err
+	}
+	return thumbnailUrl, nil
 }

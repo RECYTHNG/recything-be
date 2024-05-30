@@ -48,3 +48,10 @@ func (repository *ManageTaskRepositoryImpl) GetTaskChallengePagination(page int,
 
 	return tasks, int(total), nil
 }
+
+func (repository *ManageTaskRepositoryImpl) UploadThumbnail(taskId string, thumbnail string) error {
+	if err := repository.DB.GetDB().Model(&task.TaskChallenge{}).Where("id = ?", taskId).Update("thumbnail", thumbnail).Error; err != nil {
+		return err
+	}
+	return nil
+}

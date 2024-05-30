@@ -35,3 +35,7 @@ type GetTaskPagination struct {
 	TotalData int         `json:"total_data"`
 	TotalPage int         `json:"total_page"`
 }
+
+type TaskUploadThumbnailResponse struct {
+	Thumbnail string `json:"thumbnail"`
+}

@@ -127,3 +127,45 @@ func (handler *ManageTaskHandlerImpl) GetTaskChallengePaginationHandler(c echo.C
 
 	return c.JSON(http.StatusOK, responseDataPagination)
 }
+
+func (handler *ManageTaskHandlerImpl) UploadThumbnailHandler(c echo.Context) error {
+	claims := c.Get("user").(*helper.JwtCustomClaims)
+
+	file, errFile := c.FormFile("thumbnail")
+	if errFile != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "thumbnail is required")
+	}
+
+	if file.Size > 2*1024*1024 {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "file is too large")
+	}
+
+	if !strings.HasPrefix(file.Header.Get("Content-Type"), "image") {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid file type")
+	}
+
+	src, errOpen := file.Open()
+	if errOpen != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "failed to open file: "+errOpen.Error())
+	}
+	defer src.Close()
+
+	taskChallange, err := handler.Usecase.UploadThumbnailUsecase(claims.UserID, src)
+	if err != nil {
+		if errors.Is(err, pkg.ErrTaskNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, err.Error())
+		}
+		if errors.Is(err, pkg.ErrUploadCloudinary) {
+			return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+	}
+
+	data := dto.TaskUploadThumbnailResponse{
+		Thumbnail: taskChallange.Thumbnail,
+	}
+	responseData := helper.ResponseData(http.StatusOK, "success", data)
+	return c.JSON(http.StatusOK, responseData)
+
+
+}
