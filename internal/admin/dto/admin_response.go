@@ -1,11 +1,10 @@
 package dto
 
 type AdminResponseRegister struct {
-	Id           string `json:"id"`
-	Name         string `json:"name"`
-	Email        string `json:"email"`
-	Role         string `json:"role"`
-	ProfilePhoto string `json:"profile_photo"`
+	Id    string `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Role  string `json:"role"`
 }
 
 type AdminDataGetAll struct {
@@ -38,5 +37,10 @@ type AdminResponseUpdate struct {
 	Name         string `json:"name"`
 	Email        string `json:"email"`
 	Role         string `json:"role"`
+	ProfilePhoto string `json:"profile_photo"`
+}
+
+type AdminResponseUploadProfile struct {
+	Id           string `json:"id"`
 	ProfilePhoto string `json:"profile_photo"`
 }

@@ -67,11 +67,11 @@ func (handler *adminHandlerImpl) AddAdminHandler(c echo.Context) error {
 	}
 
 	data := dto.AdminResponseRegister{
-		Id:           admin.ID,
-		Name:         admin.Name,
-		Email:        admin.Email,
-		Role:         admin.Role,
-		ProfilePhoto: admin.ImageUrl,
+		Id:    admin.ID,
+		Name:  admin.Name,
+		Email: admin.Email,
+		Role:  admin.Role,
+		ProfilePhoto: admin.ProfilePhoto,
 	}
 	responseData := helper.ResponseData(http.StatusCreated, "success", data)
 	return c.JSON(http.StatusCreated, responseData)
