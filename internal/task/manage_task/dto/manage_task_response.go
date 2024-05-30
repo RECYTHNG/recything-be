@@ -6,6 +6,7 @@ type CreateTaskResponse struct {
 	Id          string      `json:"id"`
 	Title       string      `json:"title"`
 	Description string      `json:"description"`
+	Thumbnail   string      `json:"thumbnail"`
 	StartDate   time.Time   `json:"start_date"`
 	EndDate     time.Time   `json:"end_date"`
 	Steps       []TaskSteps `json:"steps"`
@@ -15,6 +16,7 @@ type DataTasks struct {
 	Id          string           `json:"id"`
 	Title       string           `json:"title"`
 	Description string           `json:"description"`
+	Thumbnail   string           `json:"thumbnail"`
 	StartDate   time.Time        `json:"start_date"`
 	EndDate     time.Time        `json:"end_date"`
 	Steps       []TaskSteps      `json:"steps"`

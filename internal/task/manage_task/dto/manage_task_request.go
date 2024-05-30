@@ -5,6 +5,7 @@ import "time"
 type CreateTaskResquest struct {
 	Title       string      `json:"title" validate:"required"`
 	Description string      `json:"description" validate:"required"`
+	Thumbnail   string      `json:"thumbnail"`
 	StartDate   time.Time   `json:"start_date" validate:"required"`
 	EndDate     time.Time   `json:"end_date" validate:"required"`
 	Steps       []TaskSteps `json:"steps" validate:"required"`

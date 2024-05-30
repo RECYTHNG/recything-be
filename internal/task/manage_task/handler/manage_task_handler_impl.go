@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sawalreverr/recything/internal/helper"
@@ -45,6 +46,7 @@ func (handler *ManageTaskHandlerImpl) CreateTaskHandler(c echo.Context) error {
 		Id:          taskChallange.ID,
 		Title:       taskChallange.Title,
 		Description: taskChallange.Description,
+		Thumbnail:   taskChallange.Thumbnail,
 		StartDate:   taskChallange.StartDate,
 		EndDate:     taskChallange.EndDate,
 		Steps:       taskStep,
@@ -100,6 +102,7 @@ func (handler *ManageTaskHandlerImpl) GetTaskChallengePaginationHandler(c echo.C
 			Id:          task.ID,
 			Title:       task.Title,
 			Description: task.Description,
+			Thumbnail:   task.Thumbnail,
 			StartDate:   task.StartDate,
 			EndDate:     task.EndDate,
 			Steps:       taskSteps,
@@ -129,8 +132,6 @@ func (handler *ManageTaskHandlerImpl) GetTaskChallengePaginationHandler(c echo.C
 }
 
 func (handler *ManageTaskHandlerImpl) UploadThumbnailHandler(c echo.Context) error {
-	claims := c.Get("user").(*helper.JwtCustomClaims)
-
 	file, errFile := c.FormFile("thumbnail")
 	if errFile != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, "thumbnail is required")
@@ -150,22 +151,16 @@ func (handler *ManageTaskHandlerImpl) UploadThumbnailHandler(c echo.Context) err
 	}
 	defer src.Close()
 
-	taskChallange, err := handler.Usecase.UploadThumbnailUsecase(claims.UserID, src)
+	imageUrl, err := helper.UploadToCloudinary(src, "task_thumbnail")
 	if err != nil {
-		if errors.Is(err, pkg.ErrTaskNotFound) {
-			return helper.ErrorHandler(c, http.StatusNotFound, err.Error())
-		}
-		if errors.Is(err, pkg.ErrUploadCloudinary) {
-			return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
-		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
 	}
 
 	data := dto.TaskUploadThumbnailResponse{
-		Thumbnail: taskChallange.Thumbnail,
+		Thumbnail: imageUrl,
 	}
+
 	responseData := helper.ResponseData(http.StatusOK, "success", data)
 	return c.JSON(http.StatusOK, responseData)
-
 
 }

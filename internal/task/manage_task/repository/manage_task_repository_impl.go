@@ -22,7 +22,7 @@ func (r *ManageTaskRepositoryImpl) CreateTask(task *task.TaskChallenge) (*task.T
 	return task, nil
 }
 
-func (repository *ManageTaskRepositoryImpl) FindLastIdTaskChallange() (string, error) {
+func (repository *ManageTaskRepositoryImpl) FindLastIdTaskChallenge() (string, error) {
 	var task *task.TaskChallenge
 	if err := repository.DB.GetDB().Unscoped().Order("id desc").First(&task).Error; err != nil {
 		return "TM0000", err
@@ -47,11 +47,4 @@ func (repository *ManageTaskRepositoryImpl) GetTaskChallengePagination(page int,
 	}
 
 	return tasks, int(total), nil
-}
-
-func (repository *ManageTaskRepositoryImpl) UploadThumbnail(taskId string, thumbnail string) error {
-	if err := repository.DB.GetDB().Model(&task.TaskChallenge{}).Where("id = ?", taskId).Update("thumbnail", thumbnail).Error; err != nil {
-		return err
-	}
-	return nil
 }
