@@ -117,9 +117,8 @@ func (s *echoServer) ArticleHttpHandler() {
 	usecase := usecase.NewArticleUsecase(repository)
 	handler := handler.NewArticleHandler(usecase)
 
-	s.e.POST("/articles", handler.AddArticleHandler)
-	s.e.GET("/articles", handler.GetDataAllArticleHandler)
-	s.e.GET("/articles/:articleId", handler.GetDataArticleByIdHandler)
-	s.e.PUT("/articles/:articleId", handler.UpdateArticleHandler)
-	s.e.DELETE("/articles/:articleId", handler.DeleteArticleHandler)
+	s.gr.POST("/articles", handler.AddArticleHandler)
+	s.gr.GET("/articles/:articleId", handler.GetDataArticleByIdHandler)
+	s.gr.PUT("/articles/:articleId", handler.UpdateArticleHandler)
+	s.gr.DELETE("/articles/:articleId", handler.DeleteArticleHandler)
 }
