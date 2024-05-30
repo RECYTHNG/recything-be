@@ -121,4 +121,7 @@ func (s *echoServer) manageTask() {
 
 	// create task by admin or super admin
 	s.gr.POST("/tasks", handler.CreateTaskHandler, SuperAdminOrAdminMiddleware)
+
+	// get task challenge by pagination
+	s.gr.GET("/tasks", handler.GetTaskChallengePaginationHandler, SuperAdminOrAdminMiddleware)
 }

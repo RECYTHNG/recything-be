@@ -17,7 +17,7 @@ func NewManageTaskUsecase(repository repository.ManageTaskRepository) *ManageTas
 	return &ManageTaskUsecaseImpl{ManageTaskRepository: repository}
 }
 
-func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskResquest, adminId string) (*task.TaskChallange, error) {
+func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskResquest, adminId string) (*task.TaskChallenge, error) {
 	if len(request.Steps) == 0 {
 		return nil, pkg.ErrTaskStepsNull
 
@@ -25,7 +25,7 @@ func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskR
 	findLastId, _ := usecase.ManageTaskRepository.FindLastIdTaskChallange()
 	id := helper.GenerateCustomID(findLastId, "TM")
 
-	taskChallange := &task.TaskChallange{
+	taskChallange := &task.TaskChallenge{
 		ID:          id,
 		AdminId:     adminId,
 		Title:       request.Title,
@@ -49,4 +49,12 @@ func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskR
 		return nil, err
 	}
 	return taskChallange, nil
+}
+
+func (usecase *ManageTaskUsecaseImpl) GetTaskChallengePagination(page int, limit int) ([]task.TaskChallenge, int, error) {
+	tasks, total, err := usecase.ManageTaskRepository.GetTaskChallengePagination(page, limit)
+	if err != nil {
+		return nil, 0, err
+	}
+	return tasks, total, nil
 }

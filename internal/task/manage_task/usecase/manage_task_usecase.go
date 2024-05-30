@@ -6,5 +6,6 @@ import (
 )
 
 type ManageTaskUsecase interface {
-	CreateTaskUsecase(request *dto.CreateTaskResquest, adminId string) (*task.TaskChallange, error)
+	CreateTaskUsecase(request *dto.CreateTaskResquest, adminId string) (*task.TaskChallenge, error)
+	GetTaskChallengePagination(page int, limit int) ([]task.TaskChallenge, int, error)
 }

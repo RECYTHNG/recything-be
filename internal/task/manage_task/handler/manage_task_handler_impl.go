@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sawalreverr/recything/internal/helper"
@@ -60,4 +61,69 @@ func (handler *ManageTaskHandlerImpl) CreateTaskHandler(c echo.Context) error {
 	responseData := helper.ResponseData(http.StatusOK, "success", data)
 	return c.JSON(http.StatusOK, responseData)
 
+}
+
+func (handler *ManageTaskHandlerImpl) GetTaskChallengePaginationHandler(c echo.Context) error {
+	page := c.QueryParam("page")
+	limit := c.QueryParam("limit")
+	if page == "" {
+		page = "1"
+	}
+	if limit == "" {
+		limit = "10"
+	}
+	limitInt, errLimit := strconv.Atoi(limit)
+	if errLimit != nil || limitInt <= 0 {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid limit parameter")
+	}
+	pageInt, errPage := strconv.Atoi(page)
+	if errPage != nil || pageInt <= 0 {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid page parameter")
+	}
+
+	tasks, totalData, err := handler.Usecase.GetTaskChallengePagination(pageInt, limitInt)
+	if err != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+	}
+
+	var data []dto.DataTasks
+	for _, task := range tasks {
+		var taskSteps []dto.TaskSteps
+		for _, step := range task.TaskSteps {
+			taskSteps = append(taskSteps, dto.TaskSteps{
+				Id:          step.ID,
+				Title:       step.Title,
+				Description: step.Description,
+			})
+		}
+		data = append(data, dto.DataTasks{
+			Id:          task.ID,
+			Title:       task.Title,
+			Description: task.Description,
+			StartDate:   task.StartDate,
+			EndDate:     task.EndDate,
+			Steps:       taskSteps,
+			TaskCreator: dto.TaskCreatorAdmin{
+				Id:   task.AdminId,
+				Name: task.Admin.Name,
+			},
+		})
+	}
+
+	totalPage := totalData / limitInt
+	if totalData%limitInt != 0 {
+		totalPage++
+	}
+
+	responseDataPagination := dto.GetTaskPagination{
+		Code:      http.StatusOK,
+		Message:   "success",
+		Data:      data,
+		Page:      pageInt,
+		Limit:     limitInt,
+		TotalData: totalData,
+		TotalPage: totalPage,
+	}
+
+	return c.JSON(http.StatusOK, responseDataPagination)
 }

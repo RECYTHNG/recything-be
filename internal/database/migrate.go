@@ -12,7 +12,7 @@ func AutoMigrate(db Database) {
 	if err := db.GetDB().AutoMigrate(
 		&user.User{},
 		&entity.Admin{},
-		task.TaskChallange{},
+		task.TaskChallenge{},
 		task.TaskStep{},
 	); err != nil {
 		log.Fatal("Database Migration Failed!")
