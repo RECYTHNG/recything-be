@@ -128,4 +128,7 @@ func (s *echoServer) manageTask() {
 	// get task challenge by pagination
 	s.gr.GET("/tasks", handler.GetTaskChallengePaginationHandler, SuperAdminOrAdminMiddleware)
 
+	// get task challenge by id
+	s.gr.GET("/tasks/:taskId", handler.GetTaskByIdHandler, SuperAdminOrAdminMiddleware)
+
 }

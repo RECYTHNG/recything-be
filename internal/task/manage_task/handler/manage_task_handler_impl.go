@@ -164,3 +164,38 @@ func (handler *ManageTaskHandlerImpl) UploadThumbnailHandler(c echo.Context) err
 	return c.JSON(http.StatusOK, responseData)
 
 }
+
+func (handler *ManageTaskHandlerImpl) GetTaskByIdHandler(c echo.Context) error {
+	id := c.Param("id")
+	task, err := handler.Usecase.GetTaskByIdUsecase(id)
+	if err != nil {
+		if errors.Is(err, pkg.ErrTaskNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrTaskNotFound.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+	}
+
+	var taskSteps []dto.TaskSteps
+	for _, step := range task.TaskSteps {
+		taskSteps = append(taskSteps, dto.TaskSteps{
+			Id:          step.ID,
+			Title:       step.Title,
+			Description: step.Description,
+		})
+	}
+	data := dto.TaskGetByIdResponse{
+		Id:          task.ID,
+		Title:       task.Title,
+		Description: task.Description,
+		Thumbnail:   task.Thumbnail,
+		StartDate:   task.StartDate,
+		EndDate:     task.EndDate,
+		Steps:       taskSteps,
+		TaskCreator: dto.TaskCreatorAdmin{
+			Id:   task.AdminId,
+			Name: task.Admin.Name,
+		},
+	}
+	responseData := helper.ResponseData(http.StatusOK, "success", data)
+	return c.JSON(http.StatusOK, responseData)
+}

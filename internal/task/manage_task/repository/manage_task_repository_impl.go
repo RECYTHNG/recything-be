@@ -48,3 +48,15 @@ func (repository *ManageTaskRepositoryImpl) GetTaskChallengePagination(page int,
 
 	return tasks, int(total), nil
 }
+
+func (repository *ManageTaskRepositoryImpl) GetTaskById(id string) (*task.TaskChallenge, error) {
+	var task *task.TaskChallenge
+	if err := repository.DB.GetDB().
+		Preload("TaskSteps").
+		Preload("Admin").
+		First(&task, "id = ?", id).
+		Error; err != nil {
+		return nil, err
+	}
+	return task, nil
+}

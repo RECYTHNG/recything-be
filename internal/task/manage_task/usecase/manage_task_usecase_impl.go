@@ -59,3 +59,11 @@ func (usecase *ManageTaskUsecaseImpl) GetTaskChallengePagination(page int, limit
 	}
 	return tasks, total, nil
 }
+
+func (usecase *ManageTaskUsecaseImpl) GetTaskByIdUsecase(id string) (*task.TaskChallenge, error) {
+	task, err := usecase.ManageTaskRepository.GetTaskById(id)
+	if err != nil {
+		return nil, pkg.ErrTaskNotFound
+	}
+	return task, nil
+}
