@@ -10,52 +10,46 @@ import (
 	"github.com/sawalreverr/recything/internal/helper"
 )
 
-func SuperAdminMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		return jwtMiddleware(c, next, "superadmin")
-	}
-}
+func RoleBasedMiddleware(allowedRoles ...string) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			secretKey := config.GetConfig().Server.JWTSecret
 
-func AdminMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		return jwtMiddleware(c, next, "admin")
-	}
-}
+			authHeader := c.Request().Header.Get("Authorization")
+			if authHeader == "" {
+				return helper.ErrorHandler(c, http.StatusUnauthorized, "token is not provided")
+			}
 
-func UserMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		return jwtMiddleware(c, next, "user")
-	}
-}
+			if !strings.HasPrefix(authHeader, "Bearer ") {
+				return helper.ErrorHandler(c, http.StatusBadRequest, "invalid token format. use bearer token")
+			}
+			tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
 
-func jwtMiddleware(c echo.Context, next echo.HandlerFunc, requiredRole string) error {
-	secretKey := config.GetConfig().Server.JWTSecret
+			token, err := jwt.ParseWithClaims(tokenStr, &helper.JwtCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+				return []byte(secretKey), nil
+			})
 
-	authHeader := c.Request().Header.Get("Authorization")
-	if authHeader == "" {
-		return helper.ErrorHandler(c, http.StatusUnauthorized, "token is not provided")
-	}
+			if err != nil {
+				return helper.ErrorHandler(c, http.StatusUnauthorized, "invalid token signature")
+			}
 
-	if !strings.HasPrefix(authHeader, "Bearer ") {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid token format. use bearer token")
-	}
-	tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
+			if claims, ok := token.Claims.(*helper.JwtCustomClaims); ok && next != nil {
+				roleAllowed := false
+				for _, allowedRole := range allowedRoles {
+					if claims.Role == allowedRole {
+						roleAllowed = true
+						break
+					}
+				}
+				if !roleAllowed {
+					return helper.ErrorHandler(c, http.StatusUnauthorized, "unauthorized")
+				}
 
-	token, err := jwt.ParseWithClaims(tokenStr, &helper.JwtCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(secretKey), nil
-	})
+				c.Set("user", claims)
+				return next(c)
+			}
 
-	if err != nil {
-		return helper.ErrorHandler(c, http.StatusUnauthorized, "invalid token signature")
-	}
-
-	if claims, ok := token.Claims.(*helper.JwtCustomClaims); ok && next != nil {
-		if claims.Role != requiredRole {
 			return helper.ErrorHandler(c, http.StatusUnauthorized, "unauthorized")
 		}
-		c.Set("user", claims)
-		return next(c)
 	}
-
-	return helper.ErrorHandler(c, http.StatusUnauthorized, "unauthorized")
 }

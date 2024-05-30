@@ -2,10 +2,17 @@ package database
 
 import (
 	"log"
+
+	"github.com/sawalreverr/recything/internal/admin/entity"
+	user "github.com/sawalreverr/recything/internal/user"
 )
 
 func AutoMigrate(db Database) {
-	if err := db.GetDB().AutoMigrate(); err != nil {
+	if err := db.GetDB().AutoMigrate(
+		&user.User{},
+		&entity.Admin{},
+		&entity.Article{},
+	); err != nil {
 		log.Fatal("Database Migration Failed!")
 	}
 

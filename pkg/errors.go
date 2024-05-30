@@ -2,57 +2,27 @@ package pkg
 
 import "errors"
 
-const (
-	ERROR_DATA_ID          = "id tidak ditemukan"
-	ERROR_ID_INVALID       = "id salah"
-	ERROR_DATA_EMAIL       = "email tidak ditemukan"
-	ERROR_FORMAT_EMAIL     = "error : format email tidak valid"
-	ERROR_EMAIL_EXIST      = "error : email sudah digunakan"
-	ERROR_AKSES_ROLE       = "akses ditolak"
-	ERROR_PASSWORD         = "error : password lama tidak sesuai"
-	ERROR_CONFIRM_PASSWORD = "error : konfirmasi password tidak sesuai"
-	ERROR_ID_ROLE          = "id atau role tidak ditemukan"
-	ERROR_GET_DATA         = "data tidak ditemukan"
-	ERROR_EMPTY            = "error : harap lengkapi data dengan benar"
-	ERROR_EMPTY_FILE       = "error : tidak ada file yang di upload"
-	ERROR_DATA_NOT_FOUND   = "data tidak ditemukan"
-	ERROR_DATA_EXIST       = "error : data sudah ada"
-	ERROR_INVALID_ID       = "error: id tidak boleh sama"
-	ERROR_INVALID_UPDATE   = "error: data harus berberbeda dengan data sebelumnya"
-	ERROR_INVALID_INPUT    = "data yang diinput tidak sesuai"
-	ERROR_NOT_FOUND        = "data tidak ditemukan"
-	ERROR_RECORD_NOT_FOUND = "record not found"
-)
-
-const (
-	ALREADY = "sudah"
-	NO      = "tidak"
-	MUST    = "harus"
-	FAILED  = "gagal"
-	ERROR   = "error"
-)
-
-const (
-	BRONZE   = "bronze"
-	PLATINUM = "platinum"
-	SILVER   = "silver"
-	GOLD     = "gold"
-)
-
 var (
 	ErrStatusForbidden     = errors.New("forbidden")
 	ErrStatusInternalError = errors.New("internal server error")
 	ErrNoPrivilege         = errors.New("no permission to doing this task")
-)
 
-const (
-	SUCCESS_LOGIN       = "berhasil melakukan login"
-	SUCCESS_NULL        = "data belum tersedia"
-	SUCCESS_CREATE_DATA = "berhasil membuat data"
-	SUCCESS_DELETE_DATA = "berhasil menghapus data"
-	SUCCESS_GET_DATA    = "berhasil mendapatkan data"
-)
+	// Authentication
+	ErrEmailAlreadyExists       = errors.New("email already exists")
+	ErrPhoneNumberAlreadyExists = errors.New("phone number already exists")
+	ErrUserNotFound             = errors.New("user not found")
+	ErrPasswordInvalid          = errors.New("password invalid")
+	ErrOTPInvalid               = errors.New("otp invalid")
+	ErrNeedToVerify             = errors.New("verify account false")
+	ErrUserAlreadyVerified      = errors.New("user already verified")
 
-var (
-	CATEGORY_ARTICLE = []string{"Organik", "Plastik", "Kertas", "Kaleng", "Kaca", "Tektil", "Elektronik"}
+	// Upload Cloudinary
+	ErrUploadCloudinary = errors.New("upload cloudinary server error")
+
+	// admin
+	ErrAdminNotFound = errors.New("admin not found")
+
+	// article
+	ErrTitleAlreadyExists = errors.New("title already exists")
+	ErrArticleNotFound    = errors.New("article not found")
 )
