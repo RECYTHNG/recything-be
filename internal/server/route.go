@@ -109,4 +109,7 @@ func (s *echoServer) supAdminHttpHandler() {
 
 	// get profile admin or super admin
 	s.gr.GET("/profile", handler.GetProfileAdminHandler, SuperAdminOrAdminMiddleware)
+
+	// update admin current login
+	s.gr.PUT("/admins/current-login", handler.UpdateAdminCurrentLoginHandler, SuperAdminOrAdminMiddleware)
 }

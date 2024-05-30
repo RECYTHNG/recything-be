@@ -22,15 +22,10 @@ func NewAdminUsecase(adminRepo repository.AdminRepository) *AdminUsecaseImpl {
 	return &AdminUsecaseImpl{Repository: adminRepo}
 }
 
-func (usecase *AdminUsecaseImpl) AddAdminUsecase(request dto.AdminRequestCreate, file io.Reader) (*entity.Admin, error) {
+func (usecase *AdminUsecaseImpl) AddAdminUsecase(request dto.AdminRequestCreate) (*entity.Admin, error) {
 	findAdmin, _ := usecase.Repository.FindAdminByEmail(request.Email)
 	if findAdmin != nil {
 		return nil, pkg.ErrEmailAlreadyExists
-	}
-
-	imageUrl, errUpload := helper.UploadToCloudinary(file, "profile_admin")
-	if errUpload != nil {
-		return nil, pkg.ErrUploadCloudinary
 	}
 
 	findLastId, _ := usecase.Repository.FindLastIdAdmin()
@@ -44,7 +39,7 @@ func (usecase *AdminUsecaseImpl) AddAdminUsecase(request dto.AdminRequestCreate,
 		Email:     request.Email,
 		Password:  hashPassword,
 		Role:      request.Role,
-		ImageUrl:  imageUrl,
+		ImageUrl:  request.ProfileUrl,
 		DeletedAt: gorm.DeletedAt{},
 	}
 
@@ -128,4 +123,28 @@ func (usecase *AdminUsecaseImpl) DeleteAdminUsecase(id string) error {
 		return err
 	}
 	return nil
+}
+
+func (usecase *AdminUsecaseImpl) UpdateAdminCurrenLoginUsecase(id string, request *dto.AdminUpdateRequest) (*entity.Admin, error) {
+	findAdmin, errFind := usecase.Repository.FindAdminByID(id)
+	if errFind != nil {
+		return nil, pkg.ErrAdminNotFound
+	}
+
+	if matchPassword := helper.ComparePassword(findAdmin.Password, request.OldPassword); !matchPassword {
+		return nil, pkg.ErrPasswordInvalid
+	}
+
+	hashPassword, _ := helper.GenerateHash(request.NewPassword)
+	admin, err := usecase.Repository.UpdateAdminCurrentLogin(id, &entity.Admin{
+		Name:     request.Name,
+		Email:    request.Email,
+		Password: hashPassword,
+		Role:     request.Role,
+		ImageUrl: request.ProfileUrl,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return admin, nil
 }

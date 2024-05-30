@@ -73,3 +73,10 @@ func (repository *AdminRepositoryImpl) DeleteAdmin(id string) error {
 	}
 	return nil
 }
+
+func (repository *AdminRepositoryImpl) UpdateAdminCurrentLogin(id string, admin *entity.Admin) (*entity.Admin, error) {
+	if err := repository.DB.GetDB().Where("id = ?", id).Updates(&admin).Error; err != nil {
+		return nil, err
+	}
+	return admin, nil
+}

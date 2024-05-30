@@ -10,4 +10,5 @@ type AdminRepository interface {
 	GetDataAllAdmin(limit int, offset int) ([]entity.Admin, int, error)
 	FindLastIdAdmin() (string, error)
 	DeleteAdmin(id string) error
+	UpdateAdminCurrentLogin(id string, admin *entity.Admin) (*entity.Admin, error)
 }
