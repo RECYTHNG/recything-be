@@ -59,6 +59,9 @@ func (s *echoServer) Start() {
 	// Report Handler
 	s.reportHttpHandler()
 
+	// FAQs Handler
+	s.faqHttpHandler()
+
 	serverPORT := fmt.Sprintf(":%d", s.conf.Server.Port)
 	s.app.Logger.Fatal(s.app.Start(serverPORT))
 }

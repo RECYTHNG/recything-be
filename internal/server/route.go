@@ -9,6 +9,9 @@ import (
 	"github.com/sawalreverr/recything/internal/admin/usecase"
 	authHandler "github.com/sawalreverr/recything/internal/auth/handler"
 	authUsecase "github.com/sawalreverr/recything/internal/auth/usecase"
+	faqHandler "github.com/sawalreverr/recything/internal/faq/handler"
+	faqRepo "github.com/sawalreverr/recything/internal/faq/repository"
+	faqUsecase "github.com/sawalreverr/recything/internal/faq/usecase"
 	"github.com/sawalreverr/recything/internal/middleware"
 	reportHandler "github.com/sawalreverr/recything/internal/report/handler"
 	reportRepo "github.com/sawalreverr/recything/internal/report/repository"
@@ -130,4 +133,19 @@ func (s *echoServer) reportHttpHandler() {
 
 	// Admin get all with pagination and filter
 	s.gr.GET("/reports", handler.GetAllReports, SuperAdminOrAdminMiddleware)
+}
+
+func (s *echoServer) faqHttpHandler() {
+	repository := faqRepo.NewFaqRepository(s.db)
+	usecase := faqUsecase.NewFaqUsecase(repository)
+	handler := faqHandler.NewFaqHandler(usecase)
+
+	// User get all faqs
+	s.gr.GET("/faqs", handler.GetAllFaqs, UserMiddleware)
+
+	// User get all faqs by category
+	s.gr.GET("/faqs/category", handler.GetFaqsByCategory, UserMiddleware)
+
+	// User get all faqs by keyword
+	s.gr.GET("/faqs/search", handler.GetFaqsByKeyword, UserMiddleware)
 }

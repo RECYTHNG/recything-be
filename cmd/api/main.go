@@ -17,6 +17,9 @@ func main() {
 	// Init Waste Materials
 	db.InitWasteMaterials()
 
+	// Init Faqs
+	db.InitFaqs()
+
 	app := server.NewEchoServer(conf, db)
 	app.Start()
 }
