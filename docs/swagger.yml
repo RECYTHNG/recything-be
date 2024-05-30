@@ -877,7 +877,7 @@ paths:
         '404': 
           description: Achievement not found
 
-  /superadmin/admins:
+  /admins:
     get:
       tags:
         - manage admins
@@ -920,19 +920,25 @@ paths:
                   data:
                     type: object
                     properties:
-                      total:
-                        type: integer
-                        example: 20
+                      admins:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/AdminResponse'
                       page:
                         type: integer
                         example: 1
                       limit:
                         type: integer
                         example: 10
-                      admins:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/AdminResponse'
+                      total_data:
+                        type: integer
+                        example: 10
+                      total_page:
+                        type: integer
+                        example: 1
+
+
+                      
     post:
       tags:
         - manage admins
@@ -944,7 +950,7 @@ paths:
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/json::
             schema:
               $ref: '#/components/schemas/Admin'
       responses:
@@ -961,9 +967,56 @@ paths:
                   message:
                     type: string
                     example: admin successfully created!
+                  data:
+                    $ref: '#/components/schemas/AdminResponse'
         '400':
           description: Invalid request data
-  /superadmin/admins/{adminId}:
+  
+  /profile:
+    post:
+      tags:
+        - manage admins
+      summary: upload profile
+      description: Endpoint for upload profile before send data.
+      operationId: updateProfile
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data::
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                imageProfile:
+                  type: string
+                  format: image
+                  description: Image profile
+                  example: image.png
+      responses:
+        '201':
+          description: Profile successfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: profile successfully created!
+                  data:
+                    type: object
+                    properties:
+                      profile_photo:
+                        type: string
+                        example: "https://example.com/profile.jpg"
+                      
+  /admins/{adminId}:
     put:
       tags:
         - manage admins
@@ -979,13 +1032,13 @@ paths:
           schema:
             type: string
           description: ID of the admin to be updated
-          example: ADM0001
+          example: AD0001
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
-              $ref: '#/components/schemas/Admin'
+              $ref: '#/components/schemas/AdminUpdate'
       responses:
         '200':
           description: Admin successfully updated
@@ -1000,6 +1053,8 @@ paths:
                   message:
                     type: string
                     example: admin successfully updated!
+                  data:
+                    $ref: '#/components/schemas/AdminResponse'
         '400':
           description: Invalid request data
         '404':
@@ -1181,9 +1236,6 @@ components:
     Admin:
       type: object
       properties:
-        id:
-          type: string
-          example: ADM0001
         name:
           type: string
           example: John Doe
@@ -1193,14 +1245,39 @@ components:
         password:
           type: string
           example: password@123
+        confirm_password:
+          type: string
+          example: password@123
         role:
           type: string
           enum: [admin, superadmin]
           example: admin
-        profile_photo:
+        profile_url:
           type: string
-          format: image
-          example: "profile.jpg"
+          example: "https://example.com/profile.jpg"
+    AdminUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: john.doe@example.com
+        old_password:
+          type: string
+          example: password@123
+        new_password:
+          type: string
+          example: password@123
+        role:
+          type: string
+          enum: [admin, superadmin]
+          example: admin
+        profile_url:
+          type: string
+          example: "https://example.com/profile.jpg"
+
     AdminResponse:
       type: object
       properties:
