@@ -112,4 +112,7 @@ func (s *echoServer) supAdminHttpHandler() {
 
 	// update admin current login
 	s.gr.PUT("/admins/current-login", handler.UpdateAdminCurrentLoginHandler, SuperAdminOrAdminMiddleware)
+
+	// add profile admin
+	s.gr.POST("/profile", handler.AddProfileAdminHandler, SuperAdminOrAdminMiddleware)
 }

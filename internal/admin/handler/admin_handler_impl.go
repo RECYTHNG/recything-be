@@ -266,3 +266,36 @@ func (handler *adminHandlerImpl) UpdateAdminCurrentLoginHandler(c echo.Context) 
 	responseData := helper.ResponseData(http.StatusOK, "data successfully updated", data)
 	return c.JSON(http.StatusOK, responseData)
 }
+
+func (handler *adminHandlerImpl) AddProfileAdminHandler(c echo.Context) error {
+	file, errFile := c.FormFile("profile_photo")
+
+	if errFile != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "please upload your image!")
+	}
+
+	if file.Size > 2*1024*1024 {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "file is too large")
+	}
+
+	if !strings.HasPrefix(file.Header.Get("Content-Type"), "image") {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid file type")
+	}
+
+	src, errOpen := file.Open()
+	if errOpen != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "failed to open file: "+errOpen.Error())
+	}
+	defer src.Close()
+
+	imageUrl, errUpload := helper.UploadToCloudinary(src, "profile_admin")
+	if errUpload != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
+	}
+
+	data := dto.AdminResponseAddProfile{
+		ProfilePhoto: imageUrl,
+	}
+	responseData := helper.ResponseData(http.StatusOK, "success", data)
+	return c.JSON(http.StatusOK, responseData)
+}

@@ -40,7 +40,6 @@ type AdminResponseUpdate struct {
 	ProfilePhoto string `json:"profile_photo"`
 }
 
-type AdminResponseUploadProfile struct {
-	Id           string `json:"id"`
+type AdminResponseAddProfile struct {
 	ProfilePhoto string `json:"profile_photo"`
 }

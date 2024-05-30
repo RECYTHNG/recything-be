@@ -10,4 +10,6 @@ type AdminHandler interface {
 	DeleteAdminHandler(c echo.Context) error
 	GetProfileAdminHandler(c echo.Context) error
 	UpdateAdminCurrentLoginHandler(c echo.Context) error
+	AddProfileAdminHandler(c echo.Context) error
+	UpdateProfileAdminHandler(c echo.Context) error
 }
