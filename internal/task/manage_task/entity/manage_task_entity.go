@@ -14,6 +14,7 @@ type TaskChallenge struct {
 	Thumbnail   string
 	StartDate   time.Time
 	EndDate     time.Time
+	Status      bool           `gorm:"default:true"`
 	TaskSteps   []TaskStep     `gorm:"foreignKey:TaskChallengeId"`
 	AdminId     string         `gorm:"index"`
 	Admin       admin.Admin    `gorm:"foreignKey:AdminId"`
@@ -30,4 +31,12 @@ type TaskStep struct {
 	CreatedAt       time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt       time.Time      `gorm:"autoUpdateTime"`
 	DeletedAt       gorm.DeletedAt `gorm:"index"`
+}
+
+func (tc *TaskChallenge) BeforeFind(tx *gorm.DB) (err error) {
+	if tc.EndDate.Before(time.Now()) && tc.Status {
+		tx.Model(&TaskChallenge{}).Where("id = ?", tc.ID).Update("status", false)
+		tc.Status = false
+	}
+	return nil
 }
