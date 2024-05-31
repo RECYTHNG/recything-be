@@ -7,4 +7,5 @@ type ManageTaskHandler interface {
 	GetTaskChallangePagginationHandler(c echo.Context) error
 	UploadThumbnailHandler(c echo.Context) error
 	GetTaskByIdHandler(c echo.Context) error
+	UpdateTaskHandler(c echo.Context) error
 }

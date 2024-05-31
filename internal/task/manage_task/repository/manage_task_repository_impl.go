@@ -2,9 +2,11 @@ package repository
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/sawalreverr/recything/internal/database"
 	task "github.com/sawalreverr/recything/internal/task/manage_task/entity"
+	"gorm.io/gorm"
 )
 
 type ManageTaskRepositoryImpl struct {
@@ -59,4 +61,44 @@ func (repository *ManageTaskRepositoryImpl) GetTaskById(id string) (*task.TaskCh
 		return nil, err
 	}
 	return task, nil
+}
+
+func (repository *ManageTaskRepositoryImpl) FindTask(id string) (*task.TaskChallenge, error) {
+	log.Println("Finding task with ID:", id)
+	var task task.TaskChallenge
+	if err := repository.DB.GetDB().Where("id = ?", id).First(&task).Error; err != nil {
+		log.Println("Error finding task:", err)
+		return nil, err
+	}
+	return &task, nil
+}
+
+func (repository *ManageTaskRepositoryImpl) UpdateTaskChallenge(taskChallenge *task.TaskChallenge, taskId string) (*task.TaskChallenge, error) {
+	log.Println("Updating task with ID:", taskId)
+	tx := repository.DB.GetDB().Begin()
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+			log.Println("Transaction rollback due to panic:", r)
+		}
+	}()
+	if err := tx.Where("task_challenge_id = ?", taskId).Delete(&task.TaskStep{}).Error; err != nil {
+		log.Println("Error deleting task steps:", err)
+		tx.Rollback()
+		return nil, err
+	}
+
+	if err := tx.Session(&gorm.Session{FullSaveAssociations: true}).Updates(taskChallenge).Error; err != nil {
+		log.Println("Error updating task challenge:", err)
+		tx.Rollback()
+		return nil, err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		log.Println("Error committing transaction:", err)
+		return nil, err
+	}
+
+	return taskChallenge, nil
 }

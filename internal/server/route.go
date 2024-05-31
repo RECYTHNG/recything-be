@@ -131,4 +131,7 @@ func (s *echoServer) manageTask() {
 	// get task challenge by id
 	s.gr.GET("/tasks/:taskId", handler.GetTaskByIdHandler, SuperAdminOrAdminMiddleware)
 
+	// update task challenge
+	s.gr.PUT("/tasks/:taskId", handler.UpdateTaskHandler, SuperAdminOrAdminMiddleware)
+
 }

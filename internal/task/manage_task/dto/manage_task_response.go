@@ -52,3 +52,13 @@ type TaskGetByIdResponse struct {
 	Steps       []TaskSteps      `json:"steps"`
 	TaskCreator TaskCreatorAdmin `json:"task_creator"`
 }
+
+type UpdateTaskResponse struct {
+	Id          string      `json:"id"`
+	Title       string      `json:"title"`
+	Description string      `json:"description"`
+	Thumbnail   string      `json:"thumbnail"`
+	StartDate   time.Time   `json:"start_date"`
+	EndDate     time.Time   `json:"end_date"`
+	Steps       []TaskSteps `json:"steps"`
+}

@@ -14,7 +14,7 @@ type TaskChallenge struct {
 	Thumbnail   string
 	StartDate   time.Time
 	EndDate     time.Time
-	TaskSteps   []TaskStep     `gorm:"foreignKey:TaskChallangeId"`
+	TaskSteps   []TaskStep     `gorm:"foreignKey:TaskChallengeId"`
 	AdminId     string         `gorm:"index"`
 	Admin       admin.Admin    `gorm:"foreignKey:AdminId"`
 	CreatedAt   time.Time      `gorm:"autoCreateTime"`
@@ -24,7 +24,7 @@ type TaskChallenge struct {
 
 type TaskStep struct {
 	ID              int    `gorm:"primaryKey"`
-	TaskChallangeId string `gorm:"index"`
+	TaskChallengeId string `gorm:"index"`
 	Title           string
 	Description     string
 	CreatedAt       time.Time      `gorm:"autoCreateTime"`

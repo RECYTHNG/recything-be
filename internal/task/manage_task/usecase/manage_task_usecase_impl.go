@@ -11,6 +11,7 @@ import (
 
 type ManageTaskUsecaseImpl struct {
 	ManageTaskRepository repository.ManageTaskRepository
+	DB                   *gorm.DB
 }
 
 func NewManageTaskUsecase(repository repository.ManageTaskRepository) *ManageTaskUsecaseImpl {
@@ -30,7 +31,7 @@ func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskR
 		AdminId:     adminId,
 		Title:       request.Title,
 		Description: request.Description,
-		Thumbnail:   request.Thumbnail,
+		Thumbnail:   request.ThumbnailUrl,
 		StartDate:   request.StartDate,
 		EndDate:     request.EndDate,
 		TaskSteps:   []task.TaskStep{},
@@ -39,7 +40,7 @@ func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskR
 
 	for _, step := range request.Steps {
 		taskStep := task.TaskStep{
-			TaskChallangeId: id,
+			TaskChallengeId: id,
 			Title:           step.Title,
 			Description:     step.Description,
 		}
@@ -66,4 +67,42 @@ func (usecase *ManageTaskUsecaseImpl) GetTaskByIdUsecase(id string) (*task.TaskC
 		return nil, pkg.ErrTaskNotFound
 	}
 	return task, nil
+}
+
+func (usecase *ManageTaskUsecaseImpl) UpdateTaskChallengeUsecase(request *dto.UpdateTaskRequest, id string) (*task.TaskChallenge, error) {
+	findTask, _ := usecase.ManageTaskRepository.FindTask(id)
+
+	if findTask == nil {
+		return nil, pkg.ErrTaskNotFound
+	}
+	if len(request.Steps) == 0 {
+		return nil, pkg.ErrTaskStepsNull
+	}
+
+	taskChallenge := &task.TaskChallenge{
+		ID:          id,
+		AdminId:     findTask.AdminId,
+		Title:       request.Title,
+		Description: request.Description,
+		Thumbnail:   request.ThumbnailUrl,
+		StartDate:   request.StartDate,
+		EndDate:     request.EndDate,
+	}
+
+	// Add new steps
+	for _, step := range request.Steps {
+		taskStep := task.TaskStep{
+			TaskChallengeId: id,
+			Title:           step.Title,
+			Description:     step.Description,
+		}
+		taskChallenge.TaskSteps = append(taskChallenge.TaskSteps, taskStep)
+	}
+
+	updatedTaskChallenge, err := usecase.ManageTaskRepository.UpdateTaskChallenge(taskChallenge, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedTaskChallenge, nil
 }
