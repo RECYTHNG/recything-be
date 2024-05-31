@@ -117,8 +117,20 @@ func (s *echoServer) ArticleHttpHandler() {
 	usecase := usecase.NewArticleUsecase(repository)
 	handler := handler.NewArticleHandler(usecase)
 
-	s.gr.POST("/articles", handler.AddArticleHandler)
+	s.gr.POST("/admin/articles", handler.AddArticleHandler)
 	s.gr.GET("/articles/:articleId", handler.GetDataArticleByIdHandler)
 	s.gr.PUT("/articles/:articleId", handler.UpdateArticleHandler)
 	s.gr.DELETE("/articles/:articleId", handler.DeleteArticleHandler)
+}
+
+func (s *echoServer) AchievementHttpHandler() {
+	achievementRepository := repository.NewAchievementRepository(s.db)
+	achievementUsecase := usecase.NewAchievementUseCase(achievementRepository)
+	achievementHandler := handler.NewAchievementHandler(achievementUsecase)
+
+	s.gr.POST("/achievements", achievementHandler.AddAchievementHandler)
+	s.gr.GET("/achievements", achievementHandler.GetAchievementsHandler)
+	s.gr.GET("/achievements/:achievementId", achievementHandler.GetAchievementByIdHandler)
+	s.gr.PUT("/achievements/:achievementId", achievementHandler.UpdateAchievementHandler)
+	s.gr.DELETE("/achievements/:achievementId", achievementHandler.DeleteAchievementHandler)
 }

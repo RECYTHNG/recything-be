@@ -25,4 +25,8 @@ var (
 	// article
 	ErrTitleAlreadyExists = errors.New("title already exists")
 	ErrArticleNotFound    = errors.New("article not found")
+
+	// Achievement
+	ErrAchievementNotFound = errors.New("achievement not found")
+	ErrInvalidID           = errors.New("invalid id")
 )

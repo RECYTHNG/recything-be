@@ -12,6 +12,7 @@ func AutoMigrate(db Database) {
 		&user.User{},
 		&entity.Admin{},
 		&entity.Article{},
+		&entity.Achievement{},
 	); err != nil {
 		log.Fatal("Database Migration Failed!")
 	}
