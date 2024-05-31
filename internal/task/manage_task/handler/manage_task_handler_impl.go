@@ -49,6 +49,7 @@ func (handler *ManageTaskHandlerImpl) CreateTaskHandler(c echo.Context) error {
 		Thumbnail:   taskChallange.Thumbnail,
 		StartDate:   taskChallange.StartDate,
 		EndDate:     taskChallange.EndDate,
+		Status:      taskChallange.Status,
 		Steps:       taskStep,
 	}
 	for _, step := range taskChallange.TaskSteps {
@@ -105,6 +106,7 @@ func (handler *ManageTaskHandlerImpl) GetTaskChallengePaginationHandler(c echo.C
 			Thumbnail:   task.Thumbnail,
 			StartDate:   task.StartDate,
 			EndDate:     task.EndDate,
+			Status:      task.Status,
 			Steps:       taskSteps,
 			TaskCreator: dto.TaskCreatorAdmin{
 				Id:   task.AdminId,
@@ -190,6 +192,7 @@ func (handler *ManageTaskHandlerImpl) GetTaskByIdHandler(c echo.Context) error {
 		Thumbnail:   task.Thumbnail,
 		StartDate:   task.StartDate,
 		EndDate:     task.EndDate,
+		Status:      task.Status,
 		Steps:       taskSteps,
 		TaskCreator: dto.TaskCreatorAdmin{
 			Id:   task.AdminId,

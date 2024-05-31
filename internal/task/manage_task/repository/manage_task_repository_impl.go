@@ -3,8 +3,10 @@ package repository
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/sawalreverr/recything/internal/database"
+	"github.com/sawalreverr/recything/internal/task/manage_task/entity"
 	task "github.com/sawalreverr/recything/internal/task/manage_task/entity"
 	"gorm.io/gorm"
 )
@@ -108,4 +110,17 @@ func (repository *ManageTaskRepositoryImpl) DeleteTaskChallenge(taskId string) e
 		return err
 	}
 	return nil
+}
+
+// cronjob for update task challenge status
+func UpdateTaskChallengeStatus(db *ManageTaskRepositoryImpl) {
+	now := time.Now()
+	result := db.DB.GetDB().Model(&entity.TaskChallenge{}).
+		Where("end_date < ? AND status = ?", now, true).Update("status", false)
+
+	if result.Error != nil {
+		log.Printf("Error updating task challenge status: %v", result.Error)
+	} else {
+		log.Printf("Updated %d task challenge(s) status to false", result.RowsAffected)
+	}
 }

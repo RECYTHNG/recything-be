@@ -23,6 +23,8 @@ func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskR
 		return nil, pkg.ErrTaskStepsNull
 
 	}
+	// now := time.Now()
+	// oneMinute := now.Add(time.Minute * 1)
 	findLastId, _ := usecase.ManageTaskRepository.FindLastIdTaskChallenge()
 	id := helper.GenerateCustomID(findLastId, "TM")
 
