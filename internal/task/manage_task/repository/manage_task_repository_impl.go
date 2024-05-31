@@ -102,3 +102,10 @@ func (repository *ManageTaskRepositoryImpl) UpdateTaskChallenge(taskChallenge *t
 
 	return taskChallenge, nil
 }
+
+func (repository *ManageTaskRepositoryImpl) DeleteTaskChallenge(taskId string) error {
+	if err := repository.DB.GetDB().Where("id = ?", taskId).Delete(&task.TaskChallenge{}).Error; err != nil {
+		return err
+	}
+	return nil
+}

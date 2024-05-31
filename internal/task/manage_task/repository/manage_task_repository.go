@@ -11,4 +11,5 @@ type ManageTaskRepository interface {
 	GetTaskById(id string) (*task.TaskChallenge, error)
 	FindTask(id string) (*task.TaskChallenge, error)
 	UpdateTaskChallenge(taskChallenge *task.TaskChallenge, taskId string) (*task.TaskChallenge, error)
+	DeleteTaskChallenge(taskId string) error
 }

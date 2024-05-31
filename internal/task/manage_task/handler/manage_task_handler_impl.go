@@ -239,6 +239,19 @@ func (handler *ManageTaskHandlerImpl) UpdateTaskHandler(c echo.Context) error {
 		EndDate:     task.EndDate,
 		Steps:       taskSteps,
 	}
-	responseData := helper.ResponseData(http.StatusOK, "success", data)
+	responseData := helper.ResponseData(http.StatusOK, "data updated successfully", data)
+	return c.JSON(http.StatusOK, responseData)
+}
+
+func (handler *ManageTaskHandlerImpl) DeleteTaskHandler(c echo.Context) error {
+	id := c.Param("taskId")
+	err := handler.Usecase.DeleteTaskChallengeUsecase(id)
+	if err != nil {
+		if errors.Is(err, pkg.ErrTaskNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrTaskNotFound.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+	}
+	responseData := helper.ResponseData(http.StatusOK, "data deleted successfully", nil)
 	return c.JSON(http.StatusOK, responseData)
 }

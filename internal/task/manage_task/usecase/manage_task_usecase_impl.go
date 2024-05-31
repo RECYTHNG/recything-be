@@ -106,3 +106,13 @@ func (usecase *ManageTaskUsecaseImpl) UpdateTaskChallengeUsecase(request *dto.Up
 
 	return updatedTaskChallenge, nil
 }
+
+func (usecase *ManageTaskUsecaseImpl) DeleteTaskChallengeUsecase(id string) error {
+	if _, err := usecase.ManageTaskRepository.FindTask(id); err != nil {
+		return pkg.ErrTaskNotFound
+	}
+	if err := usecase.ManageTaskRepository.DeleteTaskChallenge(id); err != nil {
+		return err
+	}
+	return nil
+}

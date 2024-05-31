@@ -134,4 +134,7 @@ func (s *echoServer) manageTask() {
 	// update task challenge
 	s.gr.PUT("/tasks/:taskId", handler.UpdateTaskHandler, SuperAdminOrAdminMiddleware)
 
+	// delete task challenge
+	s.gr.DELETE("/tasks/:taskId", handler.DeleteTaskHandler, SuperAdminOrAdminMiddleware)
+
 }
