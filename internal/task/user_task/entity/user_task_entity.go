@@ -24,7 +24,7 @@ type UserTaskChallenge struct {
 }
 
 type UserTaskImage struct {
-	ID              string `gorm:"primaryKey"`
+	ID              int    `gorm:"primaryKey"`
 	TaskChallengeId string `gorm:"index"`
 	ImageUrl        string
 	CreatedAt       time.Time      `gorm:"autoCreateTime"`

@@ -152,4 +152,7 @@ func (s *echoServer) userTask() {
 
 	// get task by id
 	s.gr.GET("/user/tasks/:taskId", handler.GetTaskByIdHandler, UserMiddleware)
+
+	// create task by user
+	s.gr.POST("/user/tasks", handler.CreateUserTaskHandler, UserMiddleware)
 }

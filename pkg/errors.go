@@ -27,5 +27,6 @@ var (
 	ErrTaskNotFound  = errors.New("task not found")
 
 	// User Task
-
+	ErrImageTaskNull = errors.New("image task cannot be null")
+	ErrUserTaskExist = errors.New("user task already exist")
 )

@@ -84,3 +84,50 @@ func (handler *UserTaskHandlerImpl) GetTaskByIdHandler(c echo.Context) error {
 	responseData := helper.ResponseData(http.StatusOK, "success", data)
 	return c.JSON(http.StatusOK, responseData)
 }
+
+func (handler *UserTaskHandlerImpl) CreateUserTaskHandler(c echo.Context) error {
+	var request dto.UserTaskRequestCreate
+	if err := c.Bind(&request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	}
+	claims := c.Get("user").(*helper.JwtCustomClaims)
+	userTask, err := handler.Usecase.CreateUserTaskUsecase(&request, claims.UserID)
+	if err != nil {
+		if errors.Is(err, pkg.ErrTaskNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrTaskNotFound.Error())
+		}
+		if errors.Is(err, pkg.ErrUserTaskExist) {
+			return helper.ErrorHandler(c, http.StatusConflict, pkg.ErrUserTaskExist.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+	}
+
+	var taskStep []dto.TaskSteps
+
+	for _, step := range userTask.TaskChallenge.TaskSteps {
+		taskStep = append(taskStep, dto.TaskSteps{
+			Id:          step.ID,
+			Title:       step.Title,
+			Description: step.Description,
+		})
+	}
+	data := dto.TaskChallengeResponseCreate{
+		Id:          userTask.TaskChallenge.ID,
+		Title:       userTask.TaskChallenge.Title,
+		Description: userTask.TaskChallenge.Description,
+		Thumbnail:   userTask.TaskChallenge.Thumbnail,
+		StartDate:   userTask.TaskChallenge.StartDate,
+		EndDate:     userTask.TaskChallenge.EndDate,
+		Point:       userTask.TaskChallenge.Point,
+		StatusTask:  userTask.TaskChallenge.Status,
+		TaskSteps:   taskStep,
+	}
+	dataUsertask := dto.UserTaskResponseCreate{
+		Id:             userTask.ID,
+		TaskChalenge:   data,
+		StatusProgress: userTask.StatusProgress,
+	}
+	responseData := helper.ResponseData(http.StatusCreated, "success", dataUsertask)
+	return c.JSON(http.StatusCreated, responseData)
+
+}
