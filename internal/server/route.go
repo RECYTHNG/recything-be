@@ -149,4 +149,7 @@ func (s *echoServer) userTask() {
 
 	// get all tasks
 	s.gr.GET("/user/tasks", handler.GetAllTasksHandler, UserMiddleware)
+
+	// get task by id
+	s.gr.GET("/user/tasks/:taskId", handler.GetTaskByIdHandler, UserMiddleware)
 }

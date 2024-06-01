@@ -6,4 +6,5 @@ import (
 
 type UserTaskRepository interface {
 	GetAllTasks() ([]task.TaskChallenge, error)
+	GetTaskById(id string) (*task.TaskChallenge, error)
 }

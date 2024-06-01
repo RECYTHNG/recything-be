@@ -27,5 +27,5 @@ var (
 	ErrTaskNotFound  = errors.New("task not found")
 
 	// User Task
-	ErrNoContent = errors.New("no content")
+
 )
