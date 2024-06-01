@@ -19,7 +19,7 @@ func main() {
 	c := cron.New()
 
 	taskRepo := repository.NewManageTaskRepository(db)
-	c.AddFunc("@every 1m", func() {
+	c.AddFunc("@daily", func() {
 		log.Println("Updating task challenge status...")
 		repository.UpdateTaskChallengeStatus(taskRepo)
 	})
