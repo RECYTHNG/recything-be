@@ -15,15 +15,15 @@ type UserTaskChallenge struct {
 	TaskChallengeId string             `gorm:"index"`
 	TaskChallenge   task.TaskChallenge `gorm:"foreignKey:TaskChallengeId"`
 	Status          bool
-	CreatedAt       time.Time      `gorm:"autoCreateTime"`
-	UpdatedAt       time.Time      `gorm:"autoUpdateTime"`
-	DeletedAt       gorm.DeletedAt `gorm:"index"`
+	ImageTask       []UserTaskImage `gorm:"foreignKey:TaskChallengeId"`
+	CreatedAt       time.Time       `gorm:"autoCreateTime"`
+	UpdatedAt       time.Time       `gorm:"autoUpdateTime"`
+	DeletedAt       gorm.DeletedAt  `gorm:"index"`
 }
 
 type UserTaskImage struct {
-	ID              string             `gorm:"primaryKey"`
-	TaskChallengeId string             `gorm:"index"`
-	TaskChallenge   task.TaskChallenge `gorm:"foreignKey:TaskChallengeId"`
+	ID              string `gorm:"primaryKey"`
+	TaskChallengeId string `gorm:"index"`
 	ImageUrl        string
 	Description     string
 	CreatedAt       time.Time      `gorm:"autoCreateTime"`
