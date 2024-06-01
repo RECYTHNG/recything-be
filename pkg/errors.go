@@ -25,4 +25,7 @@ var (
 	// Manage Task
 	ErrTaskStepsNull = errors.New("steps cannot be null")
 	ErrTaskNotFound  = errors.New("task not found")
+
+	// User Task
+	ErrNoContent = errors.New("no content")
 )

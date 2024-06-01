@@ -13,6 +13,9 @@ import (
 	taskHandler "github.com/sawalreverr/recything/internal/task/manage_task/handler"
 	taskRepo "github.com/sawalreverr/recything/internal/task/manage_task/repository"
 	taskUsecase "github.com/sawalreverr/recything/internal/task/manage_task/usecase"
+	userTaskHandler "github.com/sawalreverr/recything/internal/task/user_task/handler"
+	userTaskRepo "github.com/sawalreverr/recything/internal/task/user_task/repository"
+	userTaskUsecase "github.com/sawalreverr/recything/internal/task/user_task/usecase"
 	userHandler "github.com/sawalreverr/recything/internal/user/handler"
 	userRepo "github.com/sawalreverr/recything/internal/user/repository"
 	userUsecase "github.com/sawalreverr/recything/internal/user/usecase"
@@ -137,4 +140,13 @@ func (s *echoServer) manageTask() {
 	// delete task challenge
 	s.gr.DELETE("/tasks/:taskId", handler.DeleteTaskHandler, SuperAdminOrAdminMiddleware)
 
+}
+
+func (s *echoServer) userTask() {
+	repository := userTaskRepo.NewUserTaskRepository(s.db)
+	usecase := userTaskUsecase.NewUserTaskUsecase(repository)
+	handler := userTaskHandler.NewUserTaskHandler(usecase)
+
+	// get all tasks
+	s.gr.GET("/user/tasks", handler.GetAllTasksHandler, UserMiddleware)
 }

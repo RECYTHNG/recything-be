@@ -17,7 +17,8 @@ func (repository *UserTaskRepositoryImpl) GetAllTasks() ([]task.TaskChallenge, e
 	var tasks []task.TaskChallenge
 	if err := repository.DB.GetDB().
 		Preload("TaskSteps").
-		Find(&tasks).
+		Order("id desc").
+		Find(&tasks, "status = ?", true).
 		Error; err != nil {
 		return nil, err
 	}

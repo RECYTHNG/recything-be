@@ -59,6 +59,9 @@ func (s *echoServer) Start() {
 	// manage task handler
 	s.manageTask()
 
+	// user task handler
+	s.userTask()
+
 	serverPORT := fmt.Sprintf(":%d", s.conf.Server.Port)
 	s.app.Logger.Fatal(s.app.Start(serverPORT))
 }
