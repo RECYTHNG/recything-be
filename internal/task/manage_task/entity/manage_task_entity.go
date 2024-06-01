@@ -14,6 +14,7 @@ type TaskChallenge struct {
 	Thumbnail   string
 	StartDate   time.Time
 	EndDate     time.Time
+	Point       int
 	Status      bool           `gorm:"default:true"`
 	TaskSteps   []TaskStep     `gorm:"foreignKey:TaskChallengeId"`
 	AdminId     string         `gorm:"index"`

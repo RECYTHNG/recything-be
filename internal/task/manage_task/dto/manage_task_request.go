@@ -8,6 +8,7 @@ type CreateTaskResquest struct {
 	ThumbnailUrl string      `json:"thumbnail_url" validate:"required"`
 	StartDate    time.Time   `json:"start_date" validate:"required"`
 	EndDate      time.Time   `json:"end_date" validate:"required"`
+	Point        int         `json:"point" validate:"required"`
 	Steps        []TaskSteps `json:"steps" validate:"required"`
 }
 
@@ -23,5 +24,6 @@ type UpdateTaskRequest struct {
 	ThumbnailUrl string      `json:"thumbnail_url" validate:"required"`
 	StartDate    time.Time   `json:"start_date" validate:"required"`
 	EndDate      time.Time   `json:"end_date" validate:"required"`
+	Point        int         `json:"point" validate:"required"`
 	Steps        []TaskSteps `json:"steps" validate:"required"`
 }

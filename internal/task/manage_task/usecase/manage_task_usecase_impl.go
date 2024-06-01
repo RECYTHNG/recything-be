@@ -11,7 +11,6 @@ import (
 
 type ManageTaskUsecaseImpl struct {
 	ManageTaskRepository repository.ManageTaskRepository
-	DB                   *gorm.DB
 }
 
 func NewManageTaskUsecase(repository repository.ManageTaskRepository) *ManageTaskUsecaseImpl {
@@ -23,8 +22,6 @@ func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskR
 		return nil, pkg.ErrTaskStepsNull
 
 	}
-	// now := time.Now()
-	// oneMinute := now.Add(time.Minute * 1)
 	findLastId, _ := usecase.ManageTaskRepository.FindLastIdTaskChallenge()
 	id := helper.GenerateCustomID(findLastId, "TM")
 
@@ -36,6 +33,7 @@ func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskR
 		Thumbnail:   request.ThumbnailUrl,
 		StartDate:   request.StartDate,
 		EndDate:     request.EndDate,
+		Point:       request.Point,
 		TaskSteps:   []task.TaskStep{},
 		DeletedAt:   gorm.DeletedAt{},
 	}
@@ -89,6 +87,7 @@ func (usecase *ManageTaskUsecaseImpl) UpdateTaskChallengeUsecase(request *dto.Up
 		Thumbnail:   request.ThumbnailUrl,
 		StartDate:   request.StartDate,
 		EndDate:     request.EndDate,
+		Point:       request.Point,
 	}
 
 	// Add new steps

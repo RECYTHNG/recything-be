@@ -49,11 +49,13 @@ func (handler *ManageTaskHandlerImpl) CreateTaskHandler(c echo.Context) error {
 		Thumbnail:   taskChallange.Thumbnail,
 		StartDate:   taskChallange.StartDate,
 		EndDate:     taskChallange.EndDate,
+		Point:       taskChallange.Point,
 		Status:      taskChallange.Status,
 		Steps:       taskStep,
 	}
 	for _, step := range taskChallange.TaskSteps {
 		taskSteps := dto.TaskSteps{
+			Id:          step.ID,
 			Title:       step.Title,
 			Description: step.Description,
 		}
@@ -106,6 +108,7 @@ func (handler *ManageTaskHandlerImpl) GetTaskChallengePaginationHandler(c echo.C
 			Thumbnail:   task.Thumbnail,
 			StartDate:   task.StartDate,
 			EndDate:     task.EndDate,
+			Point:       task.Point,
 			Status:      task.Status,
 			Steps:       taskSteps,
 			TaskCreator: dto.TaskCreatorAdmin{
@@ -192,6 +195,7 @@ func (handler *ManageTaskHandlerImpl) GetTaskByIdHandler(c echo.Context) error {
 		Thumbnail:   task.Thumbnail,
 		StartDate:   task.StartDate,
 		EndDate:     task.EndDate,
+		Point:       task.Point,
 		Status:      task.Status,
 		Steps:       taskSteps,
 		TaskCreator: dto.TaskCreatorAdmin{
@@ -240,6 +244,7 @@ func (handler *ManageTaskHandlerImpl) UpdateTaskHandler(c echo.Context) error {
 		Thumbnail:   task.Thumbnail,
 		StartDate:   task.StartDate,
 		EndDate:     task.EndDate,
+		Point:       task.Point,
 		Steps:       taskSteps,
 	}
 	responseData := helper.ResponseData(http.StatusOK, "data updated successfully", data)

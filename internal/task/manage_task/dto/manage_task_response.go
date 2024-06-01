@@ -9,6 +9,7 @@ type CreateTaskResponse struct {
 	Thumbnail   string      `json:"thumbnail"`
 	StartDate   time.Time   `json:"start_date"`
 	EndDate     time.Time   `json:"end_date"`
+	Point       int         `json:"point"`
 	Status      bool        `json:"status"`
 	Steps       []TaskSteps `json:"steps"`
 }
@@ -20,6 +21,7 @@ type DataTasks struct {
 	Thumbnail   string           `json:"thumbnail"`
 	StartDate   time.Time        `json:"start_date"`
 	EndDate     time.Time        `json:"end_date"`
+	Point       int              `json:"point"`
 	Status      bool             `json:"status"`
 	Steps       []TaskSteps      `json:"steps"`
 	TaskCreator TaskCreatorAdmin `json:"task_creator"`
@@ -51,6 +53,7 @@ type TaskGetByIdResponse struct {
 	Thumbnail   string           `json:"thumbnail"`
 	StartDate   time.Time        `json:"start_date"`
 	EndDate     time.Time        `json:"end_date"`
+	Point       int              `json:"point"`
 	Status      bool             `json:"status"`
 	Steps       []TaskSteps      `json:"steps"`
 	TaskCreator TaskCreatorAdmin `json:"task_creator"`
@@ -63,5 +66,6 @@ type UpdateTaskResponse struct {
 	Thumbnail   string      `json:"thumbnail"`
 	StartDate   time.Time   `json:"start_date"`
 	EndDate     time.Time   `json:"end_date"`
+	Point       int         `json:"point"`
 	Steps       []TaskSteps `json:"steps"`
 }
