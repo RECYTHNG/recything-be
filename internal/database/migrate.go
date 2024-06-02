@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/sawalreverr/recything/internal/admin/entity"
+	"github.com/sawalreverr/recything/internal/faq"
 	"github.com/sawalreverr/recything/internal/report"
 	user "github.com/sawalreverr/recything/internal/user"
 )
@@ -16,6 +17,7 @@ func AutoMigrate(db Database) {
 		&report.WasteMaterial{},
 		&report.ReportWasteMaterial{},
 		&report.ReportImage{},
+		&faq.FAQ{},
 	); err != nil {
 		log.Fatal("Database Migration Failed!")
 	}

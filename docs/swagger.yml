@@ -12,6 +12,8 @@ tags:
     description: Endpoint for user account
   - name: reporting
     description: Endpoint for user reporting littering & rubbish
+  - name: faqs
+    description: Endpoint for user get faqs in customer service
 
   - name: manage users
     description: Endpoint for admin manage users account
@@ -801,6 +803,99 @@ paths:
         '404':  
           description: Report not found
 
+  /faqs:
+    get:
+      tags:
+        - faqs
+      summary: Get all FAQs
+      description: Endpoint user for get all faqs
+      operationId: getFaqs
+      responses:
+        '200':
+          description: Get all success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FAQs'
+  /faqs/category:
+    get:
+      tags:
+        - faqs
+      summary: Get FAQs by category
+      description: Endpoint user for get faqs by category
+      operationId: getFaqsByCategory
+      parameters:
+        - in: query
+          name: name
+          required: true
+          schema:
+            type: string
+            example: point dan level
+          description: The name of the FAQ category to retrieve,
+                       invalid input (profil, littering, rubbish, misi, lokasi sampah, poin dan level, artikel)
+      responses:
+        '200':
+          description: Get all data by category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FAQs'
+  /faqs/search:
+    get:
+      tags:
+        - faqs
+      summary: Search FAQs by keyword
+      description: Searches for FAQs that match a specific keyword
+      operationId: getFaqsByKeyword
+      parameters:
+        - in: query
+          name: keyword
+          required: true
+          schema:
+            type: string
+            example: ikon
+          description: The keyword to search for FAQs.
+      responses:
+        '200':
+          description: Get all data by keyword
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FAQs'
+
   /admin/articles:
     get:
       tags:
@@ -1530,3 +1625,18 @@ components:
         profile_photo:
           type: string
           example: "https://example.com/profile.jpg"
+    FAQs:
+      type: object
+      properties:
+        id: 
+          type: string
+          example: FAQ01
+        category:
+          type: string
+          example: profil
+        question:
+          type: string
+          example: Bagaimana cara saya memperbarui informasi profil saya?
+        answer:
+          type: string
+          example: Anda dapat memperbarui informasi profil Anda melalui menu 'Pengaturan Profil' di aplikasi. Klik ikon profil, pilih 'Pengaturan', dan edit informasi yang diperlukan.

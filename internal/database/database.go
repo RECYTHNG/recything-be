@@ -6,4 +6,5 @@ type Database interface {
 	GetDB() *gorm.DB
 	InitSuperAdmin()
 	InitWasteMaterials()
+	InitFaqs()
 }
