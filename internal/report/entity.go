@@ -22,6 +22,7 @@ type Report struct {
 	City        string  `json:"city"`
 	Province    string  `json:"province"`
 	Status      string  `json:"status" gorm:"type:enum('need review', 'approve', 'reject');default:'need review'"`
+	Reason      string  `json:"reason"`
 
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`

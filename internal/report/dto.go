@@ -21,6 +21,7 @@ type ReportInput struct {
 
 type UpdateStatus struct {
 	Status string `json:"status" validate:"required,oneof='approve' 'reject'"`
+	Reason string `json:"reason"`
 }
 
 type ReportDetail struct {
@@ -36,6 +37,7 @@ type ReportDetail struct {
 	City        string  `json:"city"`
 	Province    string  `json:"province"`
 	Status      string  `json:"status"`
+	Reason      string  `json:"reason"`
 
 	WasteMaterials []WasteMaterial `json:"waste_materials"`
 	ReportImages   []string        `json:"report_images"`
