@@ -782,6 +782,10 @@ paths:
                   enum: [approve, reject]
                   description: New status for the report
                   example: approve
+                reason:
+                  type: string
+                  description: Reason if report rejected
+                  example: Laporan sampah kamu dianggap tidak sesuai dan tidak dapat ditindaklanjutkan
       security:
         - Bearer: []
       responses:
@@ -1396,9 +1400,6 @@ components:
         email:
           type: string
           example: john.doe@gmail.com
-        phone_number:
-          type: string
-          example: 089511223344
         password:
           type: string
           example: password@123

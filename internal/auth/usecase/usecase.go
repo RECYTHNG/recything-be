@@ -23,10 +23,10 @@ func (uc *authUsecase) RegisterUser(user a.Register) (*u.User, error) {
 		return nil, pkg.ErrEmailAlreadyExists
 	}
 
-	phoneFound, _ := uc.userRepository.FindByPhoneNumber(user.PhoneNumber)
-	if phoneFound != nil {
-		return nil, pkg.ErrPhoneNumberAlreadyExists
-	}
+	// phoneFound, _ := uc.userRepository.FindByPhoneNumber(user.PhoneNumber)
+	// if phoneFound != nil {
+	// 	return nil, pkg.ErrPhoneNumberAlreadyExists
+	// }
 
 	lastID, _ := uc.userRepository.FindLastID()
 	newID := helper.GenerateCustomID(lastID, "USR")
@@ -34,13 +34,13 @@ func (uc *authUsecase) RegisterUser(user a.Register) (*u.User, error) {
 	hashedPass, _ := helper.GenerateHash(user.Password)
 
 	newUser := u.User{
-		ID:          newID,
-		Name:        user.Name,
-		Email:       user.Email,
-		PhoneNumber: user.PhoneNumber,
-		Password:    hashedPass,
-		OTP:         helper.GenerateOTP(),
-		IsVerified:  false,
+		ID:    newID,
+		Name:  user.Name,
+		Email: user.Email,
+		// PhoneNumber: user.PhoneNumber,
+		Password:   hashedPass,
+		OTP:        helper.GenerateOTP(),
+		IsVerified: false,
 	}
 
 	createdUser, err := uc.userRepository.Create(newUser)

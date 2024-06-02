@@ -99,22 +99,22 @@ func (s *echoServer) supAdminHttpHandler() {
 	handler := handler.NewAdminHandler(usecase)
 
 	// register admin by super admin
-	s.gr.POST("/admins", handler.AddAdminHandler, SuperAdminMiddleware)
+	s.gr.POST("/admin", handler.AddAdminHandler, SuperAdminMiddleware)
 
 	// get all admin by super admin
 	s.gr.GET("/admins", handler.GetDataAllAdminHandler, SuperAdminMiddleware)
 
 	// get data admin by id by super admin
-	s.gr.GET("/admins/:adminId", handler.GetDataAdminByIdHandler, SuperAdminMiddleware)
+	s.gr.GET("/admin/:adminId", handler.GetDataAdminByIdHandler, SuperAdminMiddleware)
 
 	// update admin by super admin
-	s.gr.PUT("/admins/:adminId", handler.UpdateAdminHandler, SuperAdminMiddleware)
+	s.gr.PUT("/admin/:adminId", handler.UpdateAdminHandler, SuperAdminMiddleware)
 
 	// delete admin by super admin
-	s.gr.DELETE("/admins/:adminId", handler.DeleteAdminHandler, SuperAdminMiddleware)
+	s.gr.DELETE("/admin/:adminId", handler.DeleteAdminHandler, SuperAdminMiddleware)
 
 	// get profile admin or super admin
-	s.gr.GET("/profile", handler.GetProfileAdminHandler, SuperAdminOrAdminMiddleware)
+	s.gr.GET("/admin/profile", handler.GetProfileAdminHandler, SuperAdminOrAdminMiddleware)
 }
 
 func (s *echoServer) reportHttpHandler() {
