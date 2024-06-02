@@ -135,3 +135,15 @@ func (repository *UserTaskRepositoryImpl) GetUserTaskByUserId(userId string) ([]
 	}
 	return userTask, nil
 }
+
+func (repository *UserTaskRepositoryImpl) GetUserTaskDoneByUserId(userId string) ([]user_task.UserTaskChallenge, error) {
+	var userTask []user_task.UserTaskChallenge
+	if err := repository.DB.GetDB().
+		Preload("TaskChallenge.TaskSteps").
+		Where("user_id = ? and status_progress = ?", userId, "done").
+		Order("id desc").
+		Find(&userTask).Error; err != nil {
+		return nil, err
+	}
+	return userTask, nil
+}

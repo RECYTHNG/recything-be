@@ -122,3 +122,14 @@ func (usecase *UserTaskUsecaseImpl) GetUserTaskByUserIdUsecase(userId string) ([
 	}
 	return userTask, nil
 }
+
+func (usecase *UserTaskUsecaseImpl) GetUserTaskDoneByUserIdUsecase(userId string) ([]user_task.UserTaskChallenge, error) {
+	userTask, err := usecase.ManageTaskRepository.GetUserTaskDoneByUserId(userId)
+	if err != nil {
+		return nil, err
+	}
+	if len(userTask) == 0 {
+		return nil, pkg.ErrUserNoHasTask
+	}
+	return userTask, nil
+}
