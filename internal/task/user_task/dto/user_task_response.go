@@ -43,3 +43,14 @@ type TaskChallengeResponseCreate struct {
 	StatusTask  bool        `json:"status_task"`
 	TaskSteps   []TaskSteps `json:"task_steps"`
 }
+
+type UserTaskUploadImageResponse struct {
+	Id             string                      `json:"id"`
+	StatusProgress string                      `json:"status_progress"`
+	TaskChallenge  TaskChallengeResponseCreate `json:"task_challenge"`
+	Images         []Images                    `json:"images"`
+}
+
+type Images struct {
+	Images string `json:"images"`
+}

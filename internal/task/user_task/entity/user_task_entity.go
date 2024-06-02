@@ -16,7 +16,7 @@ type UserTaskChallenge struct {
 	TaskChallenge    task.TaskChallenge `gorm:"foreignKey:TaskChallengeId"`
 	StatusProgress   string             `gorm:"type:enum('in_progress', 'done');default:'in_progress'"`
 	StatusAccept     string             `gorm:"type:enum('accept','need_rivew', 'reject');default:'need_rivew'"`
-	ImageTask        []UserTaskImage    `gorm:"foreignKey:TaskChallengeId"`
+	ImageTask        []UserTaskImage    `gorm:"foreignKey:UserTaskChallengeId"`
 	DescriptionImage string
 	CreatedAt        time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt        time.Time      `gorm:"autoUpdateTime"`
@@ -24,10 +24,10 @@ type UserTaskChallenge struct {
 }
 
 type UserTaskImage struct {
-	ID              int    `gorm:"primaryKey"`
-	TaskChallengeId string `gorm:"index"`
-	ImageUrl        string
-	CreatedAt       time.Time      `gorm:"autoCreateTime"`
-	UpdatedAt       time.Time      `gorm:"autoUpdateTime"`
-	DeletedAt       gorm.DeletedAt `gorm:"index"`
+	ID                  int    `gorm:"primaryKey"`
+	UserTaskChallengeId string `gorm:"index"`
+	ImageUrl            string
+	CreatedAt           time.Time      `gorm:"autoCreateTime"`
+	UpdatedAt           time.Time      `gorm:"autoUpdateTime"`
+	DeletedAt           gorm.DeletedAt `gorm:"index"`
 }

@@ -153,6 +153,9 @@ func (s *echoServer) userTask() {
 	// get task by id
 	s.gr.GET("/user/tasks/:taskId", handler.GetTaskByIdHandler, UserMiddleware)
 
-	// create task by user
+	// create task by user or start task
 	s.gr.POST("/user/tasks", handler.CreateUserTaskHandler, UserMiddleware)
+
+	// upload image task
+	s.gr.POST("/user/tasks/images/:userTaskId", handler.UploadImageTaskHandler, UserMiddleware)
 }

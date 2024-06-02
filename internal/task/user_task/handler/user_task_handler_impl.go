@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 
@@ -99,6 +100,9 @@ func (handler *UserTaskHandlerImpl) CreateUserTaskHandler(c echo.Context) error 
 		if errors.Is(err, pkg.ErrUserTaskExist) {
 			return helper.ErrorHandler(c, http.StatusConflict, pkg.ErrUserTaskExist.Error())
 		}
+		if errors.Is(err, pkg.ErrTaskCannotBeFollowed) {
+			return helper.ErrorHandler(c, http.StatusConflict, pkg.ErrTaskCannotBeFollowed.Error())
+		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
 	}
 
@@ -128,6 +132,86 @@ func (handler *UserTaskHandlerImpl) CreateUserTaskHandler(c echo.Context) error 
 		StatusProgress: userTask.StatusProgress,
 	}
 	responseData := helper.ResponseData(http.StatusCreated, "success", dataUsertask)
+	return c.JSON(http.StatusCreated, responseData)
+
+}
+
+func (handler *UserTaskHandlerImpl) UploadImageTaskHandler(c echo.Context) error {
+	var request dto.UploadImageTask
+	claims := c.Get("user").(*helper.JwtCustomClaims)
+
+	userTaskId := c.Param("userTaskId")
+
+	jsonData := c.FormValue("json_data")
+
+	if err := json.Unmarshal([]byte(jsonData), &request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	}
+	if err := c.Validate(&request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	}
+	form, errForm := c.MultipartForm()
+	if errForm != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, errForm.Error())
+	}
+	images := form.File["images"]
+	if len(images) == 0 {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "image is required")
+	}
+
+	userTask, err := handler.Usecase.UploadImageTaskUsecase(&request, images, claims.UserID, userTaskId)
+	if err != nil {
+		if errors.Is(err, pkg.ErrUserTaskNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserTaskNotFound.Error())
+		}
+		if errors.Is(err, pkg.ErrUserTaskDone) {
+			return helper.ErrorHandler(c, http.StatusConflict, pkg.ErrUserTaskDone.Error())
+		}
+		if errors.Is(err, errors.New("upload image size must less than 2MB")) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "upload image size must less than 2MB")
+		}
+		if errors.Is(err, errors.New("only image allowed")) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "only image allowed")
+		}
+		if errors.Is(err, pkg.ErrUploadCloudinary) {
+			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+	}
+	var taskStep []dto.TaskSteps
+	var urlImages []dto.Images
+	data := dto.UserTaskUploadImageResponse{
+		Id:             userTask.ID,
+		StatusProgress: userTask.StatusProgress,
+		TaskChallenge: dto.TaskChallengeResponseCreate{
+			Id:          userTask.TaskChallenge.ID,
+			Title:       userTask.TaskChallenge.Title,
+			Description: userTask.TaskChallenge.Description,
+			Thumbnail:   userTask.TaskChallenge.Thumbnail,
+			StartDate:   userTask.TaskChallenge.StartDate,
+			EndDate:     userTask.TaskChallenge.EndDate,
+			Point:       userTask.TaskChallenge.Point,
+			StatusTask:  userTask.TaskChallenge.Status,
+			TaskSteps:   taskStep,
+		},
+		Images: urlImages,
+	}
+
+	for _, step := range userTask.TaskChallenge.TaskSteps {
+		taskStep = append(taskStep, dto.TaskSteps{
+			Id:          step.ID,
+			Title:       step.Title,
+			Description: step.Description,
+		})
+	}
+	for _, image := range userTask.ImageTask {
+		urlImages = append(urlImages, dto.Images{
+			Images: image.ImageUrl,
+		})
+	}
+	data.TaskChallenge.TaskSteps = taskStep
+	data.Images = urlImages
+	responseData := helper.ResponseData(http.StatusCreated, "success", data)
 	return c.JSON(http.StatusCreated, responseData)
 
 }
