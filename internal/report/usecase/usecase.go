@@ -96,6 +96,7 @@ func (uc *reportUsecase) CreateReport(report rpt.ReportInput, authorID string, i
 		City:           createdReport.City,
 		Province:       createdReport.Province,
 		Status:         createdReport.Status,
+		Reason:         createdReport.Reason,
 		CreatedAt:      createdReport.CreatedAt,
 		WasteMaterials: *materials,
 		ReportImages:   *images,
@@ -135,6 +136,7 @@ func (uc *reportUsecase) FindHistoryUserReports(authorID string) (*[]rpt.ReportD
 			City:           report.City,
 			Province:       report.Province,
 			Status:         report.Status,
+			Reason:         report.Reason,
 			CreatedAt:      report.CreatedAt,
 			WasteMaterials: *materials,
 			ReportImages:   *images,
@@ -153,6 +155,10 @@ func (uc *reportUsecase) UpdateStatusReport(report rpt.UpdateStatus, reportID st
 	}
 
 	reportFound.Status = report.Status
+
+	if reportFound.Status == "reject" {
+		reportFound.Reason = report.Reason
+	}
 
 	if err := uc.reportRepository.Update(*reportFound); err != nil {
 		return pkg.ErrStatusInternalError
@@ -192,6 +198,7 @@ func (uc *reportUsecase) FindAllReports(page, limit int, reportType, status stri
 			City:           report.City,
 			Province:       report.Province,
 			Status:         report.Status,
+			Reason:         report.Reason,
 			CreatedAt:      report.CreatedAt,
 			WasteMaterials: *materials,
 			ReportImages:   *images,
