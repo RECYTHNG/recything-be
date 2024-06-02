@@ -54,3 +54,9 @@ type UserTaskUploadImageResponse struct {
 type Images struct {
 	Images string `json:"images"`
 }
+
+type UserTaskGetByIdUserResponse struct {
+	Id             string                      `json:"id"`
+	StatusProgress string                      `json:"status_progress"`
+	TaskChallenge  TaskChallengeResponseCreate `json:"task_challenge"`
+}

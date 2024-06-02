@@ -32,4 +32,5 @@ var (
 	ErrUserTaskNotFound     = errors.New("user task not found")
 	ErrUserTaskDone         = errors.New("user task already done")
 	ErrTaskCannotBeFollowed = errors.New("task cannot be followed")
+	ErrUserNoHasTask        = errors.New("user has no task")
 )

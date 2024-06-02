@@ -123,3 +123,15 @@ func (repository *UserTaskRepositoryImpl) UploadImageTask(userTask *user_task.Us
 	return userTask, nil
 
 }
+
+func (repository *UserTaskRepositoryImpl) GetUserTaskByUserId(userId string) ([]user_task.UserTaskChallenge, error) {
+	var userTask []user_task.UserTaskChallenge
+	if err := repository.DB.GetDB().
+		Preload("TaskChallenge.TaskSteps").
+		Where("user_id = ?", userId).
+		Order("id desc").
+		Find(&userTask).Error; err != nil {
+		return nil, err
+	}
+	return userTask, nil
+}

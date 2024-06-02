@@ -13,4 +13,5 @@ type UserTaskRepository interface {
 	CreateUserTask(userTask *user_task.UserTaskChallenge) (*user_task.UserTaskChallenge, error)
 	FindTask(taskId string) (*task.TaskChallenge, error)
 	UploadImageTask(userTask *user_task.UserTaskChallenge, userTaskId string) (*user_task.UserTaskChallenge, error)
+	GetUserTaskByUserId(userId string) ([]user_task.UserTaskChallenge, error)
 }
