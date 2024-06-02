@@ -157,11 +157,11 @@ func (s *echoServer) userTask() {
 	s.gr.POST("/user/tasks", handler.CreateUserTaskHandler, UserMiddleware)
 
 	// get task in progress by user current
-	s.gr.GET("/user/tasks/in-progress", handler.GetUserTaskByUserIdHandler, UserMiddleware)
+	s.gr.GET("/user_current/tasks/in-progress", handler.GetUserTaskByUserIdHandler, UserMiddleware)
 
-	// upload image task
-	s.gr.POST("/user/tasks/images/:userTaskId", handler.UploadImageTaskHandler, UserMiddleware)
+	// send task done by user current
+	s.gr.POST("/user_current/tasks/:userTaskId", handler.UploadImageTaskHandler, UserMiddleware)
 
 	// get task done by user current
-	s.gr.GET("/user/tasks/done", handler.GetUserTaskDoneByUserIdHandler, UserMiddleware)
+	s.gr.GET("/user_current/tasks/done", handler.GetUserTaskDoneByUserIdHandler, UserMiddleware)
 }

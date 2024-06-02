@@ -74,6 +74,12 @@ func (usecase *UserTaskUsecaseImpl) UploadImageTaskUsecase(request *dto.UploadIm
 		return nil, pkg.ErrUserTaskNotFound
 	}
 
+	findTask, errFindTask := usecase.ManageTaskRepository.FindTask(findUserTask.TaskChallengeId)
+
+	if errFindTask != nil {
+		return nil, pkg.ErrTaskNotFound
+	}
+
 	if findUserTask.StatusProgress == "done" {
 		return nil, pkg.ErrUserTaskDone
 	}
@@ -95,6 +101,7 @@ func (usecase *UserTaskUsecaseImpl) UploadImageTaskUsecase(request *dto.UploadIm
 	data := &user_task.UserTaskChallenge{
 		DescriptionImage: request.Description,
 		StatusProgress:   "done",
+		Point:            findTask.Point,
 		ImageTask:        []user_task.UserTaskImage{},
 	}
 

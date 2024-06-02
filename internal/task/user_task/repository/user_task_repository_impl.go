@@ -31,7 +31,8 @@ func (repository *UserTaskRepositoryImpl) GetTaskById(id string) (*task.TaskChal
 	var task task.TaskChallenge
 	if err := repository.DB.GetDB().
 		Preload("TaskSteps").
-		First(&task, "id = ? and status = ?", id, true).
+		Where("id = ?", id).
+		First(&task).
 		Error; err != nil {
 		return nil, err
 	}
@@ -78,7 +79,7 @@ func (repository *UserTaskRepositoryImpl) FindUserTask(userId string, userTaskId
 
 func (repository *UserTaskRepositoryImpl) FindTask(taskId string) (*task.TaskChallenge, error) {
 	var task task.TaskChallenge
-	if err := repository.DB.GetDB().First(&task, "id = ?", taskId).Error; err != nil {
+	if err := repository.DB.GetDB().Where("id = ?", taskId).First(&task).Error; err != nil {
 		return nil, err
 	}
 	return &task, nil
@@ -89,6 +90,7 @@ func (repository *UserTaskRepositoryImpl) UploadImageTask(userTask *user_task.Us
 	if err := tx.Model(&user_task.UserTaskChallenge{}).Where("id = ?", userTaskId).Updates(map[string]interface{}{
 		"description_image": userTask.DescriptionImage,
 		"status_progress":   userTask.StatusProgress,
+		"point":             userTask.Point,
 	}).Error; err != nil {
 		tx.Rollback()
 		return nil, err
@@ -119,7 +121,10 @@ func (repository *UserTaskRepositoryImpl) UploadImageTask(userTask *user_task.Us
 		Preload("TaskChallenge.TaskSteps").
 		First(&userTask)
 
-	tx.Commit()
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
 	return userTask, nil
 
 }

@@ -48,6 +48,7 @@ type UserTaskUploadImageResponse struct {
 	Id             string                      `json:"id"`
 	StatusProgress string                      `json:"status_progress"`
 	StatusAccept   string                      `json:"status_accepted"`
+	Point          int                         `json:"point"`
 	TaskChallenge  TaskChallengeResponseCreate `json:"task_challenge"`
 	Images         []Images                    `json:"images"`
 }
@@ -59,6 +60,13 @@ type Images struct {
 type UserTaskGetByIdUserResponse struct {
 	Id             string                      `json:"id"`
 	StatusProgress string                      `json:"status_progress"`
+	TaskChallenge  TaskChallengeResponseCreate `json:"task_challenge"`
+}
+
+type GetUserTaskDoneByIdUserResponse struct {
+	Id             string                      `json:"id"`
+	StatusProgress string                      `json:"status_progress"`
 	StatusAccept   string                      `json:"status_accepted"`
+	Point          int                         `json:"point"`
 	TaskChallenge  TaskChallengeResponseCreate `json:"task_challenge"`
 }

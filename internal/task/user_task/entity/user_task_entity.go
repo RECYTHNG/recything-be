@@ -18,6 +18,7 @@ type UserTaskChallenge struct {
 	StatusAccept     string             `gorm:"type:enum('accept','need_rivew', 'reject');default:'need_rivew'"`
 	ImageTask        []UserTaskImage    `gorm:"foreignKey:UserTaskChallengeId"`
 	DescriptionImage string
+	Point            int
 	CreatedAt        time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt        time.Time      `gorm:"autoUpdateTime"`
 	DeletedAt        gorm.DeletedAt `gorm:"index"`

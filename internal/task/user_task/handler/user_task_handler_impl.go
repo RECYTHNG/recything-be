@@ -176,6 +176,9 @@ func (handler *UserTaskHandlerImpl) UploadImageTaskHandler(c echo.Context) error
 		if errors.Is(err, pkg.ErrUploadCloudinary) {
 			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
 		}
+		if errors.Is(err, pkg.ErrTaskNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrTaskNotFound.Error())
+		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
 	}
 	var taskStep []dto.TaskSteps
@@ -184,6 +187,7 @@ func (handler *UserTaskHandlerImpl) UploadImageTaskHandler(c echo.Context) error
 		Id:             userTask.ID,
 		StatusProgress: userTask.StatusProgress,
 		StatusAccept:   userTask.StatusAccept,
+		Point:          userTask.Point,
 		TaskChallenge: dto.TaskChallengeResponseCreate{
 			Id:          userTask.TaskChallenge.ID,
 			Title:       userTask.TaskChallenge.Title,
@@ -268,12 +272,13 @@ func (handler *UserTaskHandlerImpl) GetUserTaskDoneByUserIdHandler(c echo.Contex
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
 	}
 
-	var data []dto.UserTaskGetByIdUserResponse
+	var data []dto.GetUserTaskDoneByIdUserResponse
 	for _, userTask := range userTasks {
-		data = append(data, dto.UserTaskGetByIdUserResponse{
+		data = append(data, dto.GetUserTaskDoneByIdUserResponse{
 			Id:             userTask.ID,
 			StatusProgress: userTask.StatusProgress,
 			StatusAccept:   userTask.StatusAccept,
+			Point:          userTask.Point,
 			TaskChallenge: dto.TaskChallengeResponseCreate{
 				Id:          userTask.TaskChallenge.ID,
 				Title:       userTask.TaskChallenge.Title,
