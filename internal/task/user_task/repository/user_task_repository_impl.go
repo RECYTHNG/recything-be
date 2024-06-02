@@ -128,7 +128,7 @@ func (repository *UserTaskRepositoryImpl) GetUserTaskByUserId(userId string) ([]
 	var userTask []user_task.UserTaskChallenge
 	if err := repository.DB.GetDB().
 		Preload("TaskChallenge.TaskSteps").
-		Where("user_id = ?", userId).
+		Where("user_id = ? and status_progress = ?", userId, "in_progress").
 		Order("id desc").
 		Find(&userTask).Error; err != nil {
 		return nil, err
