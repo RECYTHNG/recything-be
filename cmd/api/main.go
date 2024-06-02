@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/robfig/cron"
+	"github.com/robfig/cron/v3"
 	"github.com/sawalreverr/recything/config"
 	"github.com/sawalreverr/recything/internal/database"
 	"github.com/sawalreverr/recything/internal/server"

@@ -7,7 +7,7 @@ require (
 	github.com/go-playground/validator/v10 v10.20.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/labstack/echo/v4 v4.12.0
-	github.com/robfig/cron v1.2.0
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/spf13/viper v1.18.2
 	golang.org/x/crypto v0.22.0
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
