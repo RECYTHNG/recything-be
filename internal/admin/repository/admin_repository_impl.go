@@ -61,7 +61,7 @@ func (repository *AdminRepositoryImpl) GetDataAllAdmin(limit int, offset int) ([
 
 func (repository *AdminRepositoryImpl) FindLastIdAdmin() (string, error) {
 	var admin entity.Admin
-	if err := repository.DB.GetDB().Order("id desc").First(&admin).Error; err != nil {
+	if err := repository.DB.GetDB().Unscoped().Order("id desc").First(&admin).Error; err != nil {
 		return "AD0000", err
 	}
 	return admin.ID, nil

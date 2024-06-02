@@ -1207,7 +1207,7 @@ paths:
         '404': 
           description: Achievement not found
 
-  /superadmin/admins:
+  /admins:
     get:
       tags:
         - manage admins
@@ -1246,23 +1246,50 @@ paths:
                     example: 200
                   message:
                     type: string
-                    example: ok
+                    example: success
+                  data:
+                    type: array
+                    $ref: '#/components/schemas/Admin'
+                  page:
+                    type: integer
+                    example: 1
+                  limit:
+                    type: integer
+                    example: 10
+                  total_data:
+                    type: integer
+                    example: 1
+                  total_page:
+                    type: integer
+                    example: 1
+                      
+  /admin/profile:
+    get:
+      tags:
+        - manage admins
+      summary: Add new admin
+      description: Endpoint super admin to add a new admin.
+      operationId: addAdmin
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: success
                   data:
                     type: object
-                    properties:
-                      total:
-                        type: integer
-                        example: 20
-                      page:
-                        type: integer
-                        example: 1
-                      limit:
-                        type: integer
-                        example: 10
-                      admins:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/AdminResponse'
+                    $ref: '#/components/schemas/Admin'
+  /admin:        
     post:
       tags:
         - manage admins
@@ -1290,14 +1317,48 @@ paths:
                     example: 201
                   message:
                     type: string
-                    example: admin successfully created!
+                    example: success
         '400':
           description: Invalid request data
-  /superadmin/admins/{adminId}:
+  
+  /admin/{adminId}:
+    get:
+      tags:
+        - manage admins
+      summary: Get an admin by id
+      description: Endpoint for super admin to get an existing admin's data by id
+      operationId: getAdminById
+      security:
+        - Bearer: []
+      parameters:
+        - name: adminId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the admin to be updated
+          example: AD0001
+      responses:
+        '200':
+          description: Get data admin by id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Admin'
     put:
       tags:
         - manage admins
-      summary: Update admin
+      summary: Update an admin
       description: Endpoint for super admin to update an existing admin's data.
       operationId: updateAdmin
       security:
@@ -1309,13 +1370,13 @@ paths:
           schema:
             type: string
           description: ID of the admin to be updated
-          example: ADM0001
+          example: AD0001
       requestBody:
         required: true
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Admin'
+              $ref: '#/components/schemas/EditAdmin'
       responses:
         '200':
           description: Admin successfully updated
@@ -1329,7 +1390,7 @@ paths:
                     example: 200
                   message:
                     type: string
-                    example: admin successfully updated!
+                    example: data successfully updated
         '400':
           description: Invalid request data
         '404':
@@ -1349,7 +1410,7 @@ paths:
           schema:
             type: string
           description: ID of the admin to be deleted
-          example: ADM0001
+          example: AD0001
       responses:
         '200':
           description: Admin successfully deleted
@@ -1363,7 +1424,7 @@ paths:
                     example: 200
                   message:
                     type: string
-                    example: admin successfully deleted!
+                    example: data successfully deleted!
         '404':
           description: Admin not found
 components:
@@ -1597,6 +1658,29 @@ components:
           type: string
           example: john.doe@example.com
         password:
+          type: string
+          example: password@123
+        role:
+          type: string
+          enum: [admin, superadmin]
+          example: admin
+        profile_photo:
+          type: string
+          format: image
+          example: "profile.jpg"
+    EditAdmin:
+      type: object
+      properties:
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: john.doe@example.com
+        old_password:
+          type: string
+          example: password@123
+        new_password:
           type: string
           example: password@123
         role:
