@@ -94,3 +94,24 @@ func (handler *ApprovalTaskHandlerImpl) ApproveUserTaskHandler(c echo.Context) e
 
 	return c.JSON(http.StatusOK, responseData)
 }
+
+func (handler *ApprovalTaskHandlerImpl) RejectUserTaskHandler(c echo.Context) error {
+	userTaskId := c.Param("userTaskId")
+	var request dto.RejectUserTaskRequest
+	if err := c.Bind(&request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	}
+	if err := c.Validate(&request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid request body, detail : "+err.Error())
+	}
+	if err := handler.usecase.RejectUserTask(&request, userTaskId); err != nil {
+		if errors.Is(err, pkg.ErrUserTaskNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserNotFound.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+	}
+
+	responseData := helper.ResponseData(http.StatusOK, "success reject user task", nil)
+
+	return c.JSON(http.StatusOK, responseData)
+}

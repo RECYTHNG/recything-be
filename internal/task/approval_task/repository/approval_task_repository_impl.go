@@ -53,3 +53,10 @@ func (repository *ApprovalTaskRepositoryImpl) ApproveUserTask(status string, use
 
 	return nil
 }
+
+func (repository *ApprovalTaskRepositoryImpl) RejectUserTask(data *user_task.UserTaskChallenge, userTaskId string) error {
+	if err := repository.DB.GetDB().Where("id = ?", userTaskId).Updates(&data).Error; err != nil {
+		return err
+	}
+	return nil
+}

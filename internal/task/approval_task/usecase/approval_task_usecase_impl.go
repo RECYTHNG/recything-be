@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"github.com/sawalreverr/recything/internal/task/approval_task/dto"
 	"github.com/sawalreverr/recything/internal/task/approval_task/repository"
 	user_task "github.com/sawalreverr/recything/internal/task/user_task/entity"
 	"github.com/sawalreverr/recything/pkg"
@@ -34,4 +35,18 @@ func (usecase *ApprovalTaskUsecaseImpl) ApproveUserTask(userTaskId string) error
 	}
 	return nil
 
+}
+
+func (usecase *ApprovalTaskUsecaseImpl) RejectUserTask(request *dto.RejectUserTaskRequest, userTaskId string) error {
+	if _, err := usecase.ApprovalTaskRepository.FindUserTask(userTaskId); err != nil {
+		return pkg.ErrUserTaskNotFound
+	}
+	status := "reject"
+	if err := usecase.ApprovalTaskRepository.RejectUserTask(&user_task.UserTaskChallenge{
+		StatusAccept: status,
+		Reason:       request.Reason,
+	}, userTaskId); err != nil {
+		return err
+	}
+	return nil
 }

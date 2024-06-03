@@ -175,8 +175,11 @@ func (s *echoServer) approvalTask() {
 	handler := approvalTaskHandler.NewApprovalTaskHandler(usecase)
 
 	// get all pagination user task
-	s.gr.GET("/approval_tasks", handler.GetAllApprovalTaskPaginationHandler, SuperAdminOrAdminMiddleware)
+	s.gr.GET("/approve_tasks", handler.GetAllApprovalTaskPaginationHandler, SuperAdminOrAdminMiddleware)
 
 	// approve user task
-	s.gr.PUT("/approval_tasks/:userTaskId", handler.ApproveUserTaskHandler, SuperAdminOrAdminMiddleware)
+	s.gr.PUT("/approve_tasks/:userTaskId", handler.ApproveUserTaskHandler, SuperAdminOrAdminMiddleware)
+
+	// reject user task
+	s.gr.PUT("/reject_tasks/:userTaskId", handler.RejectUserTaskHandler, SuperAdminOrAdminMiddleware)
 }
