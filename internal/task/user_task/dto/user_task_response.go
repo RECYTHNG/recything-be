@@ -68,5 +68,6 @@ type GetUserTaskDoneByIdUserResponse struct {
 	StatusProgress string                      `json:"status_progress"`
 	StatusAccept   string                      `json:"status_accepted"`
 	Point          int                         `json:"point"`
+	ReasonReject   string                      `json:"reason_reject"`
 	TaskChallenge  TaskChallengeResponseCreate `json:"task_challenge"`
 }

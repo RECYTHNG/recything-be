@@ -279,6 +279,7 @@ func (handler *UserTaskHandlerImpl) GetUserTaskDoneByUserIdHandler(c echo.Contex
 			StatusProgress: userTask.StatusProgress,
 			StatusAccept:   userTask.StatusAccept,
 			Point:          userTask.Point,
+			ReasonReject:   userTask.Reason,
 			TaskChallenge: dto.TaskChallengeResponseCreate{
 				Id:          userTask.TaskChallenge.ID,
 				Title:       userTask.TaskChallenge.Title,
