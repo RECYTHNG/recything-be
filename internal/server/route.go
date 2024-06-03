@@ -114,7 +114,6 @@ func (s *echoServer) supAdminHttpHandler() {
 
 func (s *echoServer) ArticleHttpHandler() {
 	repository := repository.NewArticleRepository(s.db)
-	repository := repository.NewArticleRepository(s.db)
 	usecase := usecase.NewArticleUsecase(repository)
 	handler := handler.NewArticleHandler(usecase)
 
