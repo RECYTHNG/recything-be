@@ -16,6 +16,12 @@ tags:
     description: Endpoint for user chatbot (coming soon)
   - name: virtual assistant AI
     description: Endpoint for user virtual assistant (coming soon)
+  - name: manage tasks
+    description: Endpoint for admin manage tasks
+  - name: user tasks
+    description: Endpoint for user doing tasks
+  - name: approval tasks
+    description: Endpoint for admin approval tasks
 
   - name: manage users
     description: Endpoint for admin manage users account
@@ -1389,3 +1395,4 @@ components:
         profile_photo:
           type: string
           example: "https://example.com/profile.jpg"
+    
