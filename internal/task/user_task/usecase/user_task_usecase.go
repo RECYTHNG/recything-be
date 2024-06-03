@@ -11,7 +11,7 @@ import (
 type UserTaskUsecase interface {
 	GetAllTasksUsecase() ([]task.TaskChallenge, error)
 	GetTaskByIdUsecase(id string) (*task.TaskChallenge, error)
-	CreateUserTaskUsecase(request *dto.UserTaskRequestCreate, userId string) (*user_task.UserTaskChallenge, error)
+	CreateUserTaskUsecase(taskChallengeId string, userId string) (*user_task.UserTaskChallenge, error)
 	UploadImageTaskUsecase(request *dto.UploadImageTask, fileImage []*multipart.FileHeader, userId string, userTaskId string) (*user_task.UserTaskChallenge, error)
 	GetUserTaskByUserIdUsecase(userId string) ([]user_task.UserTaskChallenge, error)
 	GetUserTaskDoneByUserIdUsecase(userId string) ([]user_task.UserTaskChallenge, error)

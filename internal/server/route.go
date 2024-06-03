@@ -157,7 +157,7 @@ func (s *echoServer) userTask() {
 	s.gr.GET("/user/tasks/:taskId", handler.GetTaskByIdHandler, UserMiddleware)
 
 	// create task by user or start task
-	s.gr.POST("/user/tasks", handler.CreateUserTaskHandler, UserMiddleware)
+	s.gr.POST("/user/tasks/:taskChallengeId", handler.CreateUserTaskHandler, UserMiddleware)
 
 	// get task in progress by user current
 	s.gr.GET("/user_current/tasks/in-progress", handler.GetUserTaskByUserIdHandler, UserMiddleware)

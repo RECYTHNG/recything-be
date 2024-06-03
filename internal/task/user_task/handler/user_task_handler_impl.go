@@ -87,12 +87,9 @@ func (handler *UserTaskHandlerImpl) GetTaskByIdHandler(c echo.Context) error {
 }
 
 func (handler *UserTaskHandlerImpl) CreateUserTaskHandler(c echo.Context) error {
-	var request dto.UserTaskRequestCreate
-	if err := c.Bind(&request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
-	}
+	taskChallengeId := c.Param("taskChallengeId")
 	claims := c.Get("user").(*helper.JwtCustomClaims)
-	userTask, err := handler.Usecase.CreateUserTaskUsecase(&request, claims.UserID)
+	userTask, err := handler.Usecase.CreateUserTaskUsecase(taskChallengeId, claims.UserID)
 	if err != nil {
 		if errors.Is(err, pkg.ErrTaskNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrTaskNotFound.Error())

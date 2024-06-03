@@ -36,8 +36,8 @@ func (usecase *UserTaskUsecaseImpl) GetTaskByIdUsecase(id string) (*task.TaskCha
 	return userTask, nil
 }
 
-func (usecase *UserTaskUsecaseImpl) CreateUserTaskUsecase(request *dto.UserTaskRequestCreate, userId string) (*user_task.UserTaskChallenge, error) {
-	findtask, errFindTask := usecase.ManageTaskRepository.FindTask(request.TaskChallengeId)
+func (usecase *UserTaskUsecaseImpl) CreateUserTaskUsecase(taskChallengeId string, userId string) (*user_task.UserTaskChallenge, error) {
+	findtask, errFindTask := usecase.ManageTaskRepository.FindTask(taskChallengeId)
 
 	if errFindTask != nil {
 		return nil, pkg.ErrTaskNotFound
@@ -47,7 +47,7 @@ func (usecase *UserTaskUsecaseImpl) CreateUserTaskUsecase(request *dto.UserTaskR
 		return nil, pkg.ErrTaskCannotBeFollowed
 	}
 
-	if _, err := usecase.ManageTaskRepository.FindUserTask(userId, request.TaskChallengeId); err == nil {
+	if _, err := usecase.ManageTaskRepository.FindUserTask(userId, taskChallengeId); err == nil {
 		return nil, pkg.ErrUserTaskExist
 	}
 
@@ -56,7 +56,7 @@ func (usecase *UserTaskUsecaseImpl) CreateUserTaskUsecase(request *dto.UserTaskR
 	userTask := &user_task.UserTaskChallenge{
 		ID:              id,
 		UserId:          userId,
-		TaskChallengeId: request.TaskChallengeId,
+		TaskChallengeId: taskChallengeId,
 	}
 
 	userTaskData, err := usecase.ManageTaskRepository.CreateUserTask(userTask)
