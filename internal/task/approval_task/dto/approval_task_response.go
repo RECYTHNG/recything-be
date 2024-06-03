@@ -31,3 +31,18 @@ type GetUserTaskPagination struct {
 	TotalData int            `json:"total_data"`
 	TotalPage int            `json:"total_page"`
 }
+
+type GetUserTaskDetailsResponse struct {
+	Id        string        `json:"id"`
+	TitleTask string        `json:"title_task"`
+	StartDate time.Time     `json:"start_date"`
+	EndDate   time.Time     `json:"end_date"`
+	UserName  string        `json:"user_name"`
+	Images    []*DataImages `json:"images"`
+}
+
+type DataImages struct {
+	Id          int    `json:"id"`
+	ImageUrl    string `json:"image_url"`
+	Description string `json:"description"`
+}

@@ -6,7 +6,8 @@ import (
 )
 
 type ApprovalTaskUsecase interface {
-	GetAllApprovalTaskPagination(limit int, offset int) ([]*user_task.UserTaskChallenge, int, error)
-	ApproveUserTask(userTaskId string) error
-	RejectUserTask(request *dto.RejectUserTaskRequest, userTaskId string) error
+	GetAllApprovalTaskPaginationUseCase(limit int, offset int) ([]*user_task.UserTaskChallenge, int, error)
+	ApproveUserTaskUseCase(userTaskId string) error
+	RejectUserTaskUseCase(request *dto.RejectUserTaskRequest, userTaskId string) error
+	GetUserTaskDetailsUseCase(userTaskId string) (*user_task.UserTaskChallenge, error)
 }

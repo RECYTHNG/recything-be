@@ -6,4 +6,5 @@ type ApprovalTaskHandler interface {
 	GetAllApprovalTaskPaginationHandler(c echo.Context) error
 	ApproveUserTaskHandler(c echo.Context) error
 	RejectUserTaskHandler(c echo.Context) error
+	GetUserTaskDetailsHandler(c echo.Context) error
 }

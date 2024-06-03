@@ -60,3 +60,15 @@ func (repository *ApprovalTaskRepositoryImpl) RejectUserTask(data *user_task.Use
 	}
 	return nil
 }
+
+func (repository *ApprovalTaskRepositoryImpl) GetUserTaskDetails(userTaskId string) (*user_task.UserTaskChallenge, error) {
+	var userTask user_task.UserTaskChallenge
+	if err := repository.DB.GetDB().
+		Preload("UserTaskImage").
+		Preload("User").
+		Preload("TaskChallenge").
+		Where("id = ?", userTaskId).First(&userTask).Error; err != nil {
+		return nil, err
+	}
+	return &userTask, nil
+}

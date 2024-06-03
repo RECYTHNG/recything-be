@@ -38,7 +38,7 @@ func (handler *ApprovalTaskHandlerImpl) GetAllApprovalTaskPaginationHandler(c ec
 		return err
 	}
 
-	userTask, total, err := handler.usecase.GetAllApprovalTaskPagination(limitInt, (pageInt-1)*limitInt)
+	userTask, total, err := handler.usecase.GetAllApprovalTaskPaginationUseCase(limitInt, (pageInt-1)*limitInt)
 	if err != nil {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
@@ -83,7 +83,7 @@ func (handler *ApprovalTaskHandlerImpl) GetAllApprovalTaskPaginationHandler(c ec
 
 func (handler *ApprovalTaskHandlerImpl) ApproveUserTaskHandler(c echo.Context) error {
 	userTaskId := c.Param("userTaskId")
-	if err := handler.usecase.ApproveUserTask(userTaskId); err != nil {
+	if err := handler.usecase.ApproveUserTaskUseCase(userTaskId); err != nil {
 		if errors.Is(err, pkg.ErrUserTaskNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserNotFound.Error())
 		}
@@ -104,7 +104,7 @@ func (handler *ApprovalTaskHandlerImpl) RejectUserTaskHandler(c echo.Context) er
 	if err := c.Validate(&request); err != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid request body, detail : "+err.Error())
 	}
-	if err := handler.usecase.RejectUserTask(&request, userTaskId); err != nil {
+	if err := handler.usecase.RejectUserTaskUseCase(&request, userTaskId); err != nil {
 		if errors.Is(err, pkg.ErrUserTaskNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserNotFound.Error())
 		}
@@ -112,6 +112,40 @@ func (handler *ApprovalTaskHandlerImpl) RejectUserTaskHandler(c echo.Context) er
 	}
 
 	responseData := helper.ResponseData(http.StatusOK, "success reject user task", nil)
+
+	return c.JSON(http.StatusOK, responseData)
+}
+
+func (handler *ApprovalTaskHandlerImpl) GetUserTaskDetailsHandler(c echo.Context) error {
+	userTaskId := c.Param("userTaskId")
+	task, err := handler.usecase.GetUserTaskDetailsUseCase(userTaskId)
+	if err != nil {
+		if errors.Is(err, pkg.ErrUserTaskNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserNotFound.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+	}
+
+	var images []*dto.DataImages
+	data := dto.GetUserTaskDetailsResponse{
+		Id:        task.ID,
+		TitleTask: task.TaskChallenge.Title,
+		StartDate: task.TaskChallenge.StartDate,
+		EndDate:   task.TaskChallenge.EndDate,
+		UserName:  task.User.Name,
+		Images:    []*dto.DataImages{},
+	}
+
+	for _, image := range task.ImageTask {
+		images = append(images, &dto.DataImages{
+			Id:          image.ID,
+			ImageUrl:    image.ImageUrl,
+			Description: task.DescriptionImage,
+		})
+	}
+	data.Images = images
+
+	responseData := helper.ResponseData(http.StatusOK, "success get user task details", data)
 
 	return c.JSON(http.StatusOK, responseData)
 }

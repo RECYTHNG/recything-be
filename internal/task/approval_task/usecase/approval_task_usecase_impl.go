@@ -15,7 +15,7 @@ func NewApprovalTaskUsecase(approvalTaskRepository repository.ApprovalTaskReposi
 	return &ApprovalTaskUsecaseImpl{ApprovalTaskRepository: approvalTaskRepository}
 }
 
-func (usecase *ApprovalTaskUsecaseImpl) GetAllApprovalTaskPagination(limit int, offset int) ([]*user_task.UserTaskChallenge, int, error) {
+func (usecase *ApprovalTaskUsecaseImpl) GetAllApprovalTaskPaginationUseCase(limit int, offset int) ([]*user_task.UserTaskChallenge, int, error) {
 	task, total, err := usecase.ApprovalTaskRepository.GetAllApprovalTaskPagination(limit, offset)
 	if err != nil {
 		return nil, 0, err
@@ -24,7 +24,7 @@ func (usecase *ApprovalTaskUsecaseImpl) GetAllApprovalTaskPagination(limit int, 
 	return task, total, nil
 }
 
-func (usecase *ApprovalTaskUsecaseImpl) ApproveUserTask(userTaskId string) error {
+func (usecase *ApprovalTaskUsecaseImpl) ApproveUserTaskUseCase(userTaskId string) error {
 	if _, err := usecase.ApprovalTaskRepository.FindUserTask(userTaskId); err != nil {
 		return pkg.ErrUserTaskNotFound
 	}
@@ -37,7 +37,7 @@ func (usecase *ApprovalTaskUsecaseImpl) ApproveUserTask(userTaskId string) error
 
 }
 
-func (usecase *ApprovalTaskUsecaseImpl) RejectUserTask(request *dto.RejectUserTaskRequest, userTaskId string) error {
+func (usecase *ApprovalTaskUsecaseImpl) RejectUserTaskUseCase(request *dto.RejectUserTaskRequest, userTaskId string) error {
 	if _, err := usecase.ApprovalTaskRepository.FindUserTask(userTaskId); err != nil {
 		return pkg.ErrUserTaskNotFound
 	}
@@ -49,4 +49,15 @@ func (usecase *ApprovalTaskUsecaseImpl) RejectUserTask(request *dto.RejectUserTa
 		return err
 	}
 	return nil
+}
+
+func (usecase *ApprovalTaskUsecaseImpl) GetUserTaskDetailsUseCase(userTaskId string) (*user_task.UserTaskChallenge, error) {
+	if _, err := usecase.ApprovalTaskRepository.FindUserTask(userTaskId); err != nil {
+		return nil, pkg.ErrUserTaskNotFound
+	}
+	task, err := usecase.ApprovalTaskRepository.FindUserTask(userTaskId)
+	if err != nil {
+		return nil, err
+	}
+	return task, nil
 }
