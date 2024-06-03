@@ -182,4 +182,7 @@ func (s *echoServer) approvalTask() {
 
 	// reject user task
 	s.gr.PUT("/reject_tasks/:userTaskId", handler.RejectUserTaskHandler, SuperAdminOrAdminMiddleware)
+
+	// get user task details
+	s.gr.GET("/user_task/:userTaskId", handler.GetUserTaskDetailsHandler, SuperAdminOrAdminMiddleware)
 }
