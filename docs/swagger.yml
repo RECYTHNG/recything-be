@@ -1267,9 +1267,9 @@ paths:
     get:
       tags:
         - manage admins
-      summary: Add new admin
-      description: Endpoint super admin to add a new admin.
-      operationId: addAdmin
+      summary: Get admin data from JWT Token
+      description: Endpoint super admin to get admin data from login
+      operationId: getDataAdmin
       security:
         - Bearer: []
       responses:
