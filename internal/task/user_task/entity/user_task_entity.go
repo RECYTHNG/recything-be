@@ -19,6 +19,8 @@ type UserTaskChallenge struct {
 	ImageTask        []UserTaskImage    `gorm:"foreignKey:UserTaskChallengeId"`
 	DescriptionImage string
 	Point            int
+	Reason           string
+	acceptedAt       time.Time
 	CreatedAt        time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt        time.Time      `gorm:"autoUpdateTime"`
 	DeletedAt        gorm.DeletedAt `gorm:"index"`

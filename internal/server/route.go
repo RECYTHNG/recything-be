@@ -10,6 +10,9 @@ import (
 	authHandler "github.com/sawalreverr/recything/internal/auth/handler"
 	authUsecase "github.com/sawalreverr/recything/internal/auth/usecase"
 	"github.com/sawalreverr/recything/internal/middleware"
+	approvalTaskHandler "github.com/sawalreverr/recything/internal/task/approval_task/handler"
+	approvalTaskRepo "github.com/sawalreverr/recything/internal/task/approval_task/repository"
+	approvalTaskUsecase "github.com/sawalreverr/recything/internal/task/approval_task/usecase"
 	taskHandler "github.com/sawalreverr/recything/internal/task/manage_task/handler"
 	taskRepo "github.com/sawalreverr/recything/internal/task/manage_task/repository"
 	taskUsecase "github.com/sawalreverr/recything/internal/task/manage_task/usecase"
@@ -164,4 +167,13 @@ func (s *echoServer) userTask() {
 
 	// get task done by user current
 	s.gr.GET("/user_current/tasks/done", handler.GetUserTaskDoneByUserIdHandler, UserMiddleware)
+}
+
+func (s *echoServer) approvalTask() {
+	repository := approvalTaskRepo.NewApprovalTaskRepository(s.db)
+	usecase := approvalTaskUsecase.NewApprovalTaskUsecase(repository)
+	handler := approvalTaskHandler.NewApprovalTaskHandler(usecase)
+
+	// get all pagination user task
+	s.gr.GET("/approval_tasks", handler.GetAllApprovalTaskPaginationHandler, SuperAdminOrAdminMiddleware)
 }

@@ -62,6 +62,9 @@ func (s *echoServer) Start() {
 	// user task handler
 	s.userTask()
 
+	// approval task handler
+	s.approvalTask()
+
 	serverPORT := fmt.Sprintf(":%d", s.conf.Server.Port)
 	s.app.Logger.Fatal(s.app.Start(serverPORT))
 }
