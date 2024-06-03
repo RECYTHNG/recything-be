@@ -114,6 +114,7 @@ func (s *echoServer) supAdminHttpHandler() {
 
 func (s *echoServer) ArticleHttpHandler() {
 	repository := repository.NewArticleRepository(s.db)
+	repository := repository.NewArticleRepository(s.db)
 	usecase := usecase.NewArticleUsecase(repository)
 	handler := handler.NewArticleHandler(usecase)
 
@@ -121,4 +122,15 @@ func (s *echoServer) ArticleHttpHandler() {
 	s.gr.GET("/articles/:articleId", handler.GetDataArticleByIdHandler)
 	s.gr.PUT("/articles/:articleId", handler.UpdateArticleHandler)
 	s.gr.DELETE("/articles/:articleId", handler.DeleteArticleHandler)
+}
+
+func (s *echoServer) AdminArticleHttpHandler() {
+	repository := repository.NewArticleRepository(s.db)
+	usecase := usecase.NewArticleUsecase(repository)
+	handler := handler.NewArticleHandler(usecase)
+
+	s.gr.POST("/admin/articles", handler.AddArticleHandler)
+	s.gr.GET("/admin/articles/:articleId", handler.GetDataArticleByIdHandler)
+	s.gr.PUT("/admin/articles/:articleId", handler.UpdateArticleHandler)
+	s.gr.DELETE("/admin/articles/:articleId", handler.DeleteArticleHandler)
 }
