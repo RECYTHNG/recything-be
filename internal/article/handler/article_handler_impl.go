@@ -21,7 +21,7 @@ func NewArticleHandler(articleUsecase usecase.ArticleUsecase) *articleHandlerImp
 	return &articleHandlerImpl{Usecase: articleUsecase}
 }
 
-// Created Article
+// Create Article
 func (handler *articleHandlerImpl) CreateArticleHandler(c echo.Context) error {
 	var request dto.ArticleRequestCreate
 	if err := c.Bind(&request); err != nil {
@@ -73,7 +73,7 @@ func (handler *articleHandlerImpl) CreateArticleHandler(c echo.Context) error {
 	return c.JSON(http.StatusCreated, responseData)
 }
 
-// Get Data All
+// Get All Articles
 func (handler *articleHandlerImpl) GetDataAllArticleHandler(c echo.Context) error {
 	limit := c.QueryParam("limit")
 	page := c.QueryParam("page")
@@ -127,6 +127,7 @@ func (handler *articleHandlerImpl) GetDataAllArticleHandler(c echo.Context) erro
 	return c.JSON(http.StatusOK, dataRes)
 }
 
+// Get Article by ID
 func (handler *articleHandlerImpl) GetDataArticleByIdHandler(c echo.Context) error {
 	id := c.Param("articleId")
 
@@ -149,6 +150,7 @@ func (handler *articleHandlerImpl) GetDataArticleByIdHandler(c echo.Context) err
 	return c.JSON(http.StatusOK, responseData)
 }
 
+// Update Article
 func (handler *articleHandlerImpl) UpdateArticleHandler(c echo.Context) error {
 	id := c.Param("articleId")
 
@@ -203,6 +205,7 @@ func (handler *articleHandlerImpl) UpdateArticleHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, responseData)
 }
 
+// Delete Article
 func (handler *articleHandlerImpl) DeleteArticleHandler(c echo.Context) error {
 	id := c.Param("articleId")
 
