@@ -20,7 +20,7 @@ type UserTaskChallenge struct {
 	DescriptionImage string
 	Point            int
 	Reason           string
-	acceptedAt       time.Time
+	AcceptedAt       time.Time      `gorm:"column:accepted_at;type:datetime"`
 	CreatedAt        time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt        time.Time      `gorm:"autoUpdateTime"`
 	DeletedAt        gorm.DeletedAt `gorm:"index"`
