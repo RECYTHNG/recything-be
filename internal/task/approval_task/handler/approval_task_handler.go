@@ -4,4 +4,5 @@ import "github.com/labstack/echo/v4"
 
 type ApprovalTaskHandler interface {
 	GetAllApprovalTaskPaginationHandler(c echo.Context) error
+	ApproveUserTaskHandler(c echo.Context) error
 }

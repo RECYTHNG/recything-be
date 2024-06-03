@@ -6,4 +6,5 @@ import (
 
 type ApprovalTaskUsecase interface {
 	GetAllApprovalTaskPagination(limit int, offset int) ([]*user_task.UserTaskChallenge, int, error)
+	ApproveUserTask(userTaskId string) error
 }

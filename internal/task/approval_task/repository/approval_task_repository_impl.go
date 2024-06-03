@@ -30,3 +30,20 @@ func (repository *ApprovalTaskRepositoryImpl) GetAllApprovalTaskPagination(limit
 	}
 	return tasks, int(total), nil
 }
+
+func (repository *ApprovalTaskRepositoryImpl) FindUserTask(userTaskId string) (*user_task.UserTaskChallenge, error) {
+	var userTask user_task.UserTaskChallenge
+	if err := repository.DB.GetDB().Where("id = ?", userTaskId).First(&userTask).Error; err != nil {
+		return nil, err
+	}
+	return &userTask, nil
+}
+
+func (repository *ApprovalTaskRepositoryImpl) ApproveUserTask(status string, userTaskId string) error {
+	var userTask user_task.UserTaskChallenge
+	if err := repository.DB.GetDB().Where("id = ?", userTaskId).Update("status_accept", status).First(&userTask).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

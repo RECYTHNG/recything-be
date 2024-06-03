@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -8,6 +9,7 @@ import (
 	"github.com/sawalreverr/recything/internal/helper"
 	"github.com/sawalreverr/recything/internal/task/approval_task/dto"
 	"github.com/sawalreverr/recything/internal/task/approval_task/usecase"
+	"github.com/sawalreverr/recything/pkg"
 )
 
 type ApprovalTaskHandlerImpl struct {
@@ -77,4 +79,18 @@ func (handler *ApprovalTaskHandlerImpl) GetAllApprovalTaskPaginationHandler(c ec
 
 	return c.JSON(http.StatusOK, responseData)
 
+}
+
+func (handler *ApprovalTaskHandlerImpl) ApproveUserTaskHandler(c echo.Context) error {
+	userTaskId := c.Param("userTaskId")
+	if err := handler.usecase.ApproveUserTask(userTaskId); err != nil {
+		if errors.Is(err, pkg.ErrUserTaskNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserNotFound.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+	}
+
+	responseData := helper.ResponseData(http.StatusOK, "success approve user task", nil)
+
+	return c.JSON(http.StatusOK, responseData)
 }

@@ -176,4 +176,7 @@ func (s *echoServer) approvalTask() {
 
 	// get all pagination user task
 	s.gr.GET("/approval_tasks", handler.GetAllApprovalTaskPaginationHandler, SuperAdminOrAdminMiddleware)
+
+	// approve user task
+	s.gr.PUT("/approval_tasks/:userTaskId", handler.ApproveUserTaskHandler, SuperAdminOrAdminMiddleware)
 }
