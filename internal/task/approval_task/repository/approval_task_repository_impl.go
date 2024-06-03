@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"time"
+
 	"github.com/sawalreverr/recything/internal/database"
 	user_task "github.com/sawalreverr/recything/internal/task/user_task/entity"
 )
@@ -41,7 +43,11 @@ func (repository *ApprovalTaskRepositoryImpl) FindUserTask(userTaskId string) (*
 
 func (repository *ApprovalTaskRepositoryImpl) ApproveUserTask(status string, userTaskId string) error {
 	var userTask user_task.UserTaskChallenge
-	if err := repository.DB.GetDB().Where("id = ?", userTaskId).Update("status_accept", status).First(&userTask).Error; err != nil {
+	acceptedAt := time.Now()
+	if err := repository.DB.GetDB().Model(&userTask).Updates(map[string]interface{}{
+		"status_accept": status,
+		"accepted_at":   acceptedAt,
+	}).Error; err != nil {
 		return err
 	}
 
