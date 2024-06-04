@@ -33,4 +33,7 @@ var (
 	ErrUserTaskDone         = errors.New("user task already done")
 	ErrTaskCannotBeFollowed = errors.New("task cannot be followed")
 	ErrUserNoHasTask        = errors.New("user has no task")
+
+	// manage achievement
+	ErrArchievementLevelAlreadyExist = errors.New("archievement level already exist")
 )

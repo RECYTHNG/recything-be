@@ -7,6 +7,9 @@ import (
 	"github.com/sawalreverr/recything/internal/admin/handler"
 	"github.com/sawalreverr/recything/internal/admin/repository"
 	"github.com/sawalreverr/recything/internal/admin/usecase"
+	achievementHandler "github.com/sawalreverr/recything/internal/archievements/manage_archievements/handler"
+	achievementRepo "github.com/sawalreverr/recything/internal/archievements/manage_archievements/repository"
+	achievementUsecase "github.com/sawalreverr/recything/internal/archievements/manage_archievements/usecase"
 	authHandler "github.com/sawalreverr/recything/internal/auth/handler"
 	authUsecase "github.com/sawalreverr/recything/internal/auth/usecase"
 	"github.com/sawalreverr/recything/internal/middleware"
@@ -185,4 +188,16 @@ func (s *echoServer) approvalTask() {
 
 	// get user task details
 	s.gr.GET("/user_task/:userTaskId", handler.GetUserTaskDetailsHandler, SuperAdminOrAdminMiddleware)
+}
+
+func (s *echoServer) manageAchievement() {
+	repository := achievementRepo.NewManageAchievementRepository(s.db)
+	usecase := achievementUsecase.NewManageAchievementUsecase(repository)
+	handler := achievementHandler.NewManageAchievementHandler(usecase)
+
+	// upload badge achievement
+	s.gr.POST("/achievements/badge", handler.UploadBadgeHandler, SuperAdminOrAdminMiddleware)
+
+	// create achievement
+	s.gr.POST("/achievements", handler.CreateAchievementHandler, SuperAdminOrAdminMiddleware)
 }
