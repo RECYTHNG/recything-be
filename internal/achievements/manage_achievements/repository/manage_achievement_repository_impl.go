@@ -1,7 +1,7 @@
 package repository
 
 import (
-	archievement "github.com/sawalreverr/recything/internal/archievements/manage_archievements/entity"
+	archievement "github.com/sawalreverr/recything/internal/achievements/manage_achievements/entity"
 	"github.com/sawalreverr/recything/internal/database"
 )
 

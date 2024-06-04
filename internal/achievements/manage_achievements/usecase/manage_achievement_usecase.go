@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"github.com/sawalreverr/recything/internal/archievements/manage_archievements/dto"
-	archievement "github.com/sawalreverr/recything/internal/archievements/manage_archievements/entity"
+	"github.com/sawalreverr/recything/internal/achievements/manage_achievements/dto"
+	archievement "github.com/sawalreverr/recything/internal/achievements/manage_achievements/entity"
 )
 
 type ManageAchievementUsecase interface {

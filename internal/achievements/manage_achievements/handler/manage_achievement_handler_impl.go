@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v4"
-	"github.com/sawalreverr/recything/internal/archievements/manage_archievements/dto"
-	"github.com/sawalreverr/recything/internal/archievements/manage_archievements/usecase"
+	"github.com/sawalreverr/recything/internal/achievements/manage_achievements/dto"
+	"github.com/sawalreverr/recything/internal/achievements/manage_achievements/usecase"
 	"github.com/sawalreverr/recything/internal/helper"
 	"github.com/sawalreverr/recything/pkg"
 )
