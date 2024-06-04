@@ -67,14 +67,14 @@ func (handler ManageAchievementHandlerImpl) CreateAchievementHandler(c echo.Cont
 		if errors.Is(err, pkg.ErrAchievementLevelAlreadyExist) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrAchievementLevelAlreadyExist.Error())
 		}
-		return helper.ErrorHandler(c, 500, "internal server error, details: "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, details: "+err.Error())
 	}
 	responseData := &dto.CreateArchievementResponse{
 		Level:       archievement.Level,
 		TargetPoint: archievement.TargetPoint,
 		BadgeUrl:    archievement.BadgeUrl,
 	}
-	return helper.ResponseHandler(c, 200, "Success", responseData)
+	return helper.ResponseHandler(c, http.StatusCreated, "Success", responseData)
 }
 
 func (handler ManageAchievementHandlerImpl) GetAllAchievementHandler(c echo.Context) error {
@@ -94,7 +94,7 @@ func (handler ManageAchievementHandlerImpl) GetAllAchievementHandler(c echo.Cont
 	responseData := &dto.GetAllAchievementResponse{
 		Data: data,
 	}
-	return helper.ResponseHandler(c, 200, "Success", responseData.Data)
+	return helper.ResponseHandler(c, http.StatusOK, "Success", responseData.Data)
 }
 
 func (handler ManageAchievementHandlerImpl) GetAchievementByIdHandler(c echo.Context) error {
@@ -118,7 +118,7 @@ func (handler ManageAchievementHandlerImpl) GetAchievementByIdHandler(c echo.Con
 		TargetPoint: achievement.TargetPoint,
 		BadgeUrl:    achievement.BadgeUrl,
 	}
-	return helper.ResponseHandler(c, 200, "Success", responseData)
+	return helper.ResponseHandler(c, http.StatusOK, "Success", responseData)
 }
 
 func (handler ManageAchievementHandlerImpl) UpdateBadgeHandler(c echo.Context) error {
@@ -172,7 +172,7 @@ func (handler ManageAchievementHandlerImpl) UpdateAchievementHandler(c echo.Cont
 		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, details: "+err.Error())
 	}
-	return helper.ResponseHandler(c, 200, "achievement updated", nil)
+	return helper.ResponseHandler(c, http.StatusOK, "achievement updated", nil)
 }
 
 func (handler ManageAchievementHandlerImpl) DeleteAchievementHandler(c echo.Context) error {
@@ -188,5 +188,5 @@ func (handler ManageAchievementHandlerImpl) DeleteAchievementHandler(c echo.Cont
 		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, details: "+err.Error())
 	}
-	return helper.ResponseHandler(c, 200, "achievement deleted", nil)
+	return helper.ResponseHandler(c, http.StatusOK, "achievement deleted", nil)
 }
