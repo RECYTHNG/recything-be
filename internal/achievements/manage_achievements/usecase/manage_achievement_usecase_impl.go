@@ -29,7 +29,7 @@ func (repository ManageAchievementUsecaseImpl) CreateArchievementUsecase(request
 		DeletedAt:   gorm.DeletedAt{},
 	}
 
-	archievement, err := repository.repository.Create(dataAchievement)
+	archievement, err := repository.repository.CreateAchievement(dataAchievement)
 	if err != nil {
 		return nil, err
 	}
@@ -63,6 +63,16 @@ func (repository ManageAchievementUsecaseImpl) UpdateAchievementUsecase(request 
 	achievement.TargetPoint = request.TargetPoint
 	achievement.BadgeUrl = request.BadgeUrl
 	if err := repository.repository.UpdateAchievement(achievement, id); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repository ManageAchievementUsecaseImpl) DeleteAchievementUsecase(id int) error {
+	if _, err := repository.repository.GetAchievementById(id); err != nil {
+		return pkg.ErrAchievementNotFound
+	}
+	if err := repository.repository.DeleteAchievement(id); err != nil {
 		return err
 	}
 	return nil

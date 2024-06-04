@@ -212,4 +212,7 @@ func (s *echoServer) manageAchievement() {
 
 	// update achievement
 	s.gr.PUT("/achievements/:achievementId", handler.UpdateAchievementHandler, SuperAdminOrAdminMiddleware)
+
+	// delete achievement
+	s.gr.DELETE("/achievements/:achievementId", handler.DeleteAchievementHandler, SuperAdminOrAdminMiddleware)
 }

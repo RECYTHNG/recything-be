@@ -13,7 +13,7 @@ func NewManageAchievementRepository(db database.Database) *ManageAchievementRepo
 	return &ManageAchievementRepositoryImpl{DB: db}
 }
 
-func (repository ManageAchievementRepositoryImpl) Create(achievement *archievement.Archievement) (*archievement.Archievement, error) {
+func (repository ManageAchievementRepositoryImpl) CreateAchievement(achievement *archievement.Archievement) (*archievement.Archievement, error) {
 	if err := repository.DB.GetDB().Create(achievement).Error; err != nil {
 		return nil, err
 	}
@@ -30,7 +30,7 @@ func (repository ManageAchievementRepositoryImpl) FindArchievementByLevel(level 
 
 func (repository ManageAchievementRepositoryImpl) GetAllArchievement() ([]*archievement.Archievement, error) {
 	var achievements []*archievement.Archievement
-	if err := repository.DB.GetDB().Find(&achievements).Error; err != nil {
+	if err := repository.DB.GetDB().Find(&achievements).Order("target_point desc").Error; err != nil {
 		return nil, err
 	}
 	return achievements, nil
@@ -46,6 +46,13 @@ func (repository ManageAchievementRepositoryImpl) GetAchievementById(id int) (*a
 
 func (repository ManageAchievementRepositoryImpl) UpdateAchievement(achievement *archievement.Archievement, id int) error {
 	if err := repository.DB.GetDB().Where("id = ?", id).Updates(achievement).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repository ManageAchievementRepositoryImpl) DeleteAchievement(id int) error {
+	if err := repository.DB.GetDB().Delete(&archievement.Archievement{}, id).Error; err != nil {
 		return err
 	}
 	return nil

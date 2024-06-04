@@ -9,4 +9,5 @@ type ManageAchievementHandler interface {
 	GetAchievementByIdHandler(c echo.Context) error
 	UpdateAchievementHandler(c echo.Context) error
 	UpdateBadgeHandler(c echo.Context) error
+	DeleteAchievementHandler(c echo.Context) error
 }

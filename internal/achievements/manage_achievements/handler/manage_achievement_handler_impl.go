@@ -174,3 +174,19 @@ func (handler ManageAchievementHandlerImpl) UpdateAchievementHandler(c echo.Cont
 	}
 	return helper.ResponseHandler(c, 200, "achievement updated", nil)
 }
+
+func (handler ManageAchievementHandlerImpl) DeleteAchievementHandler(c echo.Context) error {
+	achievementId := c.Param("achievementId")
+	achievementIdInt, errConvert := strconv.Atoi(achievementId)
+	if errConvert != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "Invalid request param, details: "+errConvert.Error())
+	}
+	err := handler.usecae.DeleteAchievementUsecase(achievementIdInt)
+	if err != nil {
+		if errors.Is(err, pkg.ErrAchievementNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrAchievementNotFound.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, details: "+err.Error())
+	}
+	return helper.ResponseHandler(c, 200, "achievement deleted", nil)
+}
