@@ -107,6 +107,9 @@ func (handler ManageAchievementHandlerImpl) GetAchievementByIdHandler(c echo.Con
 
 	achievement, err := handler.usecae.GetAchievementByIdUsecase(achievementIdInt)
 	if err != nil {
+		if errors.Is(err, pkg.ErrAchievementNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrAchievementNotFound.Error())
+		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, details: "+err.Error())
 	}
 	responseData := &dto.DataAchievement{
@@ -116,4 +119,58 @@ func (handler ManageAchievementHandlerImpl) GetAchievementByIdHandler(c echo.Con
 		BadgeUrl:    achievement.BadgeUrl,
 	}
 	return helper.ResponseHandler(c, 200, "Success", responseData)
+}
+
+func (handler ManageAchievementHandlerImpl) UpdateBadgeHandler(c echo.Context) error {
+	badge, errFile := c.FormFile("badge")
+
+	if errFile != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "Invalid request body, details: "+errFile.Error())
+	}
+	if badge.Size > 2*1024*1024 {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "file is too large")
+	}
+
+	if !strings.HasPrefix(badge.Header.Get("Content-Type"), "image") {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid file type")
+	}
+	src, errFileOpen := badge.Open()
+	if errFileOpen != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, details: "+errFileOpen.Error())
+	}
+	defer src.Close()
+	imageUrl, err := helper.UploadToCloudinary(src, "achievement_badge_update")
+	if err != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, details: "+err.Error())
+	}
+	responseData := &dto.UploadBadgeResponse{
+		BadgeUrl: imageUrl,
+	}
+
+	return helper.ResponseHandler(c, http.StatusCreated, "Success", responseData)
+}
+
+func (handler ManageAchievementHandlerImpl) UpdateAchievementHandler(c echo.Context) error {
+	achievementId := c.Param("achievementId")
+	achievementIdInt, errConvert := strconv.Atoi(achievementId)
+	if errConvert != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "Invalid request param, details: "+errConvert.Error())
+	}
+
+	request := &dto.UpdateAchievementRequest{}
+	if err := c.Bind(request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "Invalid request body, details: "+err.Error())
+	}
+	if err := c.Validate(request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "Invalid request body, details: "+err.Error())
+	}
+
+	err := handler.usecae.UpdateAchievementUsecase(request, achievementIdInt)
+	if err != nil {
+		if errors.Is(err, pkg.ErrAchievementNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrAchievementNotFound.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, details: "+err.Error())
+	}
+	return helper.ResponseHandler(c, 200, "achievement updated", nil)
 }

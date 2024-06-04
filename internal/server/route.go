@@ -206,4 +206,10 @@ func (s *echoServer) manageAchievement() {
 
 	// get achievement by id
 	s.gr.GET("/achievements/:achievementId", handler.GetAchievementByIdHandler, SuperAdminOrAdminMiddleware)
+
+	// update badge achievement
+	s.gr.PUT("/achievements/badge", handler.UpdateBadgeHandler, SuperAdminOrAdminMiddleware)
+
+	// update achievement
+	s.gr.PUT("/achievements/:achievementId", handler.UpdateAchievementHandler, SuperAdminOrAdminMiddleware)
 }

@@ -53,3 +53,17 @@ func (repository ManageAchievementUsecaseImpl) GetAchievementByIdUsecase(id int)
 
 	return achievement, nil
 }
+
+func (repository ManageAchievementUsecaseImpl) UpdateAchievementUsecase(request *dto.UpdateAchievementRequest, id int) error {
+	achievement, err := repository.repository.GetAchievementById(id)
+	if err != nil {
+		return pkg.ErrAchievementNotFound
+	}
+	achievement.Level = request.Level
+	achievement.TargetPoint = request.TargetPoint
+	achievement.BadgeUrl = request.BadgeUrl
+	if err := repository.repository.UpdateAchievement(achievement, id); err != nil {
+		return err
+	}
+	return nil
+}
