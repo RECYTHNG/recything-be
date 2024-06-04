@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -54,17 +55,17 @@ func (handler ManageAchievementHandlerImpl) CreateAchievementHandler(c echo.Cont
 
 	request := &dto.CreateArchievementRequest{}
 	if err := c.Bind(request); err != nil {
-		return helper.ErrorHandler(c, 400, "Invalid request body, details: "+err.Error())
+		return helper.ErrorHandler(c, http.StatusBadRequest, "Invalid request body, details: "+err.Error())
 	}
 
 	if err := c.Validate(request); err != nil {
-		return helper.ErrorHandler(c, 400, "Invalid request body, details: "+err.Error())
+		return helper.ErrorHandler(c, http.StatusBadRequest, "Invalid request body, details: "+err.Error())
 	}
 
 	archievement, err := handler.usecae.CreateArchievementUsecase(request)
 	if err != nil {
-		if errors.Is(err, pkg.ErrArchievementLevelAlreadyExist) {
-			return helper.ErrorHandler(c, 400, err.Error())
+		if errors.Is(err, pkg.ErrAchievementLevelAlreadyExist) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrAchievementLevelAlreadyExist.Error())
 		}
 		return helper.ErrorHandler(c, 500, "internal server error, details: "+err.Error())
 	}
@@ -94,4 +95,25 @@ func (handler ManageAchievementHandlerImpl) GetAllAchievementHandler(c echo.Cont
 		Data: data,
 	}
 	return helper.ResponseHandler(c, 200, "Success", responseData.Data)
+}
+
+func (handler ManageAchievementHandlerImpl) GetAchievementByIdHandler(c echo.Context) error {
+	achievementId := c.Param("achievementId")
+	achievementIdInt, errConvert := strconv.Atoi(achievementId)
+
+	if errConvert != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "Invalid request param, details: "+errConvert.Error())
+	}
+
+	achievement, err := handler.usecae.GetAchievementByIdUsecase(achievementIdInt)
+	if err != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, details: "+err.Error())
+	}
+	responseData := &dto.DataAchievement{
+		Id:          achievement.ID,
+		Level:       achievement.Level,
+		TargetPoint: achievement.TargetPoint,
+		BadgeUrl:    achievement.BadgeUrl,
+	}
+	return helper.ResponseHandler(c, 200, "Success", responseData)
 }

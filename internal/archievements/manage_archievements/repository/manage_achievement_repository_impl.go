@@ -35,3 +35,11 @@ func (m ManageAchievementRepositoryImpl) GetAllArchievement() ([]*archievement.A
 	}
 	return achievements, nil
 }
+
+func (m ManageAchievementRepositoryImpl) GetAchievementById(id int) (*archievement.Archievement, error) {
+	var achievement archievement.Archievement
+	if err := m.DB.GetDB().Where("id = ?", id).First(&achievement).Error; err != nil {
+		return nil, err
+	}
+	return &achievement, nil
+}

@@ -203,4 +203,7 @@ func (s *echoServer) manageAchievement() {
 
 	// get all achievement
 	s.gr.GET("/achievements", handler.GetAllAchievementHandler, SuperAdminOrAdminMiddleware)
+
+	// get achievement by id
+	s.gr.GET("/achievements/:achievementId", handler.GetAchievementByIdHandler, SuperAdminOrAdminMiddleware)
 }

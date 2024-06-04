@@ -35,5 +35,6 @@ var (
 	ErrUserNoHasTask        = errors.New("user has no task")
 
 	// manage achievement
-	ErrArchievementLevelAlreadyExist = errors.New("archievement level already exist")
+	ErrAchievementLevelAlreadyExist = errors.New("archievement level already exist")
+	ErrAchievementNotFound          = errors.New("archievement not found")
 )
