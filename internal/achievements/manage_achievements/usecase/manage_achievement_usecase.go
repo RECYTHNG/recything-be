@@ -6,9 +6,9 @@ import (
 )
 
 type ManageAchievementUsecase interface {
-	CreateArchievementUsecase(request *dto.CreateArchievementRequest) (*archievement.Archievement, error)
-	GetAllArchievementUsecase() ([]*archievement.Archievement, error)
-	GetAchievementByIdUsecase(id int) (*archievement.Archievement, error)
+	CreateArchievementUsecase(request *dto.CreateArchievementRequest) (*archievement.Achievement, error)
+	GetAllArchievementUsecase() ([]*archievement.Achievement, error)
+	GetAchievementByIdUsecase(id int) (*archievement.Achievement, error)
 	UpdateAchievementUsecase(request *dto.UpdateAchievementRequest, id int) error
 	DeleteAchievementUsecase(id int) error
 }

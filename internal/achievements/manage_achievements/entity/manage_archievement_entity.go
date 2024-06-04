@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Archievement struct {
+type Achievement struct {
 	ID          int `json:"id" gorm:"primaryKey"`
 	Level       string
 	TargetPoint int

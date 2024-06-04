@@ -5,10 +5,10 @@ import (
 )
 
 type ManageAchievementRepository interface {
-	CreateAchievement(achievement *archievement.Archievement) (*archievement.Archievement, error)
-	FindArchievementByLevel(level string) (*archievement.Archievement, error)
-	GetAllArchievement() ([]*archievement.Archievement, error)
-	GetAchievementById(id int) (*archievement.Archievement, error)
-	UpdateAchievement(achievement *archievement.Archievement, id int) error
+	CreateAchievement(achievement *archievement.Achievement) (*archievement.Achievement, error)
+	FindArchievementByLevel(level string) (*archievement.Achievement, error)
+	GetAllArchievement() ([]*archievement.Achievement, error)
+	GetAchievementById(id int) (*archievement.Achievement, error)
+	UpdateAchievement(achievement *archievement.Achievement, id int) error
 	DeleteAchievement(id int) error
 }

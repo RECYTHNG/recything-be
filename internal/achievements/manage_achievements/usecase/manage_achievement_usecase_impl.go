@@ -16,13 +16,13 @@ func NewManageAchievementUsecase(repository repository.ManageAchievementReposito
 	return &ManageAchievementUsecaseImpl{repository: repository}
 }
 
-func (repository ManageAchievementUsecaseImpl) CreateArchievementUsecase(request *dto.CreateArchievementRequest) (*archievement.Archievement, error) {
+func (repository ManageAchievementUsecaseImpl) CreateArchievementUsecase(request *dto.CreateArchievementRequest) (*archievement.Achievement, error) {
 	findLeve, _ := repository.repository.FindArchievementByLevel(request.Level)
 	if findLeve != nil {
 		return nil, pkg.ErrAchievementLevelAlreadyExist
 	}
 
-	dataAchievement := &archievement.Archievement{
+	dataAchievement := &archievement.Achievement{
 		Level:       request.Level,
 		TargetPoint: request.TargetPoint,
 		BadgeUrl:    request.BadgeUrl,
@@ -37,7 +37,7 @@ func (repository ManageAchievementUsecaseImpl) CreateArchievementUsecase(request
 
 }
 
-func (repository ManageAchievementUsecaseImpl) GetAllArchievementUsecase() ([]*archievement.Archievement, error) {
+func (repository ManageAchievementUsecaseImpl) GetAllArchievementUsecase() ([]*archievement.Achievement, error) {
 	achievements, err := repository.repository.GetAllArchievement()
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func (repository ManageAchievementUsecaseImpl) GetAllArchievementUsecase() ([]*a
 	return achievements, nil
 }
 
-func (repository ManageAchievementUsecaseImpl) GetAchievementByIdUsecase(id int) (*archievement.Archievement, error) {
+func (repository ManageAchievementUsecaseImpl) GetAchievementByIdUsecase(id int) (*archievement.Achievement, error) {
 	achievement, err := repository.repository.GetAchievementById(id)
 	if err != nil {
 		return nil, pkg.ErrAchievementNotFound
