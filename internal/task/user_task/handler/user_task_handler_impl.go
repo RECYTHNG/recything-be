@@ -185,14 +185,13 @@ func (handler *UserTaskHandlerImpl) UploadImageTaskHandler(c echo.Context) error
 		StatusProgress: userTask.StatusProgress,
 		StatusAccept:   userTask.StatusAccept,
 		Point:          userTask.Point,
-		TaskChallenge: dto.TaskChallengeResponseCreate{
+		TaskChallenge: dto.DataTaskChallenges{
 			Id:          userTask.TaskChallenge.ID,
 			Title:       userTask.TaskChallenge.Title,
 			Description: userTask.TaskChallenge.Description,
 			Thumbnail:   userTask.TaskChallenge.Thumbnail,
 			StartDate:   userTask.TaskChallenge.StartDate,
 			EndDate:     userTask.TaskChallenge.EndDate,
-			Point:       userTask.TaskChallenge.Point,
 			StatusTask:  userTask.TaskChallenge.Status,
 			TaskSteps:   taskStep,
 		},
@@ -277,14 +276,13 @@ func (handler *UserTaskHandlerImpl) GetUserTaskDoneByUserIdHandler(c echo.Contex
 			StatusAccept:   userTask.StatusAccept,
 			Point:          userTask.Point,
 			ReasonReject:   userTask.Reason,
-			TaskChallenge: dto.TaskChallengeResponseCreate{
+			TaskChallenge: dto.DataTaskChallenges{
 				Id:          userTask.TaskChallenge.ID,
 				Title:       userTask.TaskChallenge.Title,
 				Description: userTask.TaskChallenge.Description,
 				Thumbnail:   userTask.TaskChallenge.Thumbnail,
 				StartDate:   userTask.TaskChallenge.StartDate,
 				EndDate:     userTask.TaskChallenge.EndDate,
-				Point:       userTask.TaskChallenge.Point,
 				StatusTask:  userTask.TaskChallenge.Status,
 				TaskSteps:   []dto.TaskSteps{},
 			},

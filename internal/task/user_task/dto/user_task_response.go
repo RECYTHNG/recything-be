@@ -45,12 +45,12 @@ type TaskChallengeResponseCreate struct {
 }
 
 type UserTaskUploadImageResponse struct {
-	Id             string                      `json:"id"`
-	StatusProgress string                      `json:"status_progress"`
-	StatusAccept   string                      `json:"status_accepted"`
-	Point          int                         `json:"point"`
-	TaskChallenge  TaskChallengeResponseCreate `json:"task_challenge"`
-	Images         []Images                    `json:"images"`
+	Id             string             `json:"id"`
+	StatusProgress string             `json:"status_progress"`
+	StatusAccept   string             `json:"status_accepted"`
+	Point          int                `json:"point"`
+	TaskChallenge  DataTaskChallenges `json:"task_challenge"`
+	Images         []Images           `json:"images"`
 }
 
 type Images struct {
@@ -64,10 +64,21 @@ type UserTaskGetByIdUserResponse struct {
 }
 
 type GetUserTaskDoneByIdUserResponse struct {
-	Id             string                      `json:"id"`
-	StatusProgress string                      `json:"status_progress"`
-	StatusAccept   string                      `json:"status_accepted"`
-	Point          int                         `json:"point"`
-	ReasonReject   string                      `json:"reason_reject"`
-	TaskChallenge  TaskChallengeResponseCreate `json:"task_challenge"`
+	Id             string             `json:"id"`
+	StatusProgress string             `json:"status_progress"`
+	StatusAccept   string             `json:"status_accepted"`
+	Point          int                `json:"point"`
+	ReasonReject   string             `json:"reason_reject"`
+	TaskChallenge  DataTaskChallenges `json:"task_challenge"`
+}
+
+type DataTaskChallenges struct {
+	Id          string      `json:"id"`
+	Title       string      `json:"title"`
+	Description string      `json:"description"`
+	Thumbnail   string      `json:"thumbnail"`
+	StartDate   time.Time   `json:"start_date"`
+	EndDate     time.Time   `json:"end_date"`
+	StatusTask  bool        `json:"status_task"`
+	TaskSteps   []TaskSteps `json:"task_steps"`
 }
