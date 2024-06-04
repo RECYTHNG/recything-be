@@ -6,5 +6,6 @@ import (
 )
 
 type ManageAchievementUsecase interface {
-	Create(request *dto.CreateArchievementRequest) (*archievement.Archievement, error)
+	CreateArchievementUsecase(request *dto.CreateArchievementRequest) (*archievement.Archievement, error)
+	GetAllArchievementUsecase() ([]*archievement.Archievement, error)
 }

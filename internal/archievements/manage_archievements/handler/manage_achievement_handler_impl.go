@@ -61,7 +61,7 @@ func (handler ManageAchievementHandlerImpl) CreateAchievementHandler(c echo.Cont
 		return helper.ErrorHandler(c, 400, "Invalid request body, details: "+err.Error())
 	}
 
-	archievement, err := handler.usecae.Create(request)
+	archievement, err := handler.usecae.CreateArchievementUsecase(request)
 	if err != nil {
 		if errors.Is(err, pkg.ErrArchievementLevelAlreadyExist) {
 			return helper.ErrorHandler(c, 400, err.Error())
@@ -74,4 +74,24 @@ func (handler ManageAchievementHandlerImpl) CreateAchievementHandler(c echo.Cont
 		BadgeUrl:    archievement.BadgeUrl,
 	}
 	return helper.ResponseHandler(c, 200, "Success", responseData)
+}
+
+func (handler ManageAchievementHandlerImpl) GetAllAchievementHandler(c echo.Context) error {
+	achievements, err := handler.usecae.GetAllArchievementUsecase()
+	if err != nil {
+		return helper.ErrorHandler(c, 500, "internal server error, details: "+err.Error())
+	}
+	var data []*dto.DataAchievement
+	for _, achievement := range achievements {
+		data = append(data, &dto.DataAchievement{
+			Id:          achievement.ID,
+			Level:       achievement.Level,
+			TargetPoint: achievement.TargetPoint,
+			BadgeUrl:    achievement.BadgeUrl,
+		})
+	}
+	responseData := &dto.GetAllAchievementResponse{
+		Data: data,
+	}
+	return helper.ResponseHandler(c, 200, "Success", responseData.Data)
 }

@@ -27,3 +27,11 @@ func (m ManageAchievementRepositoryImpl) FindArchievementByLevel(level string) (
 	}
 	return &achievement, nil
 }
+
+func (m ManageAchievementRepositoryImpl) GetAllArchievement() ([]*archievement.Archievement, error) {
+	var achievements []*archievement.Archievement
+	if err := m.DB.GetDB().Find(&achievements).Error; err != nil {
+		return nil, err
+	}
+	return achievements, nil
+}

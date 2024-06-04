@@ -200,4 +200,7 @@ func (s *echoServer) manageAchievement() {
 
 	// create achievement
 	s.gr.POST("/achievements", handler.CreateAchievementHandler, SuperAdminOrAdminMiddleware)
+
+	// get all achievement
+	s.gr.GET("/achievements", handler.GetAllAchievementHandler, SuperAdminOrAdminMiddleware)
 }

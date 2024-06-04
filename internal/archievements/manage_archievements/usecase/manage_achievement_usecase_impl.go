@@ -16,7 +16,7 @@ func NewManageAchievementUsecase(repository repository.ManageAchievementReposito
 	return &ManageAchievementUsecaseImpl{repository: repository}
 }
 
-func (repository ManageAchievementUsecaseImpl) Create(request *dto.CreateArchievementRequest) (*archievement.Archievement, error) {
+func (repository ManageAchievementUsecaseImpl) CreateArchievementUsecase(request *dto.CreateArchievementRequest) (*archievement.Archievement, error) {
 	findLeve, _ := repository.repository.FindArchievementByLevel(request.Level)
 	if findLeve != nil {
 		return nil, pkg.ErrArchievementLevelAlreadyExist
@@ -35,4 +35,12 @@ func (repository ManageAchievementUsecaseImpl) Create(request *dto.CreateArchiev
 	}
 	return archievement, nil
 
+}
+
+func (repository ManageAchievementUsecaseImpl) GetAllArchievementUsecase() ([]*archievement.Archievement, error) {
+	achievements, err := repository.repository.GetAllArchievement()
+	if err != nil {
+		return nil, err
+	}
+	return achievements, nil
 }
