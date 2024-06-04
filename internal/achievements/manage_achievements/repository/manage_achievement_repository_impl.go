@@ -30,7 +30,7 @@ func (repository ManageAchievementRepositoryImpl) FindArchievementByLevel(level 
 
 func (repository ManageAchievementRepositoryImpl) GetAllArchievement() ([]*archievement.Achievement, error) {
 	var achievements []*archievement.Achievement
-	if err := repository.DB.GetDB().Find(&achievements).Order("target_point desc").Error; err != nil {
+	if err := repository.DB.GetDB().Order("target_point desc").Find(&achievements).Error; err != nil {
 		return nil, err
 	}
 	return achievements, nil
