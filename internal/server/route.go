@@ -112,24 +112,28 @@ func (s *echoServer) supAdminHttpHandler() {
 
 }
 
+// Initialize the article HTTP handlers
 func (s *echoServer) ArticleHttpHandler() {
-	repository := repository.NewArticleRepository(s.db)
-	usecase := usecase.NewArticleUsecase(repository)
-	handler := handler.NewArticleHandler(usecase)
+	repo := repository.NewArticleRepository(s.db)
+	uc := usecase.NewArticleUsecase(repo)
+	h := handler.NewArticleHandler(uc)
 
-	s.gr.POST("/articles", handler.AddArticleHandler)
-	s.gr.GET("/articles/:articleId", handler.GetDataArticleByIdHandler)
-	s.gr.PUT("/articles/:articleId", handler.UpdateArticleHandler)
-	s.gr.DELETE("/articles/:articleId", handler.DeleteArticleHandler)
+	s.gr.POST("/articles", h.CreateArticleHandler)
+	s.gr.GET("/articles", h.GetDataAllArticleHandler)
+	s.gr.GET("/articles/:articleId", h.GetDataArticleByIdHandler)
+	s.gr.PUT("/articles/:articleId", h.UpdateArticleHandler)
+	s.gr.DELETE("/articles/:articleId", h.DeleteArticleHandler)
 }
 
+// Initialize the admin article HTTP handlers
 func (s *echoServer) AdminArticleHttpHandler() {
-	repository := repository.NewArticleRepository(s.db)
-	usecase := usecase.NewArticleUsecase(repository)
-	handler := handler.NewArticleHandler(usecase)
+	repo := repository.NewArticleRepository(s.db)
+	uc := usecase.NewArticleUsecase(repo)
+	h := handler.NewArticleHandler(uc)
 
-	s.gr.POST("/admin/articles", handler.AddArticleHandler)
-	s.gr.GET("/admin/articles/:articleId", handler.GetDataArticleByIdHandler)
-	s.gr.PUT("/admin/articles/:articleId", handler.UpdateArticleHandler)
-	s.gr.DELETE("/admin/articles/:articleId", handler.DeleteArticleHandler)
+	s.gr.POST("/admin/articles", h.CreateArticleHandler)
+	s.gr.GET("/admin/articles", h.GetDataAllArticleHandler)
+	s.gr.GET("/admin/articles/:articleId", h.GetDataArticleByIdHandler)
+	s.gr.PUT("/admin/articles/:articleId", h.UpdateArticleHandler)
+	s.gr.DELETE("/admin/articles/:articleId", h.DeleteArticleHandler)
 }
