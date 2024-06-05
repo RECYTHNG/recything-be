@@ -9,6 +9,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/robfig/cron/v3 v3.0.1
+	github.com/sashabaranov/go-openai v1.24.1
 	github.com/spf13/viper v1.18.2
 	golang.org/x/crypto v0.22.0
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df

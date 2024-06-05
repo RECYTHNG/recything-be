@@ -19,6 +19,8 @@ import (
 	faqRepo "github.com/sawalreverr/recything/internal/faq/repository"
 	faqUsecase "github.com/sawalreverr/recything/internal/faq/usecase"
 	"github.com/sawalreverr/recything/internal/middleware"
+	reminaiHandler "github.com/sawalreverr/recything/internal/remin-ai/handler"
+	reminaiUsecase "github.com/sawalreverr/recything/internal/remin-ai/usecase"
 	reportHandler "github.com/sawalreverr/recything/internal/report/handler"
 	reportRepo "github.com/sawalreverr/recything/internal/report/repository"
 	reportUsecase "github.com/sawalreverr/recything/internal/report/usecase"
@@ -284,4 +286,13 @@ func (s *echoServer) customDataHandler() {
 
 	// Get all custom data for admin
 	s.gr.GET("/custom-datas", handler.GetAllData, SuperAdminMiddleware)
+}
+
+func (s *echoServer) reminAIHandler() {
+	repository := customDataRepository.NewCustomDataRepository(s.db)
+	usecase := reminaiUsecase.NewReminAIUsecase(repository)
+	handler := reminaiHandler.NewReminAIHandler(usecase)
+
+	// ReMin AI Chatbot with user access
+	s.gr.POST("/remin-ai", handler.AskGPT, UserMiddleware)
 }

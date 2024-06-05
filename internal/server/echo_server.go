@@ -77,6 +77,9 @@ func (s *echoServer) Start() {
 	// Custom Data Handler
 	s.customDataHandler()
 
+	// ReMin AI Handler
+	s.reminAIHandler()
+
 	serverPORT := fmt.Sprintf(":%d", s.conf.Server.Port)
 	s.app.Logger.Fatal(s.app.Start(serverPORT))
 }

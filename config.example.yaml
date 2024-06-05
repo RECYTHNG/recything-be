@@ -19,3 +19,6 @@ smtp:
   port: 587
   authemail: <your_authemail>
   authpassword: <your_authpassword>
+
+openai:
+  apikey: <your_apikey>
