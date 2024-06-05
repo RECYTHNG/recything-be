@@ -13,16 +13,16 @@ import (
 	"github.com/sawalreverr/recything/pkg"
 )
 
-type articleHandlerImpl struct {
+type ArticleHandlerImpl struct {
 	Usecase usecase.ArticleUsecase
 }
 
-func NewArticleHandler(articleUsecase usecase.ArticleUsecase) *articleHandlerImpl {
-	return &articleHandlerImpl{Usecase: articleUsecase}
+func NewArticleHandler(articleUsecase usecase.ArticleUsecase) *ArticleHandlerImpl {
+	return &ArticleHandlerImpl{Usecase: articleUsecase}
 }
 
 // Create Article
-func (handler *articleHandlerImpl) CreateArticleHandler(c echo.Context) error {
+func (handler *ArticleHandlerImpl) CreateArticleHandler(c echo.Context) error {
 	var request dto.ArticleRequestCreate
 	if err := c.Bind(&request); err != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid request body")
@@ -74,7 +74,7 @@ func (handler *articleHandlerImpl) CreateArticleHandler(c echo.Context) error {
 }
 
 // Get All Articles
-func (handler *articleHandlerImpl) GetDataAllArticleHandler(c echo.Context) error {
+func (handler *ArticleHandlerImpl) GetDataAllArticleHandler(c echo.Context) error {
 	limit := c.QueryParam("limit")
 	page := c.QueryParam("page")
 
@@ -128,7 +128,7 @@ func (handler *articleHandlerImpl) GetDataAllArticleHandler(c echo.Context) erro
 }
 
 // Get Article by ID
-func (handler *articleHandlerImpl) GetDataArticleByIdHandler(c echo.Context) error {
+func (handler *ArticleHandlerImpl) GetDataArticleByIdHandler(c echo.Context) error {
 	id := c.Param("articleId")
 
 	article, err := handler.Usecase.GetDataArticleByIdUsecase(id)
@@ -151,7 +151,7 @@ func (handler *articleHandlerImpl) GetDataArticleByIdHandler(c echo.Context) err
 }
 
 // Update Article
-func (handler *articleHandlerImpl) UpdateArticleHandler(c echo.Context) error {
+func (handler *ArticleHandlerImpl) UpdateArticleHandler(c echo.Context) error {
 	id := c.Param("articleId")
 
 	var request dto.ArticleUpdateRequest
@@ -206,7 +206,7 @@ func (handler *articleHandlerImpl) UpdateArticleHandler(c echo.Context) error {
 }
 
 // Delete Article
-func (handler *articleHandlerImpl) DeleteArticleHandler(c echo.Context) error {
+func (handler *ArticleHandlerImpl) DeleteArticleHandler(c echo.Context) error {
 	id := c.Param("articleId")
 
 	err := handler.Usecase.DeleteArticleUsecase(id)

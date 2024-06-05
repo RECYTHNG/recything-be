@@ -1,6 +1,10 @@
 package pkg
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/google/uuid"
+)
 
 var (
 	ErrStatusForbidden     = errors.New("forbidden")
@@ -17,12 +21,20 @@ var (
 	ErrUserAlreadyVerified      = errors.New("user already verified")
 
 	// Upload Cloudinary
-	ErrUploadCloudinary = errors.New("upload cloudinary server error")
-
+	ErrUploadCloudinary       = errors.New("upload cloudinary server error")
+	ErrUploadCloudinaryFailed = errors.New("failed to upload to cloudinary")
+	UploadToCloudinary        = errors.New("upload to cloudinary")
 	// admin
 	ErrAdminNotFound = errors.New("admin not found")
 
 	// article
 	ErrTitleAlreadyExists = errors.New("title already exists")
 	ErrArticleNotFound    = errors.New("article not found")
+
+	//ID
+	// GenerateID = = errors.New("failed to generate id")
 )
+
+func GenerateID() string {
+	return uuid.New().String()
+}

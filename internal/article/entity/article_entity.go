@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"errors"
 	"time"
 
 	"gorm.io/gorm"
@@ -16,3 +17,7 @@ type Article struct {
 	UpdatedAt time.Time      `gorm:"autoUpdateTime"`
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
+
+var (
+	ErrArticleNotFound = errors.New("article not found")
+)
