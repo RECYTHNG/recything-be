@@ -14,7 +14,6 @@ type Video struct {
 	Thumbnail       string
 	Link            string
 	View            int
-	Comments        []Comment      `gorm:"foreignKey:VideoID"`
 	VideoCategoryID int            `gorm:"index"`
 	Category        VideoCategory  `gorm:"foreignKey:VideoCategoryID"`
 	CreatedAt       time.Time      `gorm:"autoCreateTime"`
@@ -33,6 +32,7 @@ type VideoCategory struct {
 type Comment struct {
 	ID        int       `gorm:"primaryKey"`
 	VideoID   string    `gorm:"index"`
+	Video     Video     `gorm:"foreignKey:VideoID"`
 	UserID    string    `gorm:"index"`
 	User      user.User `gorm:"foreignKey:UserID"`
 	Comment   string
