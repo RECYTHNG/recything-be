@@ -16,6 +16,8 @@ tags:
     description: Endpoint for user get data faqs
   - name: user tasks
     description: Endpoint for user doing task
+  - name: chatbot (ReMin AI)
+    description: Endpoint for user asking question to chatbot
 
   - name: manage users
     description: Endpoint for admin manage users account
@@ -2715,7 +2717,52 @@ paths:
           description: Bad Request / Validation Error
         '500':
           description: Internal server error
-        
+  
+  /remin-ai:
+    post:
+      tags:
+        - chatbot (ReMin AI)
+      summary: Asking question
+      description: Endpoint user to ask AI  
+      operationId: postReminAI
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question:
+                  type: string
+                  example: Bagaimana cara saya mengelola beberapa sampah anorganik
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      question:
+                        type: string
+                        example: Bagaimana cara saya mengelola beberapa sampah anorganik
+                      answer_ai: 
+                        type: string
+                        example: Untuk mengelola sampah anorganik seperti kaca, logam, dan beberapa jenis plastik, Anda dapat memulai dengan melakukan pemisahan sampah berdasarkan jenis bahan. Pastikan untuk membersihkan sampah tersebut sebelum membuangnya. Selanjutnya, Anda bisa mengirimkan sampah anorganik tersebut ke fasilitas daur ulang yang sesuai agar dapat didaur ulang menjadi produk baru. Proses daur ulang sampah anorganik ini melibatkan langkah-langkah seperti penghancuran, pemurnian, dan transformasi menjadi produk daur ulang. Dengan mengelola sampah anorganik secara benar, Anda turut berkontribusi dalam melestarikan lingkungan dan mengurangi jumlah sampah yang berakhir di tempat pembuangan akhir.\n\nSaya tidak tahu jawabannya karena pertanyaan Anda tidak terkait dengan aplikasi kami.
+        '500':
+          description: Internal server error
+
 components:
   schemas:
     User:
