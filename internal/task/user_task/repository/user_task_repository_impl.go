@@ -206,3 +206,22 @@ func (repository *UserTaskRepositoryImpl) UpdateUserTask(userTask *user_task.Use
 	return userTask, nil
 
 }
+
+func (repository *UserTaskRepositoryImpl) GetUserTaskDetails(userTaskId string, userId string) (*user_task.UserTaskChallenge, []*user_task.UserTaskImage, error) {
+	var userTask user_task.UserTaskChallenge
+	if err := repository.DB.GetDB().
+		Preload("User").
+		Preload("TaskChallenge").
+		Where("id = ? and user_id = ?", userTaskId, userId).
+		First(&userTask).Error; err != nil {
+		return nil, nil, err
+	}
+
+	var images []*user_task.UserTaskImage
+	if err := repository.DB.GetDB().
+		Where("user_task_challenge_id = ?", userTaskId).
+		Find(&images).Error; err != nil {
+		return nil, nil, err
+	}
+	return &userTask, images, nil
+}

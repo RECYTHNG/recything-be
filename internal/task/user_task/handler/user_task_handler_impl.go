@@ -389,3 +389,36 @@ func (handler *UserTaskHandlerImpl) UpdateUserTaskHandler(c echo.Context) error 
 	responseData := helper.ResponseData(http.StatusCreated, "success", data)
 	return c.JSON(http.StatusCreated, responseData)
 }
+
+func (handler *UserTaskHandlerImpl) GetUserTaskDetailsHandler(c echo.Context) error {
+	userId := c.Get("user").(*helper.JwtCustomClaims).UserID
+
+	userTaskId := c.Param("userTaskId")
+
+	userTask, images, err := handler.Usecase.GetUserTaskDetailsUsecase(userId, userTaskId)
+	if err != nil {
+		if errors.Is(err, pkg.ErrUserTaskNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserTaskNotFound.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+	}
+
+	var dataImages []*dto.DataImages
+	data := dto.GetUserTaskDetailsResponse{
+		Id:        userTask.ID,
+		TitleTask: userTask.TaskChallenge.Title,
+		UserName:  userTask.User.Name,
+		Images:    []*dto.DataImages{},
+	}
+
+	for _, image := range images {
+		dataImages = append(dataImages, &dto.DataImages{
+			Id:          image.ID,
+			ImageUrl:    image.ImageUrl,
+			Description: userTask.DescriptionImage,
+		})
+	}
+	data.Images = dataImages
+	responseData := helper.ResponseData(http.StatusOK, "success", data)
+	return c.JSON(http.StatusOK, responseData)
+}

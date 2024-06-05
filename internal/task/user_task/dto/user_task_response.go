@@ -82,3 +82,16 @@ type DataTaskChallenges struct {
 	StatusTask  bool        `json:"status_task"`
 	TaskSteps   []TaskSteps `json:"task_steps"`
 }
+
+type GetUserTaskDetailsResponse struct {
+	Id        string        `json:"id"`
+	TitleTask string        `json:"title_task"`
+	UserName  string        `json:"user_name"`
+	Images    []*DataImages `json:"images"`
+}
+
+type DataImages struct {
+	Id          int    `json:"id"`
+	ImageUrl    string `json:"image_url"`
+	Description string `json:"description"`
+}

@@ -2,7 +2,6 @@ package handler
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -126,7 +125,6 @@ func (handler *ApprovalTaskHandlerImpl) GetUserTaskDetailsHandler(c echo.Context
 		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
-	log.Println("images", images)
 
 	var dataImages []*dto.DataImages
 	data := dto.GetUserTaskDetailsResponse{

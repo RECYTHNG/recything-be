@@ -203,3 +203,11 @@ func (usecase *UserTaskUsecaseImpl) UpdateUserTaskUsecase(request *dto.UpdateUse
 	}
 	return userTask, nil
 }
+
+func (usecase *UserTaskUsecaseImpl) GetUserTaskDetailsUsecase(userTaskId string, userId string) (*user_task.UserTaskChallenge, []*user_task.UserTaskImage, error) {
+	userTask, imageTask, err := usecase.ManageTaskRepository.GetUserTaskDetails(userTaskId, userId)
+	if err != nil {
+		return nil, nil, pkg.ErrUserTaskNotFound
+	}
+	return userTask, imageTask, nil
+}
