@@ -1,9 +1,13 @@
 package usecase
 
 import (
+	"strings"
+
+	"github.com/sawalreverr/recything/internal/video/manage_video/dto"
 	video "github.com/sawalreverr/recything/internal/video/manage_video/entity"
 	repository "github.com/sawalreverr/recything/internal/video/manage_video/repository"
 	"github.com/sawalreverr/recything/pkg"
+	"gorm.io/gorm"
 )
 
 type ManageVideoUsecaseImpl struct {
@@ -24,5 +28,20 @@ func (usecase *ManageVideoUsecaseImpl) CreateDataVideoUseCase(video *video.Video
 		return err
 	}
 
+	return nil
+}
+
+func (usecase *ManageVideoUsecaseImpl) CreateCategoryVideoUseCase(request *dto.CreateCategoryVideoRequest) error {
+	if err := usecase.manageVideoRepository.FindNameCategoryVideo(request.Name); err == nil {
+		return pkg.ErrVideoCategoryNameAlreadyExist
+	}
+	name := strings.ToLower(request.Name)
+	category := video.VideoCategory{
+		Name:      name,
+		DeletedAt: gorm.DeletedAt{},
+	}
+	if err := usecase.manageVideoRepository.CreateCategoryVideo(&category); err != nil {
+		return err
+	}
 	return nil
 }

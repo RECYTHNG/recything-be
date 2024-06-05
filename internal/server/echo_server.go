@@ -74,6 +74,9 @@ func (s *echoServer) Start() {
 	// manage achievement handler
 	s.manageAchievement()
 
+	// manage video
+	s.manageVideo()
+
 	serverPORT := fmt.Sprintf(":%d", s.conf.Server.Port)
 	s.app.Logger.Fatal(s.app.Start(serverPORT))
 }

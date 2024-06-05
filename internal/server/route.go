@@ -31,6 +31,9 @@ import (
 	userHandler "github.com/sawalreverr/recything/internal/user/handler"
 	userRepo "github.com/sawalreverr/recything/internal/user/repository"
 	userUsecase "github.com/sawalreverr/recything/internal/user/usecase"
+	videoHandler "github.com/sawalreverr/recything/internal/video/manage_video/handler"
+	videoRepo "github.com/sawalreverr/recything/internal/video/manage_video/repository"
+	videoUsecase "github.com/sawalreverr/recything/internal/video/manage_video/usecase"
 )
 
 var (
@@ -260,4 +263,16 @@ func (s *echoServer) manageAchievement() {
 
 	// delete achievement
 	s.gr.DELETE("/achievements/:achievementId", handler.DeleteAchievementHandler, SuperAdminOrAdminMiddleware)
+}
+
+func (s *echoServer) manageVideo() {
+	repository := videoRepo.NewManageVideoRepository(s.db)
+	usecase := videoUsecase.NewManageVideoUsecaseImpl(repository)
+	handler := videoHandler.NewManageVideoHandlerImpl(usecase)
+
+	// create data video
+	s.gr.POST("/videos/data", handler.CreateDataVideoHandler, SuperAdminOrAdminMiddleware)
+
+	// create category video
+	s.gr.POST("/videos/categories", handler.CreateCategoryVideoHandler, SuperAdminOrAdminMiddleware)
 }

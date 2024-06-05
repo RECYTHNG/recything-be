@@ -49,5 +49,6 @@ var (
 	ErrAchievementNotFound          = errors.New("archievement not found")
 
 	// manage video
-	ErrVideoTitleAlreadyExist = errors.New("video title already exist")
+	ErrVideoTitleAlreadyExist        = errors.New("video title already exist")
+	ErrVideoCategoryNameAlreadyExist = errors.New("video category name already exist")
 )

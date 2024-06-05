@@ -7,4 +7,6 @@ import (
 type ManageVideoRepository interface {
 	CreateDataVideo(video *video.Video) error
 	FindTitleVideo(title string) error
+	CreateCategoryVideo(category *video.VideoCategory) error
+	FindNameCategoryVideo(name string) error
 }
