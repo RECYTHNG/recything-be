@@ -12,10 +12,10 @@ tags:
     description: Endpoint for user account
   - name: reporting
     description: Endpoint for user reporting littering & rubbish
-  - name: chatbot AI
-    description: Endpoint for user chatbot (coming soon)
-  - name: virtual assistant AI
-    description: Endpoint for user virtual assistant (coming soon)
+  - name: faqs
+    description: Endpoint for user get data faqs
+  - name: user tasks
+    description: Endpoint for user doing task
 
   - name: manage users
     description: Endpoint for admin manage users account
@@ -27,6 +27,10 @@ tags:
     description: Endpoint for admin manage achievements
   - name: manage admins
     description: Endpoint for super admin manage admins
+  - name: manage tasks
+    description: Endpoint for admin manage tasks
+  - name: manage custom data
+    description: Endpoint for admin manage custom data
 
 paths:
   /register:
@@ -2513,7 +2517,205 @@ paths:
                   message:
                     type: string
                     example: user has no current task
-                    
+  /custom-datas:
+    get:
+      tags:
+        - manage custom data     
+      summary: Get all custom data with pagination
+      description: Endpoint admin get all custom data 
+      operationId: getAllCustomData
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+          example: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of custom data per page
+          example: 10
+        - name: sort_by
+          in: query
+          required: false
+          schema:
+            type: string
+            default: created_at
+          description: Sorted by
+          example: created_at
+        - name: sort_type
+          in: query
+          required: false
+          schema:
+            type: string
+            default: asc
+          description: Sorted type
+          example: asc
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                        example: 10
+                      page:
+                        type: integer
+                        example: 1
+                      limit:
+                        type: integer
+                        example: 10
+                      custom-datas:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/CustomData' 
+        '500':
+          description: Internal server error
+  /custom-data/{dataId}:
+    get:
+      tags:
+        - manage custom data     
+      summary: Get custom data by id
+      description: Endpoint admin get custom data by id 
+      operationId: getCustomDataByID
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/CustomData'
+        '404':
+          description: Custom data not found
+        '500':
+          description: Internal server error 
+    put:
+      tags:
+        - manage custom data     
+      summary: Update custom data by id
+      description: Endpoint admin update custom data by id 
+      operationId: updateCustomDataByID
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomDataInput'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: custom data updated!
+        '404':
+          description: Custom data not found
+        '500':
+          description: Internal server error 
+    delete:
+      tags:
+        - manage custom data     
+      summary: Delete custom data by id
+      description: Endpoint admin delete custom data by id 
+      operationId: deleteCustomDataByID
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: custom data deleted!
+        '404':
+          description: Custom data not found
+        '500':
+          description: Internal server error 
+  /custom-data:
+    post:
+      tags:
+        - manage custom data     
+      summary: Create new custom data
+      description: Endpoint admin create new custom data  
+      operationId: postCustomData
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomDataInput'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: custom data created!
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/CustomData'
+        '400':
+          description: Bad Request / Validation Error
+        '500':
+          description: Internal server error
+        
 components:
   schemas:
     User:
@@ -2812,3 +3014,31 @@ components:
         answer:
           type: string
           example: Anda dapat memperbarui informasi profil Anda melalui menu 'Pengaturan Profil' di aplikasi. Klik ikon profil, pilih 'Pengaturan', dan edit informasi yang diperlukan.
+    CustomData:
+      type: object
+      properties:
+        id:
+          type: string
+          example: CDT0001
+        topic:
+          type: string
+          example: Daur Ulang Plastik
+        description:
+          type: string
+          example: Proses daur ulang plastik melibatkan pengumpulan sampah plastik, pembersihan, penghancuran menjadi serpihan kecil, dan kemudian melelehkannya untuk dibentuk menjadi produk baru. Plastik yang dapat didaur ulang termasuk botol air, wadah makanan, dan kantong belanja tertentu.
+        created_at:
+          type: string
+          example: 2024-06-05 23:17:50.484 +0700 +07
+        updated_at:
+          type: string
+          example: 2024-06-05 23:17:50.484 +0700 +07
+    CustomDataInput:
+      type: object
+      properties:
+        topic:
+          type: string
+          example: Daur Ulang Plastik
+        description:
+          type: string
+          example: Proses daur ulang plastik melibatkan pengumpulan sampah plastik, pembersihan, penghancuran menjadi serpihan kecil, dan kemudian melelehkannya untuk dibentuk menjadi produk baru. Plastik yang dapat didaur ulang termasuk botol air, wadah makanan, dan kantong belanja tertentu.
+        
