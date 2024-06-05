@@ -398,7 +398,7 @@ func (handler *UserTaskHandlerImpl) GetUserTaskDetailsHandler(c echo.Context) er
 
 	userTaskId := c.Param("userTaskId")
 
-	userTask, images, err := handler.Usecase.GetUserTaskDetailsUsecase(userId, userTaskId)
+	userTask, images, err := handler.Usecase.GetUserTaskDetailsUsecase(userTaskId, userId)
 	if err != nil {
 		if errors.Is(err, pkg.ErrUserTaskNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserTaskNotFound.Error())

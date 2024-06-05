@@ -215,7 +215,8 @@ func (repository *UserTaskRepositoryImpl) GetUserTaskDetails(userTaskId string, 
 	if err := repository.DB.GetDB().
 		Preload("User").
 		Preload("TaskChallenge").
-		Where("id = ? and user_id = ?", userTaskId, userId).
+		Where("id = ? ", userTaskId).
+		Where("user_id = ?", userId).
 		First(&userTask).Error; err != nil {
 		return nil, nil, err
 	}

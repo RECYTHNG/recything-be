@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"log"
 	"mime/multipart"
 	"time"
 
@@ -171,9 +170,9 @@ func (usecase *UserTaskUsecaseImpl) UpdateUserTaskUsecase(request *dto.UpdateUse
 		return nil, pkg.ErrTaskNotFound
 	}
 	countImage := len(fileImage)
-	log.Println("countImage", countImage)
-	countTaskSteps := len(findTask.TaskSteps) * 3
-	log.Println("countTaskSteps", countTaskSteps)
+	lenTaskSteps := len(findTask.TaskSteps)
+	countTaskSteps := lenTaskSteps * 3
+
 	if countImage > countTaskSteps {
 		return nil, pkg.ErrImagesExceed
 	}
