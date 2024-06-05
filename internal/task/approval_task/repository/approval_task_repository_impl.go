@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"log"
 	"time"
 
 	achievement "github.com/sawalreverr/recything/internal/achievements/manage_achievements/entity"
@@ -68,7 +67,6 @@ func (repository *ApprovalTaskRepositoryImpl) ApproveUserTask(status string, use
 	}
 
 	point := userTask.Point
-	log.Println("user id: ", userTask.UserId)
 
 	var user user_entity.User
 	if err := tx.Where("id = ?", userTask.UserId).First(&user).Error; err != nil {
@@ -89,8 +87,6 @@ func (repository *ApprovalTaskRepositoryImpl) ApproveUserTask(status string, use
 		return err
 	}
 
-	log.Println("achievements: ", achievements)
-
 	if len(achievements) == 0 {
 		tx.Rollback()
 		return nil
@@ -102,8 +98,6 @@ func (repository *ApprovalTaskRepositoryImpl) ApproveUserTask(status string, use
 			break
 		}
 	}
-
-	log.Println("badge: ", badge)
 
 	if badge != "" {
 		if err := tx.Model(&user_entity.User{}).Where("id = ?", userTask.UserId).Update("badge", badge).Error; err != nil {
