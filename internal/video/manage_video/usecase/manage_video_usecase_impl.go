@@ -25,7 +25,7 @@ func (usecase *ManageVideoUsecaseImpl) CreateDataVideoUseCase(request *dto.Creat
 	if err := usecase.manageVideoRepository.FindTitleVideo(request.Title); err == nil {
 		return pkg.ErrVideoTitleAlreadyExist
 	}
-	if err, _ := usecase.manageVideoRepository.GetCategoryVideoById(request.CategoryId); err != nil {
+	if _, err := usecase.manageVideoRepository.GetCategoryVideoById(request.CategoryId); err != nil {
 		return pkg.ErrVideoCategoryNotFound
 	}
 	view, errGetView := helper.GetVideoViewCount(request.LinkVideo)
@@ -34,12 +34,13 @@ func (usecase *ManageVideoUsecaseImpl) CreateDataVideoUseCase(request *dto.Creat
 	}
 	intView := int(view)
 	video := video.Video{
-		Title:       request.Title,
-		Description: request.Description,
-		Thumbnail:   request.UrlThumbnail,
-		Link:        request.LinkVideo,
-		View:        intView,
-		DeletedAt:   gorm.DeletedAt{},
+		Title:           request.Title,
+		Description:     request.Description,
+		Thumbnail:       request.UrlThumbnail,
+		Link:            request.LinkVideo,
+		VideoCategoryID: request.CategoryId,
+		View:            intView,
+		DeletedAt:       gorm.DeletedAt{},
 	}
 	if err := usecase.manageVideoRepository.CreateDataVideo(&video); err != nil {
 		return err

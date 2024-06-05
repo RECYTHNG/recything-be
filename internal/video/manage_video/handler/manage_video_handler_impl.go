@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sawalreverr/recything/internal/helper"
@@ -55,6 +56,37 @@ func (handler *ManageVideoHandlerImpl) CreateDataVideoHandler(c echo.Context) er
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
 	return helper.ResponseHandler(c, http.StatusCreated, "success create data video", nil)
+}
+
+func (handler *ManageVideoHandlerImpl) UploadThumbnailVideoHandler(c echo.Context) error {
+	file, errFile := c.FormFile("thumbnail")
+	if errFile != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "thumbnail is required")
+	}
+
+	if file.Size > 2*1024*1024 {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "file is too large")
+	}
+
+	if !strings.HasPrefix(file.Header.Get("Content-Type"), "image") {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid file type")
+	}
+
+	src, errOpen := file.Open()
+	if errOpen != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "failed to open file: "+errOpen.Error())
+	}
+	defer src.Close()
+
+	imageUrl, err := helper.UploadToCloudinary(src, "video_thumbnail")
+	if err != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
+	}
+
+	data := dto.UploadThumbnailResponse{UrlThumbnail: imageUrl}
+	responseData := helper.ResponseData(http.StatusOK, "success", data)
+	return c.JSON(http.StatusOK, responseData)
+
 }
 
 func (handler *ManageVideoHandlerImpl) CreateCategoryVideoHandler(c echo.Context) error {
