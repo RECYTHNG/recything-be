@@ -51,13 +51,13 @@ func (usecase *ApprovalTaskUsecaseImpl) RejectUserTaskUseCase(request *dto.Rejec
 	return nil
 }
 
-func (usecase *ApprovalTaskUsecaseImpl) GetUserTaskDetailsUseCase(userTaskId string) (*user_task.UserTaskChallenge, error) {
+func (usecase *ApprovalTaskUsecaseImpl) GetUserTaskDetailsUseCase(userTaskId string) (*user_task.UserTaskChallenge, []*user_task.UserTaskImage, error) {
 	if _, err := usecase.ApprovalTaskRepository.FindUserTask(userTaskId); err != nil {
-		return nil, pkg.ErrUserTaskNotFound
+		return nil, []*user_task.UserTaskImage{}, pkg.ErrUserTaskNotFound
 	}
-	task, err := usecase.ApprovalTaskRepository.FindUserTask(userTaskId)
+	task, images, err := usecase.ApprovalTaskRepository.GetUserTaskDetails(userTaskId)
 	if err != nil {
-		return nil, err
+		return nil, []*user_task.UserTaskImage{}, err
 	}
-	return task, nil
+	return task, images, nil
 }

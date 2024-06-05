@@ -109,7 +109,7 @@ func (repository *UserTaskRepositoryImpl) UploadImageTask(userTask *user_task.Us
 		}
 
 		for _, img := range userTask.ImageTask {
-			img.UserTaskChallengeId = userTaskId
+			img.UserTaskChallengeID = userTaskId
 			if err := tx.Create(&img).Error; err != nil {
 				tx.Rollback()
 				return nil, err

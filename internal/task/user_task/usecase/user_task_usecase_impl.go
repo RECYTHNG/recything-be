@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"mime/multipart"
+	"time"
 
 	"github.com/sawalreverr/recything/internal/helper"
 	task "github.com/sawalreverr/recything/internal/task/manage_task/entity"
@@ -57,6 +58,8 @@ func (usecase *UserTaskUsecaseImpl) CreateUserTaskUsecase(taskChallengeId string
 		ID:              id,
 		UserId:          userId,
 		TaskChallengeId: taskChallengeId,
+		AcceptedAt:      time.Now(),
+		ImageTask:       []user_task.UserTaskImage{},
 	}
 
 	userTaskData, err := usecase.ManageTaskRepository.CreateUserTask(userTask)

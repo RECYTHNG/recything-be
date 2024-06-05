@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -118,15 +119,16 @@ func (handler *ApprovalTaskHandlerImpl) RejectUserTaskHandler(c echo.Context) er
 
 func (handler *ApprovalTaskHandlerImpl) GetUserTaskDetailsHandler(c echo.Context) error {
 	userTaskId := c.Param("userTaskId")
-	task, err := handler.usecase.GetUserTaskDetailsUseCase(userTaskId)
+	task, images, err := handler.usecase.GetUserTaskDetailsUseCase(userTaskId)
 	if err != nil {
 		if errors.Is(err, pkg.ErrUserTaskNotFound) {
-			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserNotFound.Error())
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserTaskNotFound.Error())
 		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
+	log.Println("images", images)
 
-	var images []*dto.DataImages
+	var dataImages []*dto.DataImages
 	data := dto.GetUserTaskDetailsResponse{
 		Id:        task.ID,
 		TitleTask: task.TaskChallenge.Title,
@@ -136,16 +138,18 @@ func (handler *ApprovalTaskHandlerImpl) GetUserTaskDetailsHandler(c echo.Context
 		Images:    []*dto.DataImages{},
 	}
 
-	for _, image := range task.ImageTask {
-		images = append(images, &dto.DataImages{
+	for _, image := range images {
+		dataImages = append(dataImages, &dto.DataImages{
 			Id:          image.ID,
 			ImageUrl:    image.ImageUrl,
 			Description: task.DescriptionImage,
+			UploadedAt:  image.CreatedAt,
 		})
 	}
-	data.Images = images
 
-	responseData := helper.ResponseData(http.StatusOK, "success get user task details", data)
+	data.Images = dataImages
+
+	responseData := helper.ResponseData(http.StatusOK, "success get user task details", &data)
 
 	return c.JSON(http.StatusOK, responseData)
 }

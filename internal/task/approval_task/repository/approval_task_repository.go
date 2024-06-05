@@ -9,5 +9,5 @@ type ApprovalTaskRepository interface {
 	FindUserTask(userTaskId string) (*user_task.UserTaskChallenge, error)
 	ApproveUserTask(status string, userTaskId string) error
 	RejectUserTask(data *user_task.UserTaskChallenge, userTaskId string) error
-	GetUserTaskDetails(userTaskId string) (*user_task.UserTaskChallenge, error)
+	GetUserTaskDetails(userTaskId string) (*user_task.UserTaskChallenge, []*user_task.UserTaskImage, error)
 }

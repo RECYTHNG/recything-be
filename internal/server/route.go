@@ -173,7 +173,7 @@ func (s *echoServer) userTask() {
 }
 
 func (s *echoServer) approvalTask() {
-	repository := approvalTaskRepo.NewApprovalTaskRepository(s.db)
+	repository := approvalTaskRepo.NewApprovalTaskRepositoryImpl(s.db)
 	usecase := approvalTaskUsecase.NewApprovalTaskUsecase(repository)
 	handler := approvalTaskHandler.NewApprovalTaskHandler(usecase)
 

@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"strings"
+
 	"github.com/sawalreverr/recything/internal/achievements/manage_achievements/dto"
 	archievement "github.com/sawalreverr/recything/internal/achievements/manage_achievements/entity"
 	"github.com/sawalreverr/recything/internal/achievements/manage_achievements/repository"
@@ -17,13 +19,14 @@ func NewManageAchievementUsecase(repository repository.ManageAchievementReposito
 }
 
 func (repository ManageAchievementUsecaseImpl) CreateArchievementUsecase(request *dto.CreateArchievementRequest) (*archievement.Achievement, error) {
-	findLeve, _ := repository.repository.FindArchievementByLevel(request.Level)
+	levelLower := strings.ToLower(request.Level)
+	findLeve, _ := repository.repository.FindArchievementByLevel(levelLower)
 	if findLeve != nil {
 		return nil, pkg.ErrAchievementLevelAlreadyExist
 	}
 
 	dataAchievement := &archievement.Achievement{
-		Level:       request.Level,
+		Level:       levelLower,
 		TargetPoint: request.TargetPoint,
 		BadgeUrl:    request.BadgeUrl,
 		DeletedAt:   gorm.DeletedAt{},
@@ -59,7 +62,7 @@ func (repository ManageAchievementUsecaseImpl) UpdateAchievementUsecase(request 
 	if err != nil {
 		return pkg.ErrAchievementNotFound
 	}
-	achievement.Level = request.Level
+	achievement.Level = strings.ToLower(request.Level)
 	achievement.TargetPoint = request.TargetPoint
 	achievement.BadgeUrl = request.BadgeUrl
 	if err := repository.repository.UpdateAchievement(achievement, id); err != nil {

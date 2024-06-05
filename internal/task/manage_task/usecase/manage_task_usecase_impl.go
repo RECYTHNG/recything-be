@@ -18,7 +18,7 @@ func NewManageTaskUsecase(repository repository.ManageTaskRepository) *ManageTas
 }
 
 func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskResquest, adminId string) (*task.TaskChallenge, error) {
-	if len(request.Steps) == 0 {
+	if len(request.TaskSteps) == 0 {
 		return nil, pkg.ErrTaskStepsNull
 
 	}
@@ -38,7 +38,7 @@ func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskR
 		DeletedAt:   gorm.DeletedAt{},
 	}
 
-	for _, step := range request.Steps {
+	for _, step := range request.TaskSteps {
 		taskStep := task.TaskStep{
 			TaskChallengeId: id,
 			Title:           step.Title,
@@ -75,7 +75,7 @@ func (usecase *ManageTaskUsecaseImpl) UpdateTaskChallengeUsecase(request *dto.Up
 	if findTask == nil {
 		return nil, pkg.ErrTaskNotFound
 	}
-	if len(request.Steps) == 0 {
+	if len(request.TaskSteps) == 0 {
 		return nil, pkg.ErrTaskStepsNull
 	}
 
@@ -91,7 +91,7 @@ func (usecase *ManageTaskUsecaseImpl) UpdateTaskChallengeUsecase(request *dto.Up
 	}
 
 	// Add new steps
-	for _, step := range request.Steps {
+	for _, step := range request.TaskSteps {
 		taskStep := task.TaskStep{
 			TaskChallengeId: id,
 			Title:           step.Title,

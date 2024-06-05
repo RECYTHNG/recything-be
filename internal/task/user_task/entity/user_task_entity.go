@@ -16,7 +16,7 @@ type UserTaskChallenge struct {
 	TaskChallenge    task.TaskChallenge `gorm:"foreignKey:TaskChallengeId"`
 	StatusProgress   string             `gorm:"type:enum('in_progress', 'done');default:'in_progress'"`
 	StatusAccept     string             `gorm:"type:enum('accept','need_rivew', 'reject');default:'need_rivew'"`
-	ImageTask        []UserTaskImage    `gorm:"foreignKey:UserTaskChallengeId"`
+	ImageTask        []UserTaskImage    `gorm:"foreignKey:UserTaskChallengeID"`
 	DescriptionImage string
 	Point            int
 	Reason           string
@@ -28,7 +28,7 @@ type UserTaskChallenge struct {
 
 type UserTaskImage struct {
 	ID                  int    `gorm:"primaryKey"`
-	UserTaskChallengeId string `gorm:"index"`
+	UserTaskChallengeID string `gorm:"index"`
 	ImageUrl            string
 	CreatedAt           time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt           time.Time      `gorm:"autoUpdateTime"`

@@ -9,5 +9,5 @@ type ApprovalTaskUsecase interface {
 	GetAllApprovalTaskPaginationUseCase(limit int, offset int) ([]*user_task.UserTaskChallenge, int, error)
 	ApproveUserTaskUseCase(userTaskId string) error
 	RejectUserTaskUseCase(request *dto.RejectUserTaskRequest, userTaskId string) error
-	GetUserTaskDetailsUseCase(userTaskId string) (*user_task.UserTaskChallenge, error)
+	GetUserTaskDetailsUseCase(userTaskId string) (*user_task.UserTaskChallenge, []*user_task.UserTaskImage, error)
 }

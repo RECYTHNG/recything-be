@@ -9,7 +9,7 @@ type CreateTaskResquest struct {
 	StartDate    time.Time   `json:"start_date" validate:"required"`
 	EndDate      time.Time   `json:"end_date" validate:"required"`
 	Point        int         `json:"point" validate:"required"`
-	Steps        []TaskSteps `json:"steps" validate:"required"`
+	TaskSteps    []TaskSteps `json:"task_steps" validate:"required"`
 }
 
 type TaskSteps struct {
@@ -25,5 +25,5 @@ type UpdateTaskRequest struct {
 	StartDate    time.Time   `json:"start_date" validate:"required"`
 	EndDate      time.Time   `json:"end_date" validate:"required"`
 	Point        int         `json:"point" validate:"required"`
-	Steps        []TaskSteps `json:"steps" validate:"required"`
+	TaskSteps    []TaskSteps `json:"task_steps" validate:"required"`
 }

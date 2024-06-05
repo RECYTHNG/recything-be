@@ -42,7 +42,8 @@ type GetUserTaskDetailsResponse struct {
 }
 
 type DataImages struct {
-	Id          int    `json:"id"`
-	ImageUrl    string `json:"image_url"`
-	Description string `json:"description"`
+	Id          int       `json:"id"`
+	ImageUrl    string    `json:"image_url"`
+	Description string    `json:"description"`
+	UploadedAt  time.Time `json:"uploaded_at"`
 }

@@ -218,7 +218,7 @@ func (handler *ManageTaskHandlerImpl) UpdateTaskHandler(c echo.Context) error {
 		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
 
-	if len(request.Steps) == 0 {
+	if len(request.TaskSteps) == 0 {
 		return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrTaskStepsNull.Error())
 	}
 
