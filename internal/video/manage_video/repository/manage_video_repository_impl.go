@@ -50,3 +50,11 @@ func (repository *ManageVideoRepositoryImpl) GetAllCategoryVideo() ([]video.Vide
 	}
 	return categories, nil
 }
+
+func (repository *ManageVideoRepositoryImpl) GetCategoryVideoById(id int) (*video.VideoCategory, error) {
+	var category video.VideoCategory
+	if err := repository.DB.GetDB().Where("id = ?", id).First(&category).Error; err != nil {
+		return nil, err
+	}
+	return &category, nil
+}

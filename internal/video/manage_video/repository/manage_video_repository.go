@@ -10,4 +10,5 @@ type ManageVideoRepository interface {
 	CreateCategoryVideo(category *video.VideoCategory) error
 	FindNameCategoryVideo(name string) error
 	GetAllCategoryVideo() ([]video.VideoCategory, error)
+	GetCategoryVideoById(id int) (*video.VideoCategory, error)
 }
