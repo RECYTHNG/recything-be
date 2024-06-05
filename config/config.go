@@ -10,6 +10,7 @@ type (
 		DB         *DB
 		Cloudinary *Cloudinary
 		SMTP       *SMTP
+		YouTube    *YouTube
 	}
 
 	Server struct {
@@ -36,6 +37,9 @@ type (
 		Port         int
 		AuthEmail    string
 		AuthPassword string
+	}
+	YouTube struct {
+		APIKey string
 	}
 )
 
