@@ -86,6 +86,11 @@ func (usecase *UserTaskUsecaseImpl) UploadImageTaskUsecase(request *dto.UploadIm
 	if errFindTask != nil {
 		return nil, pkg.ErrTaskNotFound
 	}
+	countImage := len(fileImage)
+	countTaskSteps := len(findTask.TaskSteps) * 3
+	if countImage > countTaskSteps {
+		return nil, pkg.ErrImagesExceed
+	}
 
 	if findUserTask.StatusProgress == "done" {
 		return nil, pkg.ErrUserTaskDone
@@ -144,6 +149,57 @@ func (usecase *UserTaskUsecaseImpl) GetUserTaskDoneByUserIdUsecase(userId string
 	}
 	if len(userTask) == 0 {
 		return nil, pkg.ErrUserNoHasTask
+	}
+	return userTask, nil
+}
+
+func (usecase *UserTaskUsecaseImpl) UpdateUserTaskUsecase(request *dto.UpdateUserTaskRequest, fileImage []*multipart.FileHeader, userId string, userTaskId string) (*user_task.UserTaskChallenge, error) {
+	findUserTask, errFind := usecase.ManageTaskRepository.FindUserTask(userId, userTaskId)
+
+	if errFind != nil {
+		return nil, pkg.ErrUserTaskNotFound
+	}
+
+	findTask, errFindTask := usecase.ManageTaskRepository.FindTask(findUserTask.TaskChallengeId)
+
+	if errFindTask != nil {
+		return nil, pkg.ErrTaskNotFound
+	}
+	countImage := len(fileImage)
+	countTaskSteps := len(findTask.TaskSteps) * 3
+	if countImage > countTaskSteps {
+		return nil, pkg.ErrImagesExceed
+	}
+
+	validImages, errImages := helper.ImagesValidation(fileImage)
+	if errImages != nil {
+		return nil, errImages
+	}
+
+	var imageUrls []string
+	for _, image := range validImages {
+		imageUrl, err := helper.UploadToCloudinary(image, "task_images_update+"+userTaskId)
+		if err != nil {
+			return nil, pkg.ErrUploadCloudinary
+		}
+		imageUrls = append(imageUrls, imageUrl)
+	}
+
+	data := &user_task.UserTaskChallenge{
+		DescriptionImage: request.Description,
+		StatusProgress:   "need_rivew",
+		ImageTask:        []user_task.UserTaskImage{},
+	}
+
+	for _, image := range imageUrls {
+		data.ImageTask = append(data.ImageTask, user_task.UserTaskImage{
+			ImageUrl: image,
+		})
+	}
+
+	userTask, err := usecase.ManageTaskRepository.UpdateUserTask(data, userTaskId)
+	if err != nil {
+		return nil, err
 	}
 	return userTask, nil
 }

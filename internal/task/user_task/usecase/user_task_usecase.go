@@ -15,4 +15,5 @@ type UserTaskUsecase interface {
 	UploadImageTaskUsecase(request *dto.UploadImageTask, fileImage []*multipart.FileHeader, userId string, userTaskId string) (*user_task.UserTaskChallenge, error)
 	GetUserTaskByUserIdUsecase(userId string) ([]user_task.UserTaskChallenge, error)
 	GetUserTaskDoneByUserIdUsecase(userId string) ([]user_task.UserTaskChallenge, error)
+	UpdateUserTaskUsecase(request *dto.UpdateUserTaskRequest, fileImage []*multipart.FileHeader, userId string, userTaskId string) (*user_task.UserTaskChallenge, error)
 }

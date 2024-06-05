@@ -161,3 +161,48 @@ func (repository *UserTaskRepositoryImpl) FindUserHasSameTask(userId string, tas
 	}
 	return &userTask, nil
 }
+
+// update user task if reject
+func (repository *UserTaskRepositoryImpl) UpdateUserTask(userTask *user_task.UserTaskChallenge, userTaskId string) (*user_task.UserTaskChallenge, error) {
+	tx := repository.DB.GetDB().Begin()
+	if err := tx.Model(&user_task.UserTaskChallenge{}).Where("id = ?", userTaskId).Updates(map[string]interface{}{
+		"description_image": userTask.DescriptionImage,
+		"status_progress":   userTask.StatusProgress,
+	}).
+		Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	var count int64
+	if err := tx.Model(&user_task.UserTaskImage{}).Where("user_task_challenge_id = ?", userTaskId).Count(&count).Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	if count != 0 {
+		if err := tx.Where("user_task_challenge_id = ?", userTaskId).Delete(&user_task.UserTaskImage{}).Error; err != nil {
+			tx.Rollback()
+			return nil, err
+		}
+
+		for _, img := range userTask.ImageTask {
+			img.UserTaskChallengeID = userTaskId
+			if err := tx.Create(&img).Error; err != nil {
+				tx.Rollback()
+				return nil, err
+			}
+		}
+	}
+
+	tx.Preload("UserTaskImage").
+		Preload("TaskChallenge.TaskSteps").
+		First(&userTask)
+
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+	return userTask, nil
+
+}

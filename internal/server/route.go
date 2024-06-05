@@ -170,6 +170,9 @@ func (s *echoServer) userTask() {
 
 	// get task done by user current
 	s.gr.GET("/user_current/tasks/done", handler.GetUserTaskDoneByUserIdHandler, UserMiddleware)
+
+	// update user task if reject
+	s.gr.PUT("/user_current/tasks/:userTaskId", handler.UpdateUserTaskHandler, UserMiddleware)
 }
 
 func (s *echoServer) approvalTask() {

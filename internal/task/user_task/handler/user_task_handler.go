@@ -9,4 +9,5 @@ type UserTaskHandler interface {
 	UploadImageTaskHandler(c echo.Context) error
 	GetUserTaskByUserIdHandler(c echo.Context) error
 	GetUserTaskDoneByUserIdHandler(c echo.Context) error
+	UpdateUserTaskHandler(c echo.Context) error
 }

@@ -16,4 +16,5 @@ type UserTaskRepository interface {
 	GetUserTaskByUserId(userId string) ([]user_task.UserTaskChallenge, error)
 	GetUserTaskDoneByUserId(userId string) ([]user_task.UserTaskChallenge, error)
 	FindUserHasSameTask(userId string, taskId string) (*user_task.UserTaskChallenge, error)
+	UpdateUserTask(userTask *user_task.UserTaskChallenge, userTaskId string) (*user_task.UserTaskChallenge, error)
 }
