@@ -40,7 +40,9 @@ func (repository *ApprovalTaskRepositoryImpl) GetAllApprovalTaskPagination(limit
 
 func (repository *ApprovalTaskRepositoryImpl) FindUserTask(userTaskId string) (*user_task.UserTaskChallenge, error) {
 	var userTask user_task.UserTaskChallenge
-	if err := repository.DB.GetDB().Where("id = ?", userTaskId).First(&userTask).Error; err != nil {
+	if err := repository.DB.GetDB().
+		Where("id = ?", userTaskId).
+		First(&userTask).Error; err != nil {
 		return nil, err
 	}
 	return &userTask, nil
@@ -101,9 +103,13 @@ func (repository *ApprovalTaskRepositoryImpl) ApproveUserTask(status string, use
 		}
 	}
 
-	if err := tx.Model(&user_entity.User{}).Where("id = ?", userTask.UserId).Update("badge", badge).Error; err != nil {
-		tx.Rollback()
-		return err
+	log.Println("badge: ", badge)
+
+	if badge != "" {
+		if err := tx.Model(&user_entity.User{}).Where("id = ?", userTask.UserId).Update("badge", badge).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
 	}
 
 	if err := tx.Commit().Error; err != nil {
@@ -139,4 +145,28 @@ func (repository *ApprovalTaskRepositoryImpl) GetUserTaskDetails(userTaskId stri
 	}
 
 	return &userTask, images, nil
+}
+
+func (repository *ApprovalTaskRepositoryImpl) FindUserTaskForApprove(userTaskId string) (*user_task.UserTaskChallenge, error) {
+	statusAccept := "need_rivew"
+	var userTask user_task.UserTaskChallenge
+	if err := repository.DB.GetDB().
+		Where("id = ?", userTaskId).
+		Where("status_accept = ?", statusAccept).
+		First(&userTask).Error; err != nil {
+		return nil, err
+	}
+	return &userTask, nil
+}
+
+func (repository *ApprovalTaskRepositoryImpl) FindUserTaskForReject(userTaskId string) (*user_task.UserTaskChallenge, error) {
+	statusAccept := "need_rivew"
+	var userTask user_task.UserTaskChallenge
+	if err := repository.DB.GetDB().
+		Where("id = ?", userTaskId).
+		Where("status_accept = ?", statusAccept).
+		First(&userTask).Error; err != nil {
+		return nil, err
+	}
+	return &userTask, nil
 }

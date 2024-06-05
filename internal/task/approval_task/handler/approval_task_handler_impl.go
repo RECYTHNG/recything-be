@@ -84,8 +84,11 @@ func (handler *ApprovalTaskHandlerImpl) GetAllApprovalTaskPaginationHandler(c ec
 func (handler *ApprovalTaskHandlerImpl) ApproveUserTaskHandler(c echo.Context) error {
 	userTaskId := c.Param("userTaskId")
 	if err := handler.usecase.ApproveUserTaskUseCase(userTaskId); err != nil {
+		if errors.Is(err, pkg.ErrUserTaskAlreadyApprove) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrUserTaskAlreadyApprove.Error())
+		}
 		if errors.Is(err, pkg.ErrUserTaskNotFound) {
-			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserNotFound.Error())
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserTaskNotFound.Error())
 		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
@@ -105,8 +108,11 @@ func (handler *ApprovalTaskHandlerImpl) RejectUserTaskHandler(c echo.Context) er
 		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid request body, detail : "+err.Error())
 	}
 	if err := handler.usecase.RejectUserTaskUseCase(&request, userTaskId); err != nil {
+		if errors.Is(err, pkg.ErrUserTaskAlreadyReject) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrUserTaskAlreadyReject.Error())
+		}
 		if errors.Is(err, pkg.ErrUserTaskNotFound) {
-			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserNotFound.Error())
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserTaskNotFound.Error())
 		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
