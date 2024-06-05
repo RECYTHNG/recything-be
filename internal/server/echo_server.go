@@ -41,7 +41,9 @@ func NewEchoServer(conf *config.Config, db database.Database) Server {
 
 func (s *echoServer) Start() {
 	s.app.Use(middleware.Recover())
-	s.app.Use(middleware.Logger())
+	s.app.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "[${method} | ${status}] ~ ${uri} ~ ${remote_ip} ~ ${latency_human}\n",
+	}))
 	s.app.Use(middleware.CORS())
 
 	// Public Handler
