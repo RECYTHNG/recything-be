@@ -10,7 +10,7 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
-func getVideoViewCount(videoURL string) (uint64, error) {
+func GetVideoViewCount(videoURL string) (uint64, error) {
 
 	conf := config.GetConfig()
 	apiKey := conf.YouTube.APIKey

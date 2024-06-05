@@ -3,6 +3,7 @@ package usecase
 import (
 	"strings"
 
+	"github.com/sawalreverr/recything/internal/helper"
 	"github.com/sawalreverr/recything/internal/video/manage_video/dto"
 	video "github.com/sawalreverr/recything/internal/video/manage_video/entity"
 	repository "github.com/sawalreverr/recything/internal/video/manage_video/repository"
@@ -20,14 +21,29 @@ func NewManageVideoUsecaseImpl(manageVideoRepository repository.ManageVideoRepos
 	}
 }
 
-func (usecase *ManageVideoUsecaseImpl) CreateDataVideoUseCase(video *video.Video) error {
-	if err := usecase.manageVideoRepository.FindTitleVideo(video.Title); err == nil {
+func (usecase *ManageVideoUsecaseImpl) CreateDataVideoUseCase(request *dto.CreateDataVideoRequest) error {
+	if err := usecase.manageVideoRepository.FindTitleVideo(request.Title); err == nil {
 		return pkg.ErrVideoTitleAlreadyExist
 	}
-	if err := usecase.manageVideoRepository.CreateDataVideo(video); err != nil {
+	if err, _ := usecase.manageVideoRepository.GetCategoryVideoById(request.CategoryId); err != nil {
+		return pkg.ErrVideoCategoryNotFound
+	}
+	view, errGetView := helper.GetVideoViewCount(request.LinkVideo)
+	if errGetView != nil {
+		return errGetView
+	}
+	intView := int(view)
+	video := video.Video{
+		Title:       request.Title,
+		Description: request.Description,
+		Thumbnail:   request.UrlThumbnail,
+		Link:        request.LinkVideo,
+		View:        intView,
+		DeletedAt:   gorm.DeletedAt{},
+	}
+	if err := usecase.manageVideoRepository.CreateDataVideo(&video); err != nil {
 		return err
 	}
-
 	return nil
 }
 

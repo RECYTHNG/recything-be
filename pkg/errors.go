@@ -56,4 +56,5 @@ var (
 	ErrVideoService                  = errors.New("video service error")
 	ErrApiYouTube                    = errors.New("api youtube error")
 	ErrParsingUrl                    = errors.New("parsing url error")
+	ErrVideoCategoryNotFound         = errors.New("video category not found")
 )

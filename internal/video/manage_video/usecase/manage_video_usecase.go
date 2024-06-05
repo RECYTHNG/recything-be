@@ -6,7 +6,7 @@ import (
 )
 
 type ManageVideoUsecase interface {
-	CreateDataVideoUseCase(video *video.Video) error
+	CreateDataVideoUseCase(request *dto.CreateDataVideoRequest) error
 	CreateCategoryVideoUseCase(request *dto.CreateCategoryVideoRequest) error
 	GetAllCategoryVideoUseCase() ([]video.VideoCategory, error)
 }

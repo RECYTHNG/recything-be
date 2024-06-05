@@ -22,7 +22,39 @@ func NewManageVideoHandlerImpl(manageVideoUsecase usecase.ManageVideoUsecase) *M
 }
 
 func (handler *ManageVideoHandlerImpl) CreateDataVideoHandler(c echo.Context) error {
-	return nil
+	var request dto.CreateDataVideoRequest
+
+	if err := c.Bind(&request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid request body, detail+"+err.Error())
+	}
+	if err := c.Validate(&request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	}
+	if err := handler.ManageVideoUsecase.CreateDataVideoUseCase(&request); err != nil {
+		if errors.Is(err, pkg.ErrVideoTitleAlreadyExist) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoTitleAlreadyExist.Error())
+		}
+		if errors.Is(err, pkg.ErrVideoCategoryNotFound) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoCategoryNotFound.Error())
+		}
+		if errors.Is(err, pkg.ErrNoVideoIdFoundOnUrl) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrNoVideoIdFoundOnUrl.Error())
+		}
+		if errors.Is(err, pkg.ErrVideoNotFound) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoNotFound.Error())
+		}
+		if errors.Is(err, pkg.ErrVideoService) {
+			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrVideoService.Error())
+		}
+		if errors.Is(err, pkg.ErrApiYouTube) {
+			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrApiYouTube.Error())
+		}
+		if errors.Is(err, pkg.ErrParsingUrl) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrParsingUrl.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+	}
+	return helper.ResponseHandler(c, http.StatusCreated, "success create data video", nil)
 }
 
 func (handler *ManageVideoHandlerImpl) CreateCategoryVideoHandler(c echo.Context) error {

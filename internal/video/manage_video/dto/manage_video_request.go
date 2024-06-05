@@ -5,7 +5,7 @@ type CreateDataVideoRequest struct {
 	Description  string `json:"description" validate:"required"`
 	UrlThumbnail string `json:"url_thumbnail" validate:"required"`
 	LinkVideo    string `json:"link_video" validate:"required"`
-	CategoryId   string `json:"category_id" validate:"required"`
+	CategoryId   int    `json:"category_id" validate:"required"`
 }
 
 type CreateCategoryVideoRequest struct {
