@@ -12,4 +12,5 @@ type ManageVideoRepository interface {
 	GetAllCategoryVideo() ([]video.VideoCategory, error)
 	GetCategoryVideoById(id int) (*video.VideoCategory, error)
 	GetAllDataVideoPagination(limit int, page int) ([]video.Video, int, error)
+	GetDetailsDataVideoById(id int) (*video.Video, error)
 }

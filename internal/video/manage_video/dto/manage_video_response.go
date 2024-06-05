@@ -29,3 +29,13 @@ type GetAllDataVideoPaginationResponse struct {
 	TotalData int          `json:"total_data"`
 	TotalPage int          `json:"total_page"`
 }
+
+type GetDetailsDataVideoByIdResponse struct {
+	Id           int          `json:"id"`
+	Title        string       `json:"title"`
+	Description  string       `json:"description"`
+	UrlThumbnail string       `json:"url_thumbnail"`
+	LinkVideo    string       `json:"link_video"`
+	Viewer       int          `json:"viewer"`
+	Category     DataCategory `json:"category"`
+}

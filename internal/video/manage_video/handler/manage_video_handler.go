@@ -8,4 +8,5 @@ type ManageVideoHandler interface {
 	GetAllCategoryVideoHandler(c *echo.Context) error
 	UploadThumbnailVideoHandler(c *echo.Context) error
 	GetAllDataVideoPaginationHandler(c *echo.Context) error
+	GetDetailsDataVideoByIdHandler(c *echo.Context) error
 }

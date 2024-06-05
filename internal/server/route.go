@@ -284,4 +284,7 @@ func (s *echoServer) manageVideo() {
 
 	// get all data video pagination
 	s.gr.GET("/videos/data", handler.GetAllDataVideoPaginationHandler, SuperAdminOrAdminMiddleware)
+
+	// get details data video by id
+	s.gr.GET("/videos/data/:videoId", handler.GetDetailsDataVideoByIdHandler, SuperAdminOrAdminMiddleware)
 }

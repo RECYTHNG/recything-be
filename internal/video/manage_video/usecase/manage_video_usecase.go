@@ -10,4 +10,5 @@ type ManageVideoUsecase interface {
 	CreateCategoryVideoUseCase(request *dto.CreateCategoryVideoRequest) error
 	GetAllCategoryVideoUseCase() ([]video.VideoCategory, error)
 	GetAllDataVideoPaginationUseCase(limit int, page int) ([]video.Video, int, error)
+	GetDetailsDataVideoByIdUseCase(id int) (*video.Video, error)
 }

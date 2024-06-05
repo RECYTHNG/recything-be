@@ -78,3 +78,14 @@ func (usecase *ManageVideoUsecaseImpl) GetAllDataVideoPaginationUseCase(limit in
 	}
 	return videos, count, nil
 }
+
+func (usecase *ManageVideoUsecaseImpl) GetDetailsDataVideoByIdUseCase(id int) (*video.Video, error) {
+	video, err := usecase.manageVideoRepository.GetDetailsDataVideoById(id)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, pkg.ErrVideoNotFound
+		}
+		return nil, err
+	}
+	return video, nil
+}

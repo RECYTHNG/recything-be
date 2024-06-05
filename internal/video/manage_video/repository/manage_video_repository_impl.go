@@ -72,3 +72,14 @@ func (repository *ManageVideoRepositoryImpl) GetAllDataVideoPagination(limit int
 	return videos, int(total), nil
 
 }
+
+func (repository *ManageVideoRepositoryImpl) GetDetailsDataVideoById(id int) (*video.Video, error) {
+	var video video.Video
+	if err := repository.DB.GetDB().
+		Preload("Category").
+		Where("id = ?", id).
+		First(&video).Error; err != nil {
+		return nil, err
+	}
+	return &video, nil
+}

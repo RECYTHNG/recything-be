@@ -176,3 +176,30 @@ func (handler *ManageVideoHandlerImpl) GetAllDataVideoPaginationHandler(c echo.C
 
 	return c.JSON(http.StatusOK, data)
 }
+
+func (handler *ManageVideoHandlerImpl) GetDetailsDataVideoByIdHandler(c echo.Context) error {
+	id := c.Param("videoId")
+	idInt, errConvert := strconv.Atoi(id)
+	if errConvert != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid id parameter")
+	}
+	video, err := handler.ManageVideoUsecase.GetDetailsDataVideoByIdUseCase(idInt)
+	if err != nil {
+		if errors.Is(err, pkg.ErrVideoNotFound) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoNotFound.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+	}
+	var dataVideo *dto.GetDetailsDataVideoByIdResponse
+	dataVideo = &dto.GetDetailsDataVideoByIdResponse{
+		Id:           video.ID,
+		Title:        video.Title,
+		Description:  video.Description,
+		UrlThumbnail: video.Thumbnail,
+		LinkVideo:    video.Link,
+		Viewer:       video.View,
+		Category:     dto.DataCategory{Id: video.Category.ID, Name: video.Category.Name},
+	}
+	responseData := helper.ResponseData(http.StatusOK, "success", dataVideo)
+	return c.JSON(http.StatusOK, responseData)
+}
