@@ -1,84 +1,81 @@
 package repository
 
 import (
-	"errors"
-
 	"github.com/sawalreverr/recything/internal/article/entity"
 	"github.com/sawalreverr/recything/internal/database"
-	"github.com/sawalreverr/recything/pkg"
 )
 
+// ArticleRepository defines the interface for article repository
+
+// articleRepositoryImpl implements the ArticleRepository interface
 type articleRepositoryImpl struct {
 	DB database.Database
 }
 
-func NewArticleRepository(DB database.Database) ArticleRepository {
+// NewArticleRepository returns a new instance of articleRepositoryImpl
+func NewArticleRepository(db database.Database) ArticleRepository {
 	return &articleRepositoryImpl{DB: db}
 }
 
-func (r *articleRepositoryImpl) CreateArticleRepository(*entity.Article, error) error {
-	query := "INSERT INTO articles (id, title, content, image_url) VALUES (?, ?, ?, ?)"
-	_, err := r.DB.GetDB().Exec(query, article.ID, article.Title, article.Content, article.ImageUrl)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (r *articleRepositoryImpl) GetAllArticleRepository(limit, offset int) ([]entity.Article, int, error) {
-	query := "SELECT id, title, content, image_url FROM articles LIMIT ? OFFSET ?"
-	rows, err := r.DB.GetDB().Query(query, limit, offset)
-	if err != nil {
-		return nil, 0, err
-	}
-	defer rows.Close()
-
-	var articles []entity.Article
-	for rows.Next() {
-		var article *entity.Article
-		if err := rows.Scan(&article.ID, &article.Title, &article.Content, &article.ImageUrl); err != nil {
-			return nil, 0, err
-		}
-		articles = append(articles, article)
-	}
-
-	countQuery := "SELECT COUNT(*) FROM articles"
-	var total int
-	err = r.DB.GetDB().QueryRow(countQuery).Scan(&total)
-	if err != nil {
-		return nil, 0, err
-	}
-
-	return articles, total, nil
-}
-
-func (r *articleRepositoryImpl) GetByIDArticleRepository(id string) (entity.Article, error) {
-	query := "SELECT id, title, content, image_url FROM articles WHERE id = ?"
-	row := r.DB.GetDB().QueryRow(query, id)
-
+// FindArticleByTitle retrieves an article by its title
+func (repo *articleRepositoryImpl) FindArticleByTitle(title string) (*entity.Article, error) {
 	var article entity.Article
-	if err := row.Scan(&article.ID, &article.Title, &article.Content, &article.ImageUrl); err != nil {
-		if errors.Is(err, r.DB.GetDB().ErrNoRows) {
-			return article, pkg.ErrArticleNotFound
-		}
-		return article, err
+	if err := repo.DB.GetDB().Where("title = ?", title).First(&article).Error; err != nil {
+		return nil, err
+	}
+	return &article, nil
+}
+
+// FindArticleByID retrieves an article by its ID
+func (repo *articleRepositoryImpl) FindArticleByID(id string) (*entity.Article, error) {
+	var article entity.Article
+	if err := repo.DB.GetDB().Where("id = ?", id).First(&article).Error; err != nil {
+		return nil, err
+	}
+	return &article, nil
+}
+
+// FindLastIdArticle retrieves the last inserted article's ID
+func (repo *articleRepositoryImpl) FindLastIdArticle() (string, error) {
+	var article entity.Article
+	if err := repo.DB.GetDB().Order("id DESC").First(&article).Error; err != nil {
+		return "", err
+	}
+	return article.ID, nil
+}
+
+// CreateDataArticle creates a new article
+func (repo *articleRepositoryImpl) CreateDataArticle(article *entity.Article) (*entity.Article, error) {
+	if err := repo.DB.GetDB().Create(article).Error; err != nil {
+		return nil, err
 	}
 	return article, nil
 }
 
-func (r *articleRepositoryImpl) UpdateArticleRepository(article entity.Article) error {
-	query := "UPDATE articles SET title = ?, content = ?, image_url = ? WHERE id = ?"
-	_, err := r.DB.GetDB().Exec(query, article.Title, article.Content, article.ImageUrl, article.ID)
-	if err != nil {
-		return err
+// GetDataAllArticle retrieves all articles with pagination
+func (repo *articleRepositoryImpl) GetDataAllArticle(limit int, offset int) ([]entity.Article, int, error) {
+	var articles []entity.Article
+	var totalCount int64
+	if err := repo.DB.GetDB().Offset(offset).Limit(limit).Find(&articles).Error; err != nil {
+		return nil, 0, err
 	}
-	return nil
+	if err := repo.DB.GetDB().Model(&entity.Article{}).Count(&totalCount).Error; err != nil {
+		return nil, 0, err
+	}
+	return articles, int(totalCount), nil
 }
 
-func (r *articleRepositoryImpl) DeleteArticleRepository(id string) error {
-	query := "DELETE FROM articles WHERE id = ?"
-	_, err := r.DB.GetDB().Exec(query, id)
-	if err != nil {
+// UpdateDataArticle updates an existing article
+func (repo *articleRepositoryImpl) UpdateDataArticle(article *entity.Article, id string) (*entity.Article, error) {
+	if err := repo.DB.GetDB().Model(&entity.Article{}).Where("id = ?", id).Updates(article).Error; err != nil {
+		return nil, err
+	}
+	return article, nil
+}
+
+// DeleteArticle deletes an article by its ID
+func (repo *articleRepositoryImpl) DeleteArticle(id string) error {
+	if err := repo.DB.GetDB().Where("id = ?", id).Delete(&entity.Article{}).Error; err != nil {
 		return err
 	}
 	return nil

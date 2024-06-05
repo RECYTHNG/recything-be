@@ -104,16 +104,16 @@ func SuccessWithDataResponse(message string, data interface{}) SuccessResponseJs
 	}
 }
 
-func ErrorHandler(c echo.Context, code int, message string) error {
-	return c.JSON(code, map[string]string{
-		"message": message,
-	})
-}
+// func ErrorHandler(c echo.Context, code int, message string) error {
+// 	return c.JSON(code, map[string]string{
+// 		"message": message,
+// 	})
+// }
 
-func ResponseData(code int, message string, data interface{}) map[string]interface{} {
-	return map[string]interface{}{
-		"code":    code,
-		"message": message,
-		"data":    data,
-	}
-}
+// func ResponseData(code int, message string, data interface{}) map[string]interface{} {
+// 	return map[string]interface{}{
+// 		"code":    code,
+// 		"message": message,
+// 		"data":    data,
+// 	}
+// }
