@@ -15,4 +15,5 @@ type UserTaskRepository interface {
 	UploadImageTask(userTask *user_task.UserTaskChallenge, userTaskId string) (*user_task.UserTaskChallenge, error)
 	GetUserTaskByUserId(userId string) ([]user_task.UserTaskChallenge, error)
 	GetUserTaskDoneByUserId(userId string) ([]user_task.UserTaskChallenge, error)
+	FindUserHasSameTask(userId string, taskId string) (*user_task.UserTaskChallenge, error)
 }

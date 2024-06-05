@@ -152,3 +152,12 @@ func (repository *UserTaskRepositoryImpl) GetUserTaskDoneByUserId(userId string)
 	}
 	return userTask, nil
 }
+
+func (repository *UserTaskRepositoryImpl) FindUserHasSameTask(userId string, taskId string) (*user_task.UserTaskChallenge, error) {
+
+	var userTask user_task.UserTaskChallenge
+	if err := repository.DB.GetDB().Where("user_id = ? and task_challenge_id = ?", userId, taskId).First(&userTask).Error; err != nil {
+		return nil, err
+	}
+	return &userTask, nil
+}

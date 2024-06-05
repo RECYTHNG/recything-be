@@ -52,6 +52,10 @@ func (usecase *UserTaskUsecaseImpl) CreateUserTaskUsecase(taskChallengeId string
 		return nil, pkg.ErrUserTaskExist
 	}
 
+	if _, err := usecase.ManageTaskRepository.FindUserHasSameTask(userId, taskChallengeId); err == nil {
+		return nil, pkg.ErrUserTaskExist
+	}
+
 	lastId, _ := usecase.ManageTaskRepository.FindLastIdTaskChallenge()
 	id := helper.GenerateCustomID(lastId, "UT")
 	userTask := &user_task.UserTaskChallenge{
