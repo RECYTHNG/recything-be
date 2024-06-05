@@ -47,4 +47,7 @@ var (
 	// manage achievement
 	ErrAchievementLevelAlreadyExist = errors.New("archievement level already exist")
 	ErrAchievementNotFound          = errors.New("archievement not found")
+
+	// Custom Data
+	ErrCustomDataNotFound = errors.New("custom data not found")
 )

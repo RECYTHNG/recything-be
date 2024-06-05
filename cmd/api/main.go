@@ -24,6 +24,9 @@ func main() {
 	// Init Faqs
 	db.InitFaqs()
 
+	// Init Custom Data
+	db.InitCustomDatas()
+
 	app := server.NewEchoServer(conf, db)
 	c := cron.New()
 

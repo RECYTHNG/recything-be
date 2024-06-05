@@ -12,6 +12,9 @@ import (
 	"github.com/sawalreverr/recything/internal/admin/usecase"
 	authHandler "github.com/sawalreverr/recything/internal/auth/handler"
 	authUsecase "github.com/sawalreverr/recything/internal/auth/usecase"
+	customDataHandler "github.com/sawalreverr/recything/internal/custom-data/handler"
+	customDataRepository "github.com/sawalreverr/recything/internal/custom-data/repository"
+	customDataUsecase "github.com/sawalreverr/recything/internal/custom-data/usecase"
 	faqHandler "github.com/sawalreverr/recything/internal/faq/handler"
 	faqRepo "github.com/sawalreverr/recything/internal/faq/repository"
 	faqUsecase "github.com/sawalreverr/recything/internal/faq/usecase"
@@ -260,4 +263,25 @@ func (s *echoServer) manageAchievement() {
 
 	// delete achievement
 	s.gr.DELETE("/achievements/:achievementId", handler.DeleteAchievementHandler, SuperAdminOrAdminMiddleware)
+}
+
+func (s *echoServer) customDataHandler() {
+	repository := customDataRepository.NewCustomDataRepository(s.db)
+	usecase := customDataUsecase.NewCustomDataUsecase(repository)
+	handler := customDataHandler.NewCustomDataHandler(usecase)
+
+	// Create new custom data for admin
+	s.gr.POST("/custom-data", handler.NewCustomData, SuperAdminOrAdminMiddleware)
+
+	// Update custom data for admin
+	s.gr.PUT("/custom-data/:dataId", handler.UpdateData, SuperAdminOrAdminMiddleware)
+
+	// Delete custom data for admin
+	s.gr.DELETE("/custom-data/:dataId", handler.DeleteData, SuperAdminOrAdminMiddleware)
+
+	// Get custom data by id for admin
+	s.gr.GET("/custom-data/:dataId", handler.GetDataByID, SuperAdminOrAdminMiddleware)
+
+	// Get all custom data for admin
+	s.gr.GET("/custom-datas", handler.GetAllData, SuperAdminMiddleware)
 }

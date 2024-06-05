@@ -5,6 +5,7 @@ import (
 
 	achievement "github.com/sawalreverr/recything/internal/achievements/manage_achievements/entity"
 	"github.com/sawalreverr/recything/internal/admin/entity"
+	customdata "github.com/sawalreverr/recything/internal/custom-data"
 	"github.com/sawalreverr/recything/internal/faq"
 	"github.com/sawalreverr/recything/internal/report"
 	task "github.com/sawalreverr/recything/internal/task/manage_task/entity"
@@ -26,6 +27,7 @@ func AutoMigrate(db Database) {
 		&user_task.UserTaskChallenge{},
 		&user_task.UserTaskImage{},
 		&achievement.Achievement{},
+		&customdata.CustomData{},
 	); err != nil {
 		log.Fatal("Database Migration Failed!")
 	}

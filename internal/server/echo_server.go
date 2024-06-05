@@ -74,6 +74,9 @@ func (s *echoServer) Start() {
 	// manage achievement handler
 	s.manageAchievement()
 
+	// Custom Data Handler
+	s.customDataHandler()
+
 	serverPORT := fmt.Sprintf(":%d", s.conf.Server.Port)
 	s.app.Logger.Fatal(s.app.Start(serverPORT))
 }

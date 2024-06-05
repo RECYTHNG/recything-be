@@ -7,6 +7,7 @@ import (
 
 	"github.com/sawalreverr/recything/config"
 	adminEntity "github.com/sawalreverr/recything/internal/admin/entity"
+	customDataEntity "github.com/sawalreverr/recything/internal/custom-data"
 	faqEntity "github.com/sawalreverr/recything/internal/faq"
 	"github.com/sawalreverr/recything/internal/helper"
 	"github.com/sawalreverr/recything/internal/report"
@@ -54,7 +55,7 @@ func (m *mysqlDatabase) InitWasteMaterials() {
 		m.DB.FirstOrCreate(&material, material)
 	}
 
-	log.Println("Waste material data added!")
+	log.Println("Dummy Waste material added!")
 }
 
 func (m *mysqlDatabase) InitSuperAdmin() {
@@ -72,7 +73,7 @@ func (m *mysqlDatabase) InitSuperAdmin() {
 	}
 
 	m.GetDB().FirstOrCreate(&admin)
-	log.Println("Super admin data added!")
+	log.Println("Dummy Super admin added!")
 }
 
 func (m *mysqlDatabase) InitFaqs() {
@@ -109,7 +110,27 @@ func (m *mysqlDatabase) InitFaqs() {
 	for _, faq := range faqs {
 		m.GetDB().FirstOrCreate(&faq, faq)
 	}
-	log.Println("FAQs data added!")
+	log.Println("Dummy FAQs added!")
+}
+
+func (m *mysqlDatabase) InitCustomDatas() {
+	datas := []customDataEntity.CustomData{
+		{ID: "CDT0001", Topic: "Daur Ulang Plastik", Description: "Proses daur ulang plastik melibatkan pengumpulan sampah plastik, pembersihan, penghancuran menjadi serpihan kecil, dan kemudian melelehkannya untuk dibentuk menjadi produk baru. Plastik yang dapat didaur ulang termasuk botol air, wadah makanan, dan kantong belanja tertentu."},
+		{ID: "CDT0002", Topic: "Pemanfaatan Sampah Organik", Description: "Sampah organik seperti sisa makanan dan daun dapat diubah menjadi kompos yang berguna sebagai pupuk alami. Proses ini melibatkan penguraian bahan organik oleh mikroorganisme dalam kondisi yang terkontrol."},
+		{ID: "CDT0003", Topic: "Pengelolaan Sampah Elektronik", Description: "Sampah elektronik seperti ponsel lama, komputer, dan televisi harus dibawa ke pusat daur ulang elektronik. Komponen-komponen berharga seperti logam mulia bisa diekstraksi dan digunakan kembali, sementara bahan berbahaya dikelola dengan aman."},
+		{ID: "CDT0004", Topic: "Kompetisi Pengurangan Sampah", Description: "Kompetisi ini mengajak masyarakat untuk mengurangi sampah yang mereka hasilkan dalam periode tertentu. Pemenang akan ditentukan berdasarkan jumlah sampah yang berhasil dikurangi dan kreativitas dalam mendaur ulang atau mengurangi penggunaan barang sekali pakai."},
+		{ID: "CDT0005", Topic: "Melaporkan Sampah yang Tidak pada Tempatnya", Description: "Pengguna aplikasi dapat melaporkan sampah yang ditemukan di tempat umum yang tidak sesuai. Laporan harus mencakup foto, lokasi, dan jenis sampah. Tim kebersihan akan diberitahu untuk mengambil tindakan."},
+		{ID: "CDT0006", Topic: "Daur Ulang Kertas", Description: "Kertas dapat didaur ulang menjadi produk baru dengan cara dikumpulkan, dipisahkan berdasarkan jenis, dihancurkan menjadi pulp, kemudian dibersihkan dan diproses menjadi kertas baru. Produk seperti koran, majalah, dan karton sering kali dapat didaur ulang."},
+		{ID: "CDT0007", Topic: "Penggunaan Ulang Barang Bekas", Description: "Banyak barang bekas seperti pakaian, furnitur, dan alat rumah tangga masih bisa digunakan kembali. Dengan sedikit kreativitas, barang-barang ini bisa diperbaiki atau dimodifikasi untuk digunakan kembali, mengurangi jumlah sampah yang berakhir di tempat pembuangan akhir."},
+		{ID: "CDT0008", Topic: "Pengelolaan Sampah Anorganik", Description: "Sampah anorganik seperti kaca, logam, dan beberapa jenis plastik bisa didaur ulang. Pengelolaan yang tepat melibatkan pemisahan berdasarkan jenis bahan, pembersihan, dan pengiriman ke fasilitas daur ulang yang sesuai."},
+		{ID: "CDT0009", Topic: "Dampak Lingkungan dari Sampah Plastik", Description: "Sampah plastik yang tidak terkelola dengan baik bisa mencemari lingkungan, termasuk lautan. Plastik membutuhkan ratusan tahun untuk terurai dan bisa membahayakan kehidupan laut. Mengurangi penggunaan plastik sekali pakai dan mendaur ulang plastik yang ada adalah langkah penting untuk mengatasi masalah ini."},
+		{ID: "CDT0010", Topic: "Teknologi Baru dalam Daur Ulang", Description: "Teknologi baru seperti pemanfaatan enzim untuk mendaur ulang plastik dan penggunaan sensor untuk pengelolaan sampah cerdas sedang dikembangkan. Teknologi ini bertujuan untuk meningkatkan efisiensi proses daur ulang dan mengurangi jumlah sampah yang tidak terkelola dengan baik."},
+	}
+
+	for _, data := range datas {
+		m.GetDB().FirstOrCreate(&data, data)
+	}
+	log.Println("Dummy Custom Data added!")
 }
 
 func (m *mysqlDatabase) GetDB() *gorm.DB {
