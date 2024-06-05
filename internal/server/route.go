@@ -281,4 +281,7 @@ func (s *echoServer) manageVideo() {
 
 	// get all category video
 	s.gr.GET("/videos/categories", handler.GetAllCategoryVideoHandler, SuperAdminOrAdminMiddleware)
+
+	// get all data video pagination
+	s.gr.GET("/videos/data", handler.GetAllDataVideoPaginationHandler, SuperAdminOrAdminMiddleware)
 }

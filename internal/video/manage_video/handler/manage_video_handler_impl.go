@@ -2,7 +2,9 @@ package handler
 
 import (
 	"errors"
+	"math"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -126,4 +128,51 @@ func (handler *ManageVideoHandlerImpl) GetAllCategoryVideoHandler(c echo.Context
 	data.Data = dataCategories
 	responseData := helper.ResponseData(http.StatusOK, "success", data.Data)
 	return c.JSON(http.StatusOK, responseData)
+}
+
+func (handler *ManageVideoHandlerImpl) GetAllDataVideoPaginationHandler(c echo.Context) error {
+	limit := c.QueryParam("limit")
+	page := c.QueryParam("page")
+
+	if limit == "" {
+		limit = "10"
+	}
+	if page == "" {
+		page = "1"
+	}
+
+	limitInt, errLimit := strconv.Atoi(limit)
+	if errLimit != nil || limitInt <= 0 {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid limit parameter")
+	}
+	pageInt, errPage := strconv.Atoi(page)
+	if errPage != nil || pageInt <= 0 {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid page parameter")
+	}
+	videos, totalData, err := handler.ManageVideoUsecase.GetAllDataVideoPaginationUseCase(limitInt, pageInt)
+
+	if err != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
+	}
+	var dataVideos []*dto.DataVideo
+	for _, video := range videos {
+		dataVideos = append(dataVideos, &dto.DataVideo{
+			Id:           video.ID,
+			Title:        video.Title,
+			Description:  video.Description,
+			UrlThumbnail: video.Thumbnail,
+		})
+	}
+
+	data := &dto.GetAllDataVideoPaginationResponse{
+		Code:      http.StatusOK,
+		Message:   "success",
+		Data:      dataVideos,
+		Page:      pageInt,
+		Limit:     limitInt,
+		TotalData: totalData,
+		TotalPage: int(math.Ceil(float64(totalData) / float64(limitInt))),
+	}
+
+	return c.JSON(http.StatusOK, data)
 }

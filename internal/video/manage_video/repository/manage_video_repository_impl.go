@@ -58,3 +58,17 @@ func (repository *ManageVideoRepositoryImpl) GetCategoryVideoById(id int) (*vide
 	}
 	return &category, nil
 }
+
+func (repository *ManageVideoRepositoryImpl) GetAllDataVideoPagination(limit int, page int) ([]video.Video, int, error) {
+	var videos []video.Video
+	var total int64
+	offset := (page - 1) * limit
+	if err := repository.DB.GetDB().Model(&video.Video{}).Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+	if err := repository.DB.GetDB().Limit(limit).Offset(offset).Order("id desc").Find(&videos).Error; err != nil {
+		return nil, 0, err
+	}
+	return videos, int(total), nil
+
+}

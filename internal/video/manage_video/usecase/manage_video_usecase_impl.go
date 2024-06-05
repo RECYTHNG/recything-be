@@ -70,3 +70,11 @@ func (usecase *ManageVideoUsecaseImpl) GetAllCategoryVideoUseCase() ([]video.Vid
 	}
 	return categories, nil
 }
+
+func (usecase *ManageVideoUsecaseImpl) GetAllDataVideoPaginationUseCase(limit int, page int) ([]video.Video, int, error) {
+	videos, count, err := usecase.manageVideoRepository.GetAllDataVideoPagination(limit, page)
+	if err != nil {
+		return nil, 0, err
+	}
+	return videos, count, nil
+}
