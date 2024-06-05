@@ -8,4 +8,5 @@ import (
 type ManageVideoUsecase interface {
 	CreateDataVideoUseCase(video *video.Video) error
 	CreateCategoryVideoUseCase(request *dto.CreateCategoryVideoRequest) error
+	GetAllCategoryVideoUseCase() ([]video.VideoCategory, error)
 }

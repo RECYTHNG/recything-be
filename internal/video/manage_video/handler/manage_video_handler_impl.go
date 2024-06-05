@@ -42,3 +42,24 @@ func (handler *ManageVideoHandlerImpl) CreateCategoryVideoHandler(c echo.Context
 	}
 	return helper.ResponseHandler(c, http.StatusCreated, "success create category video", nil)
 }
+
+func (handler *ManageVideoHandlerImpl) GetAllCategoryVideoHandler(c echo.Context) error {
+	categories, err := handler.ManageVideoUsecase.GetAllCategoryVideoUseCase()
+	if err != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+	}
+	var dataCategories []*dto.DataCategory
+	data := &dto.GetAllCategoryVideoResponse{
+		Data: []*dto.DataCategory{},
+	}
+
+	for _, category := range categories {
+		dataCategories = append(dataCategories, &dto.DataCategory{
+			Id:   category.ID,
+			Name: category.Name,
+		})
+	}
+	data.Data = dataCategories
+	responseData := helper.ResponseData(http.StatusOK, "success", data.Data)
+	return c.JSON(http.StatusOK, responseData)
+}

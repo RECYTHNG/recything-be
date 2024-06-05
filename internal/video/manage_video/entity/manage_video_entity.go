@@ -8,7 +8,7 @@ import (
 )
 
 type Video struct {
-	ID              string `gorm:"primaryKey"`
+	ID              int `gorm:"primaryKey"`
 	Title           string
 	Description     string
 	Thumbnail       string
@@ -23,7 +23,7 @@ type Video struct {
 }
 
 type VideoCategory struct {
-	ID        string         `gorm:"primaryKey"`
+	ID        int            `gorm:"primaryKey"`
 	Name      string         `gorm:"unique;not null"`
 	CreatedAt time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt time.Time      `gorm:"autoUpdateTime"`
@@ -31,7 +31,7 @@ type VideoCategory struct {
 }
 
 type Comment struct {
-	ID        string    `gorm:"primaryKey"`
+	ID        int       `gorm:"primaryKey"`
 	VideoID   string    `gorm:"index"`
 	UserID    string    `gorm:"index"`
 	User      user.User `gorm:"foreignKey:UserID"`

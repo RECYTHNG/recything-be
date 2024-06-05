@@ -45,3 +45,11 @@ func (usecase *ManageVideoUsecaseImpl) CreateCategoryVideoUseCase(request *dto.C
 	}
 	return nil
 }
+
+func (usecase *ManageVideoUsecaseImpl) GetAllCategoryVideoUseCase() ([]video.VideoCategory, error) {
+	categories, err := usecase.manageVideoRepository.GetAllCategoryVideo()
+	if err != nil {
+		return nil, err
+	}
+	return categories, nil
+}

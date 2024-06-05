@@ -275,4 +275,7 @@ func (s *echoServer) manageVideo() {
 
 	// create category video
 	s.gr.POST("/videos/categories", handler.CreateCategoryVideoHandler, SuperAdminOrAdminMiddleware)
+
+	// get all category video
+	s.gr.GET("/videos/categories", handler.GetAllCategoryVideoHandler, SuperAdminOrAdminMiddleware)
 }
