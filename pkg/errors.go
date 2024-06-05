@@ -27,4 +27,24 @@ var (
 
 	// Date
 	ErrDateFormat = errors.New("invalid date format")
+
+	// Manage Task
+	ErrTaskStepsNull = errors.New("steps cannot be null")
+	ErrTaskNotFound  = errors.New("task not found")
+
+	// User Task
+	ErrImageTaskNull          = errors.New("image task cannot be null")
+	ErrUserTaskExist          = errors.New("user task already exist")
+	ErrUserTaskNotFound       = errors.New("user task not found")
+	ErrUserTaskDone           = errors.New("user task already done")
+	ErrTaskCannotBeFollowed   = errors.New("task cannot be followed")
+	ErrUserNoHasTask          = errors.New("user has no task")
+	ErrImagesExceed           = errors.New("image exceed limit")
+	ErrUserTaskNotReject      = errors.New("user task not reject")
+	ErrUserTaskAlreadyReject  = errors.New("user task already reject")
+	ErrUserTaskAlreadyApprove = errors.New("user task already approve")
+
+	// manage achievement
+	ErrAchievementLevelAlreadyExist = errors.New("archievement level already exist")
+	ErrAchievementNotFound          = errors.New("archievement not found")
 )

@@ -3,9 +3,12 @@ package database
 import (
 	"log"
 
+	achievement "github.com/sawalreverr/recything/internal/achievements/manage_achievements/entity"
 	"github.com/sawalreverr/recything/internal/admin/entity"
 	"github.com/sawalreverr/recything/internal/faq"
 	"github.com/sawalreverr/recything/internal/report"
+	task "github.com/sawalreverr/recything/internal/task/manage_task/entity"
+	user_task "github.com/sawalreverr/recything/internal/task/user_task/entity"
 	user "github.com/sawalreverr/recything/internal/user"
 )
 
@@ -18,6 +21,11 @@ func AutoMigrate(db Database) {
 		&report.ReportWasteMaterial{},
 		&report.ReportImage{},
 		&faq.FAQ{},
+		&task.TaskChallenge{},
+		&task.TaskStep{},
+		&user_task.UserTaskChallenge{},
+		&user_task.UserTaskImage{},
+		&achievement.Achievement{},
 	); err != nil {
 		log.Fatal("Database Migration Failed!")
 	}

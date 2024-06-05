@@ -4,6 +4,9 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	achievementHandler "github.com/sawalreverr/recything/internal/achievements/manage_achievements/handler"
+	achievementRepo "github.com/sawalreverr/recything/internal/achievements/manage_achievements/repository"
+	achievementUsecase "github.com/sawalreverr/recything/internal/achievements/manage_achievements/usecase"
 	"github.com/sawalreverr/recything/internal/admin/handler"
 	"github.com/sawalreverr/recything/internal/admin/repository"
 	"github.com/sawalreverr/recything/internal/admin/usecase"
@@ -16,6 +19,15 @@ import (
 	reportHandler "github.com/sawalreverr/recything/internal/report/handler"
 	reportRepo "github.com/sawalreverr/recything/internal/report/repository"
 	reportUsecase "github.com/sawalreverr/recything/internal/report/usecase"
+	approvalTaskHandler "github.com/sawalreverr/recything/internal/task/approval_task/handler"
+	approvalTaskRepo "github.com/sawalreverr/recything/internal/task/approval_task/repository"
+	approvalTaskUsecase "github.com/sawalreverr/recything/internal/task/approval_task/usecase"
+	taskHandler "github.com/sawalreverr/recything/internal/task/manage_task/handler"
+	taskRepo "github.com/sawalreverr/recything/internal/task/manage_task/repository"
+	taskUsecase "github.com/sawalreverr/recything/internal/task/manage_task/usecase"
+	userTaskHandler "github.com/sawalreverr/recything/internal/task/user_task/handler"
+	userTaskRepo "github.com/sawalreverr/recything/internal/task/user_task/repository"
+	userTaskUsecase "github.com/sawalreverr/recything/internal/task/user_task/usecase"
 	userHandler "github.com/sawalreverr/recything/internal/user/handler"
 	userRepo "github.com/sawalreverr/recything/internal/user/repository"
 	userUsecase "github.com/sawalreverr/recything/internal/user/usecase"
@@ -148,4 +160,104 @@ func (s *echoServer) faqHttpHandler() {
 
 	// User get all faqs by keyword
 	s.gr.GET("/faqs/search", handler.GetFaqsByKeyword, UserMiddleware)
+}
+
+func (s *echoServer) manageTask() {
+	repository := taskRepo.NewManageTaskRepository(s.db)
+	usecase := taskUsecase.NewManageTaskUsecase(repository)
+	handler := taskHandler.NewManageTaskHandler(usecase)
+
+	// upload thumbnail task
+	s.gr.POST("/tasks/thumbnail", handler.UploadThumbnailHandler, SuperAdminOrAdminMiddleware)
+
+	// create task by admin or super admin
+	s.gr.POST("/tasks", handler.CreateTaskHandler, SuperAdminOrAdminMiddleware)
+
+	// get task challenge by pagination
+	s.gr.GET("/tasks", handler.GetTaskChallengePaginationHandler, SuperAdminOrAdminMiddleware)
+
+	// get task challenge by id
+	s.gr.GET("/tasks/:taskId", handler.GetTaskByIdHandler, SuperAdminOrAdminMiddleware)
+
+	// update task challenge
+	s.gr.PUT("/tasks/:taskId", handler.UpdateTaskHandler, SuperAdminOrAdminMiddleware)
+
+	// delete task challenge
+	s.gr.DELETE("/tasks/:taskId", handler.DeleteTaskHandler, SuperAdminOrAdminMiddleware)
+
+}
+
+func (s *echoServer) userTask() {
+	repository := userTaskRepo.NewUserTaskRepository(s.db)
+	usecase := userTaskUsecase.NewUserTaskUsecase(repository)
+	handler := userTaskHandler.NewUserTaskHandler(usecase)
+
+	// get all tasks
+	s.gr.GET("/user/tasks", handler.GetAllTasksHandler, UserMiddleware)
+
+	// get task by id
+	s.gr.GET("/user/tasks/:taskId", handler.GetTaskByIdHandler, UserMiddleware)
+
+	// create task by user or start task
+	s.gr.POST("/user/tasks/:taskChallengeId", handler.CreateUserTaskHandler, UserMiddleware)
+
+	// get task in progress by user current
+	s.gr.GET("/user_current/tasks/in-progress", handler.GetUserTaskByUserIdHandler, UserMiddleware)
+
+	// send task done by user current
+	s.gr.POST("/user_current/tasks/:userTaskId", handler.UploadImageTaskHandler, UserMiddleware)
+
+	// get task done by user current
+	s.gr.GET("/user_current/tasks/done", handler.GetUserTaskDoneByUserIdHandler, UserMiddleware)
+
+	// update user task if reject
+	s.gr.PUT("/user_current/tasks/:userTaskId", handler.UpdateUserTaskHandler, UserMiddleware)
+
+	// get user task details if repair
+	s.gr.GET("/user_current/tasks/:userTaskId", handler.GetUserTaskDetailsHandler, UserMiddleware)
+}
+
+func (s *echoServer) approvalTask() {
+	repository := approvalTaskRepo.NewApprovalTaskRepositoryImpl(s.db)
+	usecase := approvalTaskUsecase.NewApprovalTaskUsecase(repository)
+	handler := approvalTaskHandler.NewApprovalTaskHandler(usecase)
+
+	// get all pagination user task
+	s.gr.GET("/approve_tasks", handler.GetAllApprovalTaskPaginationHandler, SuperAdminOrAdminMiddleware)
+
+	// approve user task
+	s.gr.PUT("/approve_tasks/:userTaskId", handler.ApproveUserTaskHandler, SuperAdminOrAdminMiddleware)
+
+	// reject user task
+	s.gr.PUT("/reject_tasks/:userTaskId", handler.RejectUserTaskHandler, SuperAdminOrAdminMiddleware)
+
+	// get user task details
+	s.gr.GET("/user_task/:userTaskId", handler.GetUserTaskDetailsHandler, SuperAdminOrAdminMiddleware)
+}
+
+func (s *echoServer) manageAchievement() {
+	repository := achievementRepo.NewManageAchievementRepository(s.db)
+	usecase := achievementUsecase.NewManageAchievementUsecase(repository)
+	handler := achievementHandler.NewManageAchievementHandler(usecase)
+
+	// upload badge achievement
+	s.gr.POST("/achievements/badge", handler.UploadBadgeHandler, SuperAdminOrAdminMiddleware)
+
+	// create achievement
+	s.gr.POST("/achievements", handler.CreateAchievementHandler, SuperAdminOrAdminMiddleware)
+
+	// get all achievement
+	s.gr.GET("/achievements", handler.GetAllAchievementHandler, SuperAdminOrAdminMiddleware)
+
+	// get achievement by id
+	s.gr.GET("/achievements/:achievementId", handler.GetAchievementByIdHandler, SuperAdminOrAdminMiddleware)
+
+	// update badge achievement
+	s.gr.PUT("/achievements/badge", handler.UpdateBadgeHandler, SuperAdminOrAdminMiddleware)
+
+	// update achievement
+	s.gr.PUT("/achievements/:achievementId", handler.UpdateAchievementHandler, SuperAdminOrAdminMiddleware)
+
+	// delete achievement
+	s.gr.DELETE("/achievements/:achievementId", handler.DeleteAchievementHandler, SuperAdminOrAdminMiddleware)
 }
