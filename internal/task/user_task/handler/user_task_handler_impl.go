@@ -350,6 +350,9 @@ func (handler *UserTaskHandlerImpl) UpdateUserTaskHandler(c echo.Context) error 
 		if errors.Is(err, pkg.ErrImagesExceed) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrImagesExceed.Error())
 		}
+		if errors.Is(err, pkg.ErrUserTaskNotReject) {
+			return helper.ErrorHandler(c, http.StatusConflict, pkg.ErrUserTaskNotReject.Error())
+		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
 	}
 	var taskStep []dto.TaskSteps

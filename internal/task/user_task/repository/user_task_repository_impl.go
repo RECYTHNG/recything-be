@@ -79,7 +79,9 @@ func (repository *UserTaskRepositoryImpl) FindUserTask(userId string, userTaskId
 
 func (repository *UserTaskRepositoryImpl) FindTask(taskId string) (*task.TaskChallenge, error) {
 	var task task.TaskChallenge
-	if err := repository.DB.GetDB().Where("id = ?", taskId).First(&task).Error; err != nil {
+	if err := repository.DB.GetDB().
+		Preload("TaskSteps").
+		Where("id = ?", taskId).First(&task).Error; err != nil {
 		return nil, err
 	}
 	return &task, nil
@@ -167,7 +169,7 @@ func (repository *UserTaskRepositoryImpl) UpdateUserTask(userTask *user_task.Use
 	tx := repository.DB.GetDB().Begin()
 	if err := tx.Model(&user_task.UserTaskChallenge{}).Where("id = ?", userTaskId).Updates(map[string]interface{}{
 		"description_image": userTask.DescriptionImage,
-		"status_progress":   userTask.StatusProgress,
+		"status_accept":     userTask.StatusAccept,
 	}).
 		Error; err != nil {
 		tx.Rollback()
@@ -197,6 +199,7 @@ func (repository *UserTaskRepositoryImpl) UpdateUserTask(userTask *user_task.Use
 
 	tx.Preload("UserTaskImage").
 		Preload("TaskChallenge.TaskSteps").
+		Where("id = ?", userTaskId).
 		First(&userTask)
 
 	if err := tx.Commit().Error; err != nil {

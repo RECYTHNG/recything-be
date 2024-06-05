@@ -34,6 +34,7 @@ var (
 	ErrTaskCannotBeFollowed = errors.New("task cannot be followed")
 	ErrUserNoHasTask        = errors.New("user has no task")
 	ErrImagesExceed         = errors.New("image exceed limit")
+	ErrUserTaskNotReject    = errors.New("user task not reject")
 
 	// manage achievement
 	ErrAchievementLevelAlreadyExist = errors.New("archievement level already exist")

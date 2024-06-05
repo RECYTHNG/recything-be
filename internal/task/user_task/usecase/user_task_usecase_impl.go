@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"log"
 	"mime/multipart"
 	"time"
 
@@ -160,13 +161,19 @@ func (usecase *UserTaskUsecaseImpl) UpdateUserTaskUsecase(request *dto.UpdateUse
 		return nil, pkg.ErrUserTaskNotFound
 	}
 
+	if findUserTask.StatusAccept != "reject" {
+		return nil, pkg.ErrUserTaskNotReject
+	}
+
 	findTask, errFindTask := usecase.ManageTaskRepository.FindTask(findUserTask.TaskChallengeId)
 
 	if errFindTask != nil {
 		return nil, pkg.ErrTaskNotFound
 	}
 	countImage := len(fileImage)
+	log.Println("countImage", countImage)
 	countTaskSteps := len(findTask.TaskSteps) * 3
+	log.Println("countTaskSteps", countTaskSteps)
 	if countImage > countTaskSteps {
 		return nil, pkg.ErrImagesExceed
 	}
@@ -187,7 +194,7 @@ func (usecase *UserTaskUsecaseImpl) UpdateUserTaskUsecase(request *dto.UpdateUse
 
 	data := &user_task.UserTaskChallenge{
 		DescriptionImage: request.Description,
-		StatusProgress:   "need_rivew",
+		StatusAccept:     "need_rivew",
 		ImageTask:        []user_task.UserTaskImage{},
 	}
 
