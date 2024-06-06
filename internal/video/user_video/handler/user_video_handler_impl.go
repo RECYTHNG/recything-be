@@ -1,12 +1,15 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sawalreverr/recything/internal/helper"
 	"github.com/sawalreverr/recything/internal/video/user_video/dto"
 	"github.com/sawalreverr/recything/internal/video/user_video/usecase"
+	"github.com/sawalreverr/recything/pkg"
 )
 
 type UserVideoHandlerImpl struct {
@@ -65,6 +68,50 @@ func (handler *UserVideoHandlerImpl) SearchVideoByTitleHandler(c echo.Context) e
 	}
 	data.DataVideo = dataVideo
 	responseData := helper.ResponseData(http.StatusOK, "success get all video", data.DataVideo)
+
+	return c.JSON(http.StatusOK, responseData)
+}
+
+func (handler *UserVideoHandlerImpl) GetVideoDetailHandler(c echo.Context) error {
+	id := c.Param("videoId")
+	intId, errConvert := strconv.Atoi(id)
+	if errConvert != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid id parameter")
+	}
+
+	video, comments, err := handler.Usecase.GetVideoDetailUsecase(intId)
+	if err != nil {
+		if errors.Is(err, pkg.ErrVideoNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrVideoNotFound.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+	}
+
+	var dataComments []dto.DataComment
+	data := dto.GetDetailsDataVideoByIdResponse{
+		DataVideo: &dto.DataVideo{
+			Id:           video.ID,
+			Title:        video.Title,
+			Description:  video.Description,
+			UrlThumbnail: video.Thumbnail,
+			LinkVideo:    video.Link,
+			Viewer:       video.Viewer,
+		},
+		Comments: &dataComments,
+	}
+
+	for _, comment := range *comments {
+		dataComments = append(dataComments, dto.DataComment{
+			Id:        comment.ID,
+			Comment:   comment.Comment,
+			UserID:    comment.UserID,
+			UserName:  comment.User.Name,
+			CreatedAt: comment.CreatedAt,
+			UpdatedAt: comment.UpdatedAt,
+		})
+	}
+	data.Comments = &dataComments
+	responseData := helper.ResponseData(http.StatusOK, "success", data)
 
 	return c.JSON(http.StatusOK, responseData)
 }

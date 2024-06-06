@@ -31,7 +31,7 @@ type VideoCategory struct {
 
 type Comment struct {
 	ID        int       `gorm:"primaryKey"`
-	VideoID   string    `gorm:"index"`
+	VideoID   int       `gorm:"index"`
 	Video     Video     `gorm:"foreignKey:VideoID"`
 	UserID    string    `gorm:"index"`
 	User      user.User `gorm:"foreignKey:UserID"`

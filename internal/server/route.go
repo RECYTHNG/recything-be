@@ -308,4 +308,7 @@ func (s *echoServer) userVideo() {
 
 	// search video by title
 	s.gr.GET("/videos/search", handler.SearchVideoByTitleHandler, UserMiddleware)
+
+	// get video detail
+	s.gr.GET("/videos/:videoId", handler.GetVideoDetailHandler, UserMiddleware)
 }
