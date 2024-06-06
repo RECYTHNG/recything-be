@@ -2,6 +2,7 @@ package usecase
 
 import (
 	video "github.com/sawalreverr/recything/internal/video/manage_video/entity"
+	"github.com/sawalreverr/recything/internal/video/user_video/dto"
 	"github.com/sawalreverr/recything/internal/video/user_video/repository"
 	"github.com/sawalreverr/recything/pkg"
 	"gorm.io/gorm"
@@ -43,4 +44,23 @@ func (usecase *UserVideoUsecaseImpl) GetVideoDetailUsecase(id int) (*video.Video
 		return nil, nil, err
 	}
 	return video, comments, nil
+}
+
+func (usecase *UserVideoUsecaseImpl) AddCommentUsecase(request *dto.AddCommentRequest, userId string) error {
+	if _, _, err := usecase.Repository.GetVideoDetail(request.VideoID); err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return pkg.ErrVideoNotFound
+		}
+		return err
+	}
+
+	comment := video.Comment{
+		Comment: request.Comment,
+		UserID:  userId,
+		VideoID: request.VideoID,
+	}
+	if err := usecase.Repository.AddComment(&comment); err != nil {
+		return err
+	}
+	return nil
 }

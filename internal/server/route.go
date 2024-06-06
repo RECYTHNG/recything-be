@@ -311,4 +311,7 @@ func (s *echoServer) userVideo() {
 
 	// get video detail
 	s.gr.GET("/videos/:videoId", handler.GetVideoDetailHandler, UserMiddleware)
+
+	// add comment
+	s.gr.POST("/videos/comment", handler.AddCommentHandler, UserMiddleware)
 }

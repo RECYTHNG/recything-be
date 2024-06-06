@@ -115,3 +115,22 @@ func (handler *UserVideoHandlerImpl) GetVideoDetailHandler(c echo.Context) error
 
 	return c.JSON(http.StatusOK, responseData)
 }
+
+func (handler *UserVideoHandlerImpl) AddCommentHandler(c echo.Context) error {
+	var request dto.AddCommentRequest
+	userId := c.Get("user").(*helper.JwtCustomClaims).UserID
+	if err := c.Bind(&request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	}
+	if err := c.Validate(request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	}
+	if err := handler.Usecase.AddCommentUsecase(&request, userId); err != nil {
+		if errors.Is(err, pkg.ErrVideoNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrVideoNotFound.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+	}
+	responseData := helper.ResponseData(http.StatusOK, "success add comment", nil)
+	return c.JSON(http.StatusCreated, responseData)
+}

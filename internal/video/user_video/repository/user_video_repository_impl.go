@@ -33,7 +33,6 @@ func (repository *UserVideoRepositoryImpl) GetVideoDetail(id int) (*video.Video,
 	var videos video.Video
 	var comments []video.Comment
 
-	// Mencari video berdasarkan ID
 	if err := repository.DB.GetDB().
 		Where("id = ?", id).
 		Order("created_at desc").
@@ -41,14 +40,20 @@ func (repository *UserVideoRepositoryImpl) GetVideoDetail(id int) (*video.Video,
 		return nil, nil, err
 	}
 
-	// Mencari komentar yang berhubungan dengan video berdasarkan video_id
 	if err := repository.DB.GetDB().
+		Preload("User").
 		Where("video_id = ?", id).
 		Order("created_at desc").
 		Find(&comments).Error; err != nil {
 		return nil, nil, err
 	}
 
-	// Kembalikan pointer ke video dan slice of comments
 	return &videos, &comments, nil
+}
+
+func (repository *UserVideoRepositoryImpl) AddComment(comment *video.Comment) error {
+	if err := repository.DB.GetDB().Create(comment).Error; err != nil {
+		return err
+	}
+	return nil
 }
