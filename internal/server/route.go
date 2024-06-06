@@ -36,6 +36,12 @@ import (
 	userHandler "github.com/sawalreverr/recything/internal/user/handler"
 	userRepo "github.com/sawalreverr/recything/internal/user/repository"
 	userUsecase "github.com/sawalreverr/recything/internal/user/usecase"
+	videoHandler "github.com/sawalreverr/recything/internal/video/manage_video/handler"
+	videoRepo "github.com/sawalreverr/recything/internal/video/manage_video/repository"
+	videoUsecase "github.com/sawalreverr/recything/internal/video/manage_video/usecase"
+	userVideoHandler "github.com/sawalreverr/recything/internal/video/user_video/handler"
+	userVideoRepo "github.com/sawalreverr/recything/internal/video/user_video/repository"
+	userVideoUsecase "github.com/sawalreverr/recything/internal/video/user_video/usecase"
 )
 
 var (
@@ -298,4 +304,51 @@ func (s *echoServer) reminAIHandler() {
 
 	// ReMin AI Chatbot with user access
 	s.gr.POST("/remin-ai", handler.AskGPT, UserMiddleware)
+}
+func (s *echoServer) manageVideo() {
+	repository := videoRepo.NewManageVideoRepository(s.db)
+	usecase := videoUsecase.NewManageVideoUsecaseImpl(repository)
+	handler := videoHandler.NewManageVideoHandlerImpl(usecase)
+
+	// upload thumbnail video
+	s.gr.POST("/videos/thumbnail", handler.UploadThumbnailVideoHandler, SuperAdminOrAdminMiddleware)
+
+	// create data video
+	s.gr.POST("/videos/data", handler.CreateDataVideoHandler, SuperAdminOrAdminMiddleware)
+
+	// create category video
+	s.gr.POST("/videos/categories", handler.CreateCategoryVideoHandler, SuperAdminOrAdminMiddleware)
+
+	// get all category video
+	s.gr.GET("/videos/categories", handler.GetAllCategoryVideoHandler, SuperAdminOrAdminMiddleware)
+
+	// get all data video pagination
+	s.gr.GET("/videos/data", handler.GetAllDataVideoPaginationHandler, SuperAdminOrAdminMiddleware)
+
+	// get details data video by id
+	s.gr.GET("/videos/data/:videoId", handler.GetDetailsDataVideoByIdHandler, SuperAdminOrAdminMiddleware)
+
+	// update data video
+	s.gr.PUT("/videos/data/:videoId", handler.UpdateDataVideoHandler, SuperAdminOrAdminMiddleware)
+
+	// delete data video
+	s.gr.DELETE("/videos/data/:videoId", handler.DeleteDataVideoHandler, SuperAdminOrAdminMiddleware)
+}
+
+func (s *echoServer) userVideo() {
+	repository := userVideoRepo.NewUserVideoRepository(s.db)
+	usecase := userVideoUsecase.NewUserVideoUsecase(repository)
+	handler := userVideoHandler.NewUserVideoHandler(usecase)
+
+	// get all video
+	s.gr.GET("/videos", handler.GetAllVideoHandler, UserMiddleware)
+
+	// search video by title
+	s.gr.GET("/videos/search", handler.SearchVideoByTitleHandler, UserMiddleware)
+
+	// get video detail
+	s.gr.GET("/videos/:videoId", handler.GetVideoDetailHandler, UserMiddleware)
+
+	// add comment
+	s.gr.POST("/videos/comment", handler.AddCommentHandler, UserMiddleware)
 }

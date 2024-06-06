@@ -11,6 +11,7 @@ type (
 		Cloudinary *Cloudinary
 		SMTP       *SMTP
 		OpenAI     *OpenAI
+		YouTube    *YouTube
 	}
 
 	Server struct {

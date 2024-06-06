@@ -50,4 +50,13 @@ var (
 
 	// Custom Data
 	ErrCustomDataNotFound = errors.New("custom data not found")
+	// manage video
+	ErrVideoTitleAlreadyExist        = errors.New("video title already exist")
+	ErrVideoCategoryNameAlreadyExist = errors.New("video category name already exist")
+	ErrNoVideoIdFoundOnUrl           = errors.New("no video id found on url")
+	ErrVideoNotFound                 = errors.New("video not found")
+	ErrVideoService                  = errors.New("video service error")
+	ErrApiYouTube                    = errors.New("api youtube error")
+	ErrParsingUrl                    = errors.New("parsing url error")
+	ErrVideoCategoryNotFound         = errors.New("video category not found")
 )

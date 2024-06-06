@@ -11,6 +11,7 @@ import (
 	task "github.com/sawalreverr/recything/internal/task/manage_task/entity"
 	user_task "github.com/sawalreverr/recything/internal/task/user_task/entity"
 	user "github.com/sawalreverr/recything/internal/user"
+	video "github.com/sawalreverr/recything/internal/video/manage_video/entity"
 )
 
 func AutoMigrate(db Database) {
@@ -28,6 +29,9 @@ func AutoMigrate(db Database) {
 		&user_task.UserTaskImage{},
 		&achievement.Achievement{},
 		&customdata.CustomData{},
+		&video.Video{},
+		&video.VideoCategory{},
+		&video.Comment{},
 	); err != nil {
 		log.Fatal("Database Migration Failed!")
 	}
