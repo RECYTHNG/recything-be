@@ -33,6 +33,9 @@ func main() {
 	// Init Task Steps
 	db.InitTaskSteps()
 
+	// Init Achievements
+	db.InitAchievements()
+
 	app := server.NewEchoServer(conf, db)
 	c := cron.New()
 

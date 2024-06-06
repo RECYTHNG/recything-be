@@ -10,4 +10,5 @@ type Database interface {
 	InitCustomDatas()
 	InitTasks()
 	InitTaskSteps()
+	InitAchievements()
 }

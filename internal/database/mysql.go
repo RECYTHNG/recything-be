@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/sawalreverr/recything/config"
+	achievement "github.com/sawalreverr/recything/internal/achievements/manage_achievements/entity"
 	adminEntity "github.com/sawalreverr/recything/internal/admin/entity"
 	customDataEntity "github.com/sawalreverr/recything/internal/custom-data"
 	faqEntity "github.com/sawalreverr/recything/internal/faq"
@@ -204,6 +205,33 @@ func (m *mysqlDatabase) InitTaskSteps() {
 	}
 
 	log.Println("Dummy Task Steps added!")
+}
+
+func (m *mysqlDatabase) InitAchievements() {
+	dumyData := []achievement.Achievement{
+		{
+			Level:       "classic",
+			TargetPoint: 0,
+		},
+		{
+			Level:       "silver",
+			TargetPoint: 50000,
+		},
+		{
+			Level:       "gold",
+			TargetPoint: 150000,
+		},
+		{
+			Level:       "platinum",
+			TargetPoint: 300000,
+		},
+	}
+
+	for _, data := range dumyData {
+		m.GetDB().FirstOrCreate(&data, data)
+	}
+
+	log.Println("Dummy Achievements added!")
 }
 
 func (m *mysqlDatabase) GetDB() *gorm.DB {
