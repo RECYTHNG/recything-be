@@ -89,3 +89,29 @@ func (usecase *ManageVideoUsecaseImpl) GetDetailsDataVideoByIdUseCase(id int) (*
 	}
 	return video, nil
 }
+
+func (usecase *ManageVideoUsecaseImpl) UpdateDataVideoUseCase(request *dto.UpdateDataVideoRequest, id int) error {
+	if _, err := usecase.manageVideoRepository.GetDetailsDataVideoById(id); err != nil {
+		return pkg.ErrVideoNotFound
+	}
+	if _, err := usecase.manageVideoRepository.GetCategoryVideoById(request.CategoryId); err != nil {
+		return pkg.ErrVideoCategoryNotFound
+	}
+	view, errGetView := helper.GetVideoViewCount(request.LinkVideo)
+	if errGetView != nil {
+		return errGetView
+	}
+	intView := int(view)
+	video := video.Video{
+		Title:           request.Title,
+		Description:     request.Description,
+		Thumbnail:       request.UrlThumbnail,
+		Link:            request.LinkVideo,
+		VideoCategoryID: request.CategoryId,
+		View:            intView,
+	}
+	if err := usecase.manageVideoRepository.UpdateDataVideo(&video, id); err != nil {
+		return err
+	}
+	return nil
+}

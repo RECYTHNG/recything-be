@@ -83,3 +83,10 @@ func (repository *ManageVideoRepositoryImpl) GetDetailsDataVideoById(id int) (*v
 	}
 	return &video, nil
 }
+
+func (repository *ManageVideoRepositoryImpl) UpdateDataVideo(video *video.Video, id int) error {
+	if err := repository.DB.GetDB().Model(&video).Where("id = ?", id).Updates(&video).Error; err != nil {
+		return err
+	}
+	return nil
+}

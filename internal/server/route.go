@@ -287,4 +287,7 @@ func (s *echoServer) manageVideo() {
 
 	// get details data video by id
 	s.gr.GET("/videos/data/:videoId", handler.GetDetailsDataVideoByIdHandler, SuperAdminOrAdminMiddleware)
+
+	// update data video
+	s.gr.PUT("/videos/data/:videoId", handler.UpdateDataVideoHandler, SuperAdminOrAdminMiddleware)
 }
