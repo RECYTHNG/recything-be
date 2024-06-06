@@ -425,3 +425,32 @@ func (handler *UserTaskHandlerImpl) GetUserTaskDetailsHandler(c echo.Context) er
 	responseData := helper.ResponseData(http.StatusOK, "success", data)
 	return c.JSON(http.StatusOK, responseData)
 }
+
+func (handler *UserTaskHandlerImpl) GetHistoryPointByUserIdHandler(c echo.Context) error {
+	userId := c.Get("user").(*helper.JwtCustomClaims).UserID
+	userTask, totalPoint, err := handler.Usecase.GetHistoryPointByUserIdUsecase(userId)
+	if err != nil {
+		if errors.Is(err, pkg.ErrUserNoHasTask) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserNoHasTask.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+	}
+
+	var dataHistoryPoints []*dto.DataHistoryPoint
+	for _, task := range userTask {
+		dataHistoryPoints = append(dataHistoryPoints, &dto.DataHistoryPoint{
+			Id:         task.ID,
+			TitleTask:  task.TaskChallenge.Title,
+			Point:      task.Point,
+			AcceptedAt: task.AcceptedAt,
+		})
+	}
+
+	data := dto.HistoryPointResponse{
+		TotalPoint: totalPoint,
+		Data:       dataHistoryPoints,
+	}
+
+	responseData := helper.ResponseData(http.StatusOK, "success", data)
+	return c.JSON(http.StatusOK, responseData)
+}
