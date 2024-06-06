@@ -10,4 +10,5 @@ type ManageVideoHandler interface {
 	GetAllDataVideoPaginationHandler(c *echo.Context) error
 	GetDetailsDataVideoByIdHandler(c *echo.Context) error
 	UpdateDataVideoHandler(c *echo.Context) error
+	DeleteDataVideoHandler(c *echo.Context) error
 }

@@ -90,3 +90,10 @@ func (repository *ManageVideoRepositoryImpl) UpdateDataVideo(video *video.Video,
 	}
 	return nil
 }
+
+func (repository *ManageVideoRepositoryImpl) DeleteDataVideo(id int) error {
+	if err := repository.DB.GetDB().Delete(&video.Video{}, id).Error; err != nil {
+		return err
+	}
+	return nil
+}

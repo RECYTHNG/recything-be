@@ -115,3 +115,13 @@ func (usecase *ManageVideoUsecaseImpl) UpdateDataVideoUseCase(request *dto.Updat
 	}
 	return nil
 }
+
+func (usecase *ManageVideoUsecaseImpl) DeleteDataVideoUseCase(id int) error {
+	if _, err := usecase.manageVideoRepository.GetDetailsDataVideoById(id); err != nil {
+		return pkg.ErrVideoNotFound
+	}
+	if err := usecase.manageVideoRepository.DeleteDataVideo(id); err != nil {
+		return err
+	}
+	return nil
+}

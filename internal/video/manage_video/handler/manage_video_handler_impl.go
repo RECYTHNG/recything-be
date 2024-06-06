@@ -240,3 +240,18 @@ func (handler *ManageVideoHandlerImpl) UpdateDataVideoHandler(c echo.Context) er
 	}
 	return helper.ResponseHandler(c, http.StatusOK, "success update data video", nil)
 }
+
+func (handler *ManageVideoHandlerImpl) DeleteDataVideoHandler(c echo.Context) error {
+	id := c.Param("videoId")
+	idInt, errConvert := strconv.Atoi(id)
+	if errConvert != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid id parameter")
+	}
+	if err := handler.ManageVideoUsecase.DeleteDataVideoUseCase(idInt); err != nil {
+		if errors.Is(err, pkg.ErrVideoNotFound) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoNotFound.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+	}
+	return helper.ResponseHandler(c, http.StatusOK, "success delete data video", nil)
+}

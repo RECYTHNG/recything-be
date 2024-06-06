@@ -14,4 +14,5 @@ type ManageVideoRepository interface {
 	GetAllDataVideoPagination(limit int, page int) ([]video.Video, int, error)
 	GetDetailsDataVideoById(id int) (*video.Video, error)
 	UpdateDataVideo(video *video.Video, id int) error
+	DeleteDataVideo(id int) error
 }
