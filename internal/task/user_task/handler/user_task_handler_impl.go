@@ -3,9 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sawalreverr/recything/internal/helper"
@@ -440,16 +438,11 @@ func (handler *UserTaskHandlerImpl) GetHistoryPointByUserIdHandler(c echo.Contex
 
 	var dataHistoryPoints []*dto.DataHistoryPoint
 	for _, task := range userTask {
-		// Menghitung selisih hari
-		daysDiff := int(time.Since(task.AcceptedAt).Hours() / 24)
-		DayAgo := fmt.Sprintf("%d days ago", daysDiff)
-
 		dataHistoryPoints = append(dataHistoryPoints, &dto.DataHistoryPoint{
 			Id:         task.ID,
 			TitleTask:  task.TaskChallenge.Title,
 			Point:      task.Point,
 			AcceptedAt: task.AcceptedAt,
-			DaysDiff:   DayAgo,
 		})
 	}
 

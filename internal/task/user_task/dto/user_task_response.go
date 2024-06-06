@@ -101,7 +101,6 @@ type DataHistoryPoint struct {
 	TitleTask  string    `json:"title_task"`
 	Point      int       `json:"point"`
 	AcceptedAt time.Time `json:"accepted_at"`
-	DaysDiff   string    `json:"days_diff"`
 }
 
 type HistoryPointResponse struct {
