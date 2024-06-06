@@ -18,7 +18,7 @@ func NewUserVideoHandler(usecase usecase.UserVideoUsecase) *UserVideoHandlerImpl
 }
 
 func (handler *UserVideoHandlerImpl) GetAllVideoHandler(c echo.Context) error {
-	videos, err := handler.Usecase.GetAllVideo()
+	videos, err := handler.Usecase.GetAllVideoUsecase()
 	if err != nil {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
@@ -27,6 +27,32 @@ func (handler *UserVideoHandlerImpl) GetAllVideoHandler(c echo.Context) error {
 		DataVideo: dataVideo,
 	}
 
+	for _, video := range *videos {
+		dataVideo = append(dataVideo, dto.DataVideo{
+			Id:           video.ID,
+			Title:        video.Title,
+			Description:  video.Description,
+			UrlThumbnail: video.Thumbnail,
+			LinkVideo:    video.Link,
+			Viewer:       video.Viewer,
+		})
+	}
+	data.DataVideo = dataVideo
+	responseData := helper.ResponseData(http.StatusOK, "success get all video", data.DataVideo)
+
+	return c.JSON(http.StatusOK, responseData)
+}
+
+func (handler *UserVideoHandlerImpl) SearchVideoByTitleHandler(c echo.Context) error {
+	title := c.QueryParam("title")
+	videos, err := handler.Usecase.SearchVideoByTitleUsecase(title)
+	if err != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+	}
+	var dataVideo []dto.DataVideo
+	data := dto.GetAllVideoResponse{
+		DataVideo: dataVideo,
+	}
 	for _, video := range *videos {
 		dataVideo = append(dataVideo, dto.DataVideo{
 			Id:           video.ID,

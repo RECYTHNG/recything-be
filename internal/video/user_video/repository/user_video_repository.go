@@ -6,4 +6,5 @@ import (
 
 type UserVideoRepository interface {
 	GetAllVideo() (*[]video.Video, error)
+	SearchVideoByTitle(title string) (*[]video.Video, error)
 }

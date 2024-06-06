@@ -20,3 +20,11 @@ func (repository *UserVideoRepositoryImpl) GetAllVideo() (*[]video.Video, error)
 	}
 	return &videos, nil
 }
+
+func (repository *UserVideoRepositoryImpl) SearchVideoByTitle(title string) (*[]video.Video, error) {
+	var video []video.Video
+	if err := repository.DB.GetDB().Where("title LIKE ?", "%"+title+"%").Find(&video).Error; err != nil {
+		return nil, err
+	}
+	return &video, nil
+}

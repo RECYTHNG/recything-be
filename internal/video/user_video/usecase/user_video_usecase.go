@@ -5,5 +5,6 @@ import (
 )
 
 type UserVideoUsecase interface {
-	GetAllVideo() (*[]video.Video, error)
+	GetAllVideoUsecase() (*[]video.Video, error)
+	SearchVideoByTitleUsecase(title string) (*[]video.Video, error)
 }
