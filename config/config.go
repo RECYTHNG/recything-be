@@ -43,6 +43,10 @@ type (
 	OpenAI struct {
 		APIKey string
 	}
+
+	YouTube struct {
+		APIKey string
+	}
 )
 
 var (
