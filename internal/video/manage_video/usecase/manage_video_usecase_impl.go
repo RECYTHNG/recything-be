@@ -39,7 +39,7 @@ func (usecase *ManageVideoUsecaseImpl) CreateDataVideoUseCase(request *dto.Creat
 		Thumbnail:       request.UrlThumbnail,
 		Link:            request.LinkVideo,
 		VideoCategoryID: request.CategoryId,
-		View:            intView,
+		Viewer:          intView,
 		DeletedAt:       gorm.DeletedAt{},
 	}
 	if err := usecase.manageVideoRepository.CreateDataVideo(&video); err != nil {
@@ -108,7 +108,7 @@ func (usecase *ManageVideoUsecaseImpl) UpdateDataVideoUseCase(request *dto.Updat
 		Thumbnail:       request.UrlThumbnail,
 		Link:            request.LinkVideo,
 		VideoCategoryID: request.CategoryId,
-		View:            intView,
+		Viewer:          intView,
 	}
 	if err := usecase.manageVideoRepository.UpdateDataVideo(&video, id); err != nil {
 		return err

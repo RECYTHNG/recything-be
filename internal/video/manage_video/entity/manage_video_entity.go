@@ -13,7 +13,7 @@ type Video struct {
 	Description     string
 	Thumbnail       string
 	Link            string
-	View            int
+	Viewer          int
 	VideoCategoryID int            `gorm:"index"`
 	Category        VideoCategory  `gorm:"foreignKey:VideoCategoryID"`
 	CreatedAt       time.Time      `gorm:"autoCreateTime"`

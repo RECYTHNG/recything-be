@@ -197,7 +197,7 @@ func (handler *ManageVideoHandlerImpl) GetDetailsDataVideoByIdHandler(c echo.Con
 		Description:  video.Description,
 		UrlThumbnail: video.Thumbnail,
 		LinkVideo:    video.Link,
-		Viewer:       video.View,
+		Viewer:       video.Viewer,
 		Category:     dto.DataCategory{Id: video.Category.ID, Name: video.Category.Name},
 	}
 	responseData := helper.ResponseData(http.StatusOK, "success", dataVideo)
