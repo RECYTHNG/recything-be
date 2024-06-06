@@ -11,6 +11,7 @@ import (
 	faqEntity "github.com/sawalreverr/recything/internal/faq"
 	"github.com/sawalreverr/recything/internal/helper"
 	"github.com/sawalreverr/recything/internal/report"
+	task "github.com/sawalreverr/recything/internal/task/manage_task/entity"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -131,6 +132,78 @@ func (m *mysqlDatabase) InitCustomDatas() {
 		m.GetDB().FirstOrCreate(&data, data)
 	}
 	log.Println("Dummy Custom Data added!")
+}
+
+func (m *mysqlDatabase) InitTasks() {
+	dummyData := []task.TaskChallenge{
+		{
+			ID:          "TM0001",
+			Title:       "Challenge 1",
+			Description: "Description for Challenge 1",
+			Thumbnail:   "thumbnail1.jpg",
+			StartDate:   time.Now(),
+			EndDate:     time.Now().AddDate(0, 0, 30),
+			Point:       1000,
+			AdminId:     "AD0001",
+		},
+		{
+			ID:          "TM0002",
+			Title:       "Challenge 2",
+			Description: "Description for Challenge 2",
+			Thumbnail:   "thumbnail2.jpg",
+			StartDate:   time.Now(),
+			EndDate:     time.Now().AddDate(0, 1, 0),
+			Point:       200,
+			AdminId:     "AD0001",
+		},
+	}
+
+	for _, taskChallenge := range dummyData {
+		m.GetDB().FirstOrCreate(&taskChallenge, taskChallenge)
+	}
+
+	log.Println("Dummy Tasks added!")
+}
+
+func (m *mysqlDatabase) InitTaskSteps() {
+	dummyData := []task.TaskStep{
+		{
+			TaskChallengeId: "TM0001",
+			Title:           "Step 1",
+			Description:     "Description for Step 1",
+		},
+		{
+			TaskChallengeId: "TM0001",
+			Title:           "Step 2",
+			Description:     "Description for Step 2",
+		},
+		{
+			TaskChallengeId: "TM0001",
+			Title:           "Step 3",
+			Description:     "Description for Step 3",
+		},
+		{
+			TaskChallengeId: "TM0002",
+			Title:           "Step 1",
+			Description:     "Description for Step 1",
+		},
+		{
+			TaskChallengeId: "TM0002",
+			Title:           "Step 2",
+			Description:     "Description for Step 2",
+		},
+		{
+			TaskChallengeId: "TM0002",
+			Title:           "Step 3",
+			Description:     "Description for Step 3",
+		},
+	}
+
+	for _, taskStep := range dummyData {
+		m.GetDB().FirstOrCreate(&taskStep, taskStep)
+	}
+
+	log.Println("Dummy Task Steps added!")
 }
 
 func (m *mysqlDatabase) GetDB() *gorm.DB {

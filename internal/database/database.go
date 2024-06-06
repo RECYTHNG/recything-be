@@ -8,4 +8,6 @@ type Database interface {
 	InitWasteMaterials()
 	InitFaqs()
 	InitCustomDatas()
+	InitTasks()
+	InitTaskSteps()
 }

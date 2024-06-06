@@ -27,6 +27,12 @@ func main() {
 	// Init Custom Data
 	db.InitCustomDatas()
 
+	// Init Tasks
+	db.InitTasks()
+
+	// Init Task Steps
+	db.InitTaskSteps()
+
 	app := server.NewEchoServer(conf, db)
 	c := cron.New()
 
