@@ -1,6 +1,9 @@
 package usecase
 
 import (
+	"log"
+
+	"github.com/sawalreverr/recything/internal/helper"
 	video "github.com/sawalreverr/recything/internal/video/manage_video/entity"
 	"github.com/sawalreverr/recything/internal/video/user_video/dto"
 	"github.com/sawalreverr/recything/internal/video/user_video/repository"
@@ -21,7 +24,26 @@ func (usecase *UserVideoUsecaseImpl) GetAllVideoUsecase() (*[]video.Video, error
 	if err != nil {
 		return nil, err
 	}
-	return videos, nil
+
+	for i := range *videos {
+		view, errGetView := helper.GetVideoViewCount((*videos)[i].Link)
+		if errGetView != nil {
+			log.Printf("failed to get view count for video %d: %v", (*videos)[i].ID, errGetView)
+			continue
+		}
+		(*videos)[i].Viewer = int(view)
+		if errUpdate := usecase.Repository.UpdateViewer(int(view), (*videos)[i].ID); errUpdate != nil {
+			log.Printf("failed to update viewer count for video %d: %v", (*videos)[i].ID, errUpdate)
+			continue
+		}
+	}
+
+	updatedVideos, err := usecase.Repository.GetAllVideo()
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedVideos, nil
 }
 
 func (usecase *UserVideoUsecaseImpl) SearchVideoByTitleUsecase(title string) (*[]video.Video, error) {

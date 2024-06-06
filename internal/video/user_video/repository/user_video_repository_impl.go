@@ -15,7 +15,10 @@ func NewUserVideoRepository(db database.Database) *UserVideoRepositoryImpl {
 
 func (repository *UserVideoRepositoryImpl) GetAllVideo() (*[]video.Video, error) {
 	var videos []video.Video
-	if err := repository.DB.GetDB().Find(&videos).Error; err != nil {
+	if err := repository.DB.GetDB().
+		Order("created_at desc").
+		Find(&videos).
+		Error; err != nil {
 		return nil, err
 	}
 	return &videos, nil
@@ -53,6 +56,13 @@ func (repository *UserVideoRepositoryImpl) GetVideoDetail(id int) (*video.Video,
 
 func (repository *UserVideoRepositoryImpl) AddComment(comment *video.Comment) error {
 	if err := repository.DB.GetDB().Create(comment).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repository *UserVideoRepositoryImpl) UpdateViewer(view int, id int) error {
+	if err := repository.DB.GetDB().Model(&video.Video{}).Where("id = ?", id).Update("viewer", view).Error; err != nil {
 		return err
 	}
 	return nil
