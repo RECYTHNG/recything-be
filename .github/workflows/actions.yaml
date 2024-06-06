@@ -69,6 +69,8 @@ jobs:
             -v /tmp/mysql-volume:/var/lib/mysql \
             mysql:latest
 
+            docker exec mysql-service mysql -u root -p${{ secrets.DB_PASSWORD }} -e "SET GLOBAL sql_mode = '';"
+
             docker run -itd --name recything-be \
             -p 8080:8080 \
             --network api-network \
