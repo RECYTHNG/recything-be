@@ -21,7 +21,7 @@ func (uc *userUsecase) UpdateUserDetail(userID string, user u.UserDetail) error 
 
 	userFound.Name = user.Name
 	userFound.Email = user.Email
-	userFound.PhoneNumber = user.PhoneNumber
+	// userFound.PhoneNumber = user.PhoneNumber
 	userFound.Gender = user.Gender
 	userFound.BirthDate = user.ParsedBirthDate
 	userFound.Address = user.Address
@@ -54,16 +54,16 @@ func (uc *userUsecase) FindUserByID(userID string) (*u.UserResponse, error) {
 	}
 
 	response := u.UserResponse{
-		ID:          userFound.ID,
-		Name:        userFound.Name,
-		Email:       userFound.Email,
-		PhoneNumber: userFound.PhoneNumber,
-		Point:       userFound.Point,
-		Badge:       userFound.Badge,
-		Gender:      userFound.Gender,
-		BirthDate:   userFound.BirthDate,
-		Address:     userFound.Address,
-		PictureURL:  userFound.PictureURL,
+		ID:    userFound.ID,
+		Name:  userFound.Name,
+		Email: userFound.Email,
+		// PhoneNumber: userFound.PhoneNumber,
+		Point:      userFound.Point,
+		Badge:      userFound.Badge,
+		Gender:     userFound.Gender,
+		BirthDate:  userFound.BirthDate,
+		Address:    userFound.Address,
+		PictureURL: userFound.PictureURL,
 	}
 
 	return &response, nil
@@ -83,16 +83,16 @@ func (uc *userUsecase) FindAllUser(page int, limit int, sortBy string, sortType 
 
 	for _, user := range *users {
 		response := u.UserResponse{
-			ID:          user.ID,
-			Name:        user.Name,
-			Email:       user.Email,
-			PhoneNumber: user.PhoneNumber,
-			Point:       user.Point,
-			Badge:       user.Badge,
-			Gender:      user.Gender,
-			BirthDate:   user.BirthDate,
-			Address:     user.Address,
-			PictureURL:  user.PictureURL,
+			ID:    user.ID,
+			Name:  user.Name,
+			Email: user.Email,
+			// PhoneNumber: user.PhoneNumber,
+			Point:      user.Point,
+			Badge:      user.Badge,
+			Gender:     user.Gender,
+			BirthDate:  user.BirthDate,
+			Address:    user.Address,
+			PictureURL: user.PictureURL,
 		}
 
 		usersResponse = append(usersResponse, response)
