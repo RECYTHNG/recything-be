@@ -32,9 +32,8 @@ func (usecase *ApprovalTaskUsecaseImpl) ApproveUserTaskUseCase(userTaskId string
 	if _, err := usecase.ApprovalTaskRepository.FindUserTask(userTaskId); err != nil {
 		return pkg.ErrUserTaskNotFound
 	}
-	status := "accept"
 
-	if err := usecase.ApprovalTaskRepository.ApproveUserTask(status, userTaskId); err != nil {
+	if err := usecase.ApprovalTaskRepository.ApproveUserTask(userTaskId); err != nil {
 		return err
 	}
 	return nil

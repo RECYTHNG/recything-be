@@ -95,3 +95,16 @@ type DataImages struct {
 	ImageUrl    string `json:"image_url"`
 	Description string `json:"description"`
 }
+
+type DataHistoryPoint struct {
+	Id         string    `json:"id"`
+	TitleTask  string    `json:"title_task"`
+	Point      int       `json:"point"`
+	AcceptedAt time.Time `json:"accepted_at"`
+	DaysDiff   string    `json:"days_diff"`
+}
+
+type HistoryPointResponse struct {
+	TotalPoint int                 `json:"total_point"`
+	Data       []*DataHistoryPoint `json:"data_history_point"`
+}

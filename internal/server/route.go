@@ -176,6 +176,9 @@ func (s *echoServer) userTask() {
 
 	// get user task details if repair
 	s.gr.GET("/user_current/tasks/:userTaskId", handler.GetUserTaskDetailsHandler, UserMiddleware)
+
+	// get history point by user current
+	s.gr.GET("/user_current/tasks/history", handler.GetHistoryPointByUserIdHandler, UserMiddleware)
 }
 
 func (s *echoServer) approvalTask() {

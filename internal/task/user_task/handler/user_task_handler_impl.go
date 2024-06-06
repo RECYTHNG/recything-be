@@ -3,7 +3,9 @@ package handler
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sawalreverr/recything/internal/helper"
@@ -422,6 +424,40 @@ func (handler *UserTaskHandlerImpl) GetUserTaskDetailsHandler(c echo.Context) er
 		})
 	}
 	data.Images = dataImages
+	responseData := helper.ResponseData(http.StatusOK, "success", data)
+	return c.JSON(http.StatusOK, responseData)
+}
+
+func (handler *UserTaskHandlerImpl) GetHistoryPointByUserIdHandler(c echo.Context) error {
+	userId := c.Get("user").(*helper.JwtCustomClaims).UserID
+	userTask, totalPoint, err := handler.Usecase.GetHistoryPointByUserIdUsecase(userId)
+	if err != nil {
+		if errors.Is(err, pkg.ErrUserNoHasTask) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserNoHasTask.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+	}
+
+	var dataHistoryPoints []*dto.DataHistoryPoint
+	for _, task := range userTask {
+		// Menghitung selisih hari
+		daysDiff := int(time.Since(task.AcceptedAt).Hours() / 24)
+		DayAgo := fmt.Sprintf("%d days ago", daysDiff)
+
+		dataHistoryPoints = append(dataHistoryPoints, &dto.DataHistoryPoint{
+			Id:         task.ID,
+			TitleTask:  task.TaskChallenge.Title,
+			Point:      task.Point,
+			AcceptedAt: task.AcceptedAt,
+			DaysDiff:   DayAgo,
+		})
+	}
+
+	data := dto.HistoryPointResponse{
+		TotalPoint: totalPoint,
+		Data:       dataHistoryPoints,
+	}
+
 	responseData := helper.ResponseData(http.StatusOK, "success", data)
 	return c.JSON(http.StatusOK, responseData)
 }
