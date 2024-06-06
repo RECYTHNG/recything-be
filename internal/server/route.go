@@ -34,6 +34,9 @@ import (
 	videoHandler "github.com/sawalreverr/recything/internal/video/manage_video/handler"
 	videoRepo "github.com/sawalreverr/recything/internal/video/manage_video/repository"
 	videoUsecase "github.com/sawalreverr/recything/internal/video/manage_video/usecase"
+	userVideoHandler "github.com/sawalreverr/recything/internal/video/user_video/handler"
+	userVideoRepo "github.com/sawalreverr/recything/internal/video/user_video/repository"
+	userVideoUsecase "github.com/sawalreverr/recything/internal/video/user_video/usecase"
 )
 
 var (
@@ -293,4 +296,13 @@ func (s *echoServer) manageVideo() {
 
 	// delete data video
 	s.gr.DELETE("/videos/data/:videoId", handler.DeleteDataVideoHandler, SuperAdminOrAdminMiddleware)
+}
+
+func (s *echoServer) userVideo() {
+	repository := userVideoRepo.NewUserVideoRepository(s.db)
+	usecase := userVideoUsecase.NewUserVideoUsecase(repository)
+	handler := userVideoHandler.NewUserVideoHandler(usecase)
+
+	// get all video
+	s.gr.GET("/videos", handler.GetAllVideoHandler, UserMiddleware)
 }
