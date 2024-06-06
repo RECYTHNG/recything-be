@@ -21,7 +21,7 @@ type User struct {
 	PictureURL  string    `json:"picture_url"`
 	OTP         uint      `json:"otp"`
 	IsVerified  bool      `json:"is_verified" gorm:"default:false"`
-	Badge       string    `json:"badge"`
+	Badge       string    `json:"badge" gorm:"type:enum('classic', 'silver', 'gold', 'platinum');default:classic"`
 
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`
