@@ -21,6 +21,11 @@ func ResponseData(code int, message string, data interface{}) *BaseResponse {
 	return &response
 }
 
+func ResponseHandler(c echo.Context, statusCode int, message string, data interface{}) error {
+	response := ResponseData(statusCode, message, data)
+	return c.JSON(statusCode, response)
+}
+
 func ErrorHandler(c echo.Context, statusCode int, errorMessage string) error {
 	response := ResponseData(statusCode, errorMessage, nil)
 	return c.JSON(statusCode, response)

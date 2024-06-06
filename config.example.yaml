@@ -13,3 +13,12 @@ cloudinary:
   cloudname: <your_cloudname>
   apikey: <your_apikey>
   apisecret: <your_apisecret>
+
+smtp:
+  host: smtp.gmail.com
+  port: 587
+  authemail: <your_authemail>
+  authpassword: <your_authpassword>
+
+openai:
+  apikey: <your_apikey>

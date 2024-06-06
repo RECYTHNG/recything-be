@@ -9,6 +9,8 @@ type (
 		Server     *Server
 		DB         *DB
 		Cloudinary *Cloudinary
+		SMTP       *SMTP
+		OpenAI     *OpenAI
 	}
 
 	Server struct {
@@ -28,6 +30,17 @@ type (
 		CloudName string
 		ApiKey    string
 		ApiSecret string
+	}
+
+	SMTP struct {
+		Host         string
+		Port         int
+		AuthEmail    string
+		AuthPassword string
+	}
+
+	OpenAI struct {
+		APIKey string
 	}
 )
 
