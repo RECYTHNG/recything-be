@@ -105,6 +105,8 @@ jobs:
             docker container restart recything-be
             rm config.yaml || true
 
-            docker exec mysql-service mysql -u root -p${{ secrets.DB_PASSWORD }} -e "SET GLOBAL sql_mode = '';"
+            sleep 15
+
+            docker exec mysql-service mysql -h 127.0.0.1 -P 3306 -u root -p${{ secrets.DB_PASSWORD }} -e "SET GLOBAL sql_mode = '';"
             docker restart mysql-service
             docker restart recything-be
