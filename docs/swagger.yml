@@ -1662,7 +1662,7 @@ paths:
                 description:
                   type: string
                   example: "Task 1 description"
-                thumbnail:
+                thumbnail_url:
                   type: string
                   example: "https://example.com/thumbnail.jpg"
                 start_date:
@@ -1993,7 +1993,7 @@ paths:
                 description:
                   type: string
                   example: "Task 1 description"
-                thumbnail:
+                thumbnail_url:
                   type: string
                   example: "https://example.com/thumbnail.jpg"
                 start_date:
