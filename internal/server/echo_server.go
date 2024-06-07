@@ -85,6 +85,9 @@ func (s *echoServer) Start() {
 	// user video handler
 	s.userVideo()
 
+	// About-us handler
+	s.aboutUsHandler()
+
 	serverPORT := fmt.Sprintf(":%d", s.conf.Server.Port)
 	s.app.Logger.Fatal(s.app.Start(serverPORT))
 }

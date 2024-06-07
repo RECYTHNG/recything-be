@@ -276,28 +276,28 @@ func (m *mysqlDatabase) InitAboutUs() {
 	}
 
 	aboutUsImages := []aboutus.AboutUsImage{
-		{AboutUsID: "ABS01", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png"},
+		{ID: "ABSI01", AboutUsID: "ABS01", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png"},
 
-		{AboutUsID: "ABS05", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758301/recything/about-us/spgrokvm9un0yq5zsycn.png"},
-		{AboutUsID: "ABS05", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758301/recything/about-us/tynymzulgmkwiqu4a7mb.png"},
+		{ID: "ABSI02", AboutUsID: "ABS05", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758301/recything/about-us/spgrokvm9un0yq5zsycn.png"},
+		{ID: "ABSI03", AboutUsID: "ABS05", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758301/recything/about-us/tynymzulgmkwiqu4a7mb.png"},
 
-		{AboutUsID: "ABS06", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{AboutUsID: "ABS06", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{AboutUsID: "ABS06", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI04", AboutUsID: "ABS06", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI05", AboutUsID: "ABS06", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI06", AboutUsID: "ABS06", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
 
-		{AboutUsID: "ABS07", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{AboutUsID: "ABS07", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{AboutUsID: "ABS07", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI07", AboutUsID: "ABS07", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI08", AboutUsID: "ABS07", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI09", AboutUsID: "ABS07", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
 
-		{AboutUsID: "ABS08", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{AboutUsID: "ABS08", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{AboutUsID: "ABS08", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI10", AboutUsID: "ABS08", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI11", AboutUsID: "ABS08", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI12", AboutUsID: "ABS08", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
 
-		{AboutUsID: "ABS09", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{AboutUsID: "ABS09", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{AboutUsID: "ABS09", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI13", AboutUsID: "ABS09", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI14", AboutUsID: "ABS09", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI15", AboutUsID: "ABS09", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
 
-		{AboutUsID: "ABS10", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/mfi5xij2xssmztqwaybz.png"},
+		{ID: "ABSI16", AboutUsID: "ABS10", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/mfi5xij2xssmztqwaybz.png"},
 	}
 
 	for _, about := range aboutUs {

@@ -50,6 +50,7 @@ var (
 
 	// Custom Data
 	ErrCustomDataNotFound = errors.New("custom data not found")
+
 	// manage video
 	ErrVideoTitleAlreadyExist        = errors.New("video title already exist")
 	ErrVideoCategoryNameAlreadyExist = errors.New("video category name already exist")
@@ -62,4 +63,7 @@ var (
 
 	// user achievement
 	ErrUserNotHasHistoryPoint = errors.New("user not has history points")
+
+	// About Us
+	ErrAboutUsCategoryNotFound = errors.New("about us with that category not found")
 )

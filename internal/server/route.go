@@ -4,6 +4,9 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	aboutusHandler "github.com/sawalreverr/recything/internal/about-us/handler"
+	aboutusRepo "github.com/sawalreverr/recything/internal/about-us/repository"
+	aboutusUsecase "github.com/sawalreverr/recything/internal/about-us/usecase"
 	achievementHandler "github.com/sawalreverr/recything/internal/achievements/manage_achievements/handler"
 	achievementRepo "github.com/sawalreverr/recything/internal/achievements/manage_achievements/repository"
 	achievementUsecase "github.com/sawalreverr/recything/internal/achievements/manage_achievements/usecase"
@@ -329,4 +332,13 @@ func (s *echoServer) userVideo() {
 
 	// add comment
 	s.gr.POST("/videos/comment", handler.AddCommentHandler, UserMiddleware)
+}
+
+func (s *echoServer) aboutUsHandler() {
+	repository := aboutusRepo.NewAboutUsRepository(s.db)
+	usecase := aboutusUsecase.NewAboutUsUsecase(repository)
+	handler := aboutusHandler.NewAboutUsHandler(usecase)
+
+	// Get about us by category
+	s.gr.GET("/about-us/category", handler.GetAboutUsByCategory, UserMiddleware)
 }
