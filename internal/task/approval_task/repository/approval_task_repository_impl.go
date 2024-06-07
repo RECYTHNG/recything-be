@@ -6,6 +6,7 @@ import (
 
 	achievement "github.com/sawalreverr/recything/internal/achievements/manage_achievements/entity"
 	"github.com/sawalreverr/recything/internal/database"
+	"github.com/sawalreverr/recything/internal/helper"
 	user_task "github.com/sawalreverr/recything/internal/task/user_task/entity"
 	user_entity "github.com/sawalreverr/recything/internal/user"
 )
@@ -75,10 +76,9 @@ func (repository *ApprovalTaskRepositoryImpl) ApproveUserTask(userTaskId string)
 		return err
 	}
 
-	pointUpdate := int(user.Point) + point
-	log.Println("user point update: ", pointUpdate)
-	log.Println("user point: ", user.Point)
-	log.Println("task point: ", point)
+	pointBonus := helper.BonusTask(user.Badge, point)
+
+	pointUpdate := int(user.Point) + pointBonus
 	if err := tx.Model(&user_entity.User{}).Where("id = ?", userTask.UserId).Update("point", pointUpdate).Error; err != nil {
 		tx.Rollback()
 		return err
