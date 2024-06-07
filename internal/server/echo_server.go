@@ -76,6 +76,12 @@ func (s *echoServer) Start() {
 	// manage achievement handler
 	s.manageAchievement()
 
+	// reminai handler
+	s.reminAIHandler()
+
+	// custom data handler
+	s.customDataHandler()
+
 	// user achievement handler
 	s.userAchievement()
 
