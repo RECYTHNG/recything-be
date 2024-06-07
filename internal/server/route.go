@@ -7,6 +7,9 @@ import (
 	achievementHandler "github.com/sawalreverr/recything/internal/achievements/manage_achievements/handler"
 	achievementRepo "github.com/sawalreverr/recything/internal/achievements/manage_achievements/repository"
 	achievementUsecase "github.com/sawalreverr/recything/internal/achievements/manage_achievements/usecase"
+	userAchievementHandler "github.com/sawalreverr/recything/internal/achievements/user_achievements/handler"
+	userAchievementRepo "github.com/sawalreverr/recything/internal/achievements/user_achievements/repository"
+	userAchievementUsecase "github.com/sawalreverr/recything/internal/achievements/user_achievements/usecase"
 	"github.com/sawalreverr/recything/internal/admin/handler"
 	"github.com/sawalreverr/recything/internal/admin/repository"
 	"github.com/sawalreverr/recything/internal/admin/usecase"
@@ -221,4 +224,13 @@ func (s *echoServer) manageAchievement() {
 
 	// delete achievement
 	s.gr.DELETE("/achievements/:achievementId", handler.DeleteAchievementHandler, SuperAdminOrAdminMiddleware)
+}
+
+func (s *echoServer) userAchievement() {
+	repository := userAchievementRepo.NewUserAchievementRepository(s.db)
+	usecase := userAchievementUsecase.NewUserAchievementUsecase(repository)
+	handler := userAchievementHandler.NewUserAchievementHandler(usecase)
+
+	// get achievement by user
+	s.gr.GET("/user/achievements", handler.GetAvhievementsByUserhandler, UserMiddleware)
 }

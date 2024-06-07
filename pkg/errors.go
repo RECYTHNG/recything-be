@@ -41,4 +41,7 @@ var (
 	// manage achievement
 	ErrAchievementLevelAlreadyExist = errors.New("archievement level already exist")
 	ErrAchievementNotFound          = errors.New("archievement not found")
+
+	// user achievement
+	ErrUserNotHasHistoryPoint = errors.New("user not has history points")
 )
