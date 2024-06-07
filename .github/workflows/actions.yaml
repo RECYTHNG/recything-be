@@ -30,7 +30,7 @@ jobs:
 
       - name: Build Image
         run: docker build -t sawalrever23/recything-be:latest .
-      
+
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
@@ -101,7 +101,7 @@ jobs:
             echo "openai:" >> config.yaml
             echo "  apikey: ${{ secrets.OPENAI_APIKEY }}" >> config.yaml
 
-            echo "openai:" >> config.yaml
+            echo "youtube:" >> config.yaml
             echo "  apikey: ${{ secrets.YOUTUBE_APIKEY }}" >> config.yaml
 
             docker cp config.yaml recything-be:/config.yaml
