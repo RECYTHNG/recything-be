@@ -162,7 +162,14 @@ func (m *mysqlDatabase) InitTasks() {
 	}
 
 	for _, taskChallenge := range dummyData {
-		m.GetDB().FirstOrCreate(&taskChallenge, taskChallenge)
+		result := m.GetDB().FirstOrCreate(&taskChallenge, task.TaskChallenge{ID: taskChallenge.ID})
+		if result.Error != nil {
+			log.Printf("Error adding task challenge with ID %s: %v", taskChallenge.ID, result.Error)
+		} else if result.RowsAffected == 0 {
+			log.Printf("Task challenge with ID %s already exists.", taskChallenge.ID)
+		} else {
+			log.Printf("Task challenge with ID %s created.", taskChallenge.ID)
+		}
 	}
 
 	log.Println("Dummy Tasks added!")
