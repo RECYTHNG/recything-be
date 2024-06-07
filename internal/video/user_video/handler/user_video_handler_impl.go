@@ -107,7 +107,6 @@ func (handler *UserVideoHandlerImpl) GetVideoDetailHandler(c echo.Context) error
 			UserID:    comment.UserID,
 			UserName:  comment.User.Name,
 			CreatedAt: comment.CreatedAt,
-			UpdatedAt: comment.UpdatedAt,
 		})
 	}
 	data.Comments = &dataComments

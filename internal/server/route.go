@@ -213,22 +213,22 @@ func (s *echoServer) userTask() {
 	s.gr.POST("/user/tasks/:taskChallengeId", handler.CreateUserTaskHandler, UserMiddleware)
 
 	// get task in progress by user current
-	s.gr.GET("/user_current/tasks/in-progress", handler.GetUserTaskByUserIdHandler, UserMiddleware)
+	s.gr.GET("/user-current/tasks/in-progress", handler.GetUserTaskByUserIdHandler, UserMiddleware)
 
 	// send task done by user current
-	s.gr.POST("/user_current/tasks/:userTaskId", handler.UploadImageTaskHandler, UserMiddleware)
+	s.gr.POST("/user-current/tasks/:userTaskId", handler.UploadImageTaskHandler, UserMiddleware)
 
 	// get task done by user current
-	s.gr.GET("/user_current/tasks/done", handler.GetUserTaskDoneByUserIdHandler, UserMiddleware)
+	s.gr.GET("/user-current/tasks/done", handler.GetUserTaskDoneByUserIdHandler, UserMiddleware)
 
 	// update user task if reject
-	s.gr.PUT("/user_current/tasks/:userTaskId", handler.UpdateUserTaskHandler, UserMiddleware)
+	s.gr.PUT("/user-current/tasks/:userTaskId", handler.UpdateUserTaskHandler, UserMiddleware)
 
 	// get user task details if repair
-	s.gr.GET("/user_current/tasks/:userTaskId", handler.GetUserTaskDetailsHandler, UserMiddleware)
+	s.gr.GET("/user-current/task/:userTaskId", handler.GetUserTaskDetailsHandler, UserMiddleware)
 
 	// get history point by user current
-	s.gr.GET("/user_current/tasks/history", handler.GetHistoryPointByUserIdHandler, UserMiddleware)
+	s.gr.GET("/user-current/tasks/history", handler.GetHistoryPointByUserIdHandler, UserMiddleware)
 }
 
 func (s *echoServer) approvalTask() {
@@ -237,16 +237,16 @@ func (s *echoServer) approvalTask() {
 	handler := approvalTaskHandler.NewApprovalTaskHandler(usecase)
 
 	// get all pagination user task
-	s.gr.GET("/approve_tasks", handler.GetAllApprovalTaskPaginationHandler, SuperAdminOrAdminMiddleware)
+	s.gr.GET("/approve-tasks", handler.GetAllApprovalTaskPaginationHandler, SuperAdminOrAdminMiddleware)
 
 	// approve user task
-	s.gr.PUT("/approve_tasks/:userTaskId", handler.ApproveUserTaskHandler, SuperAdminOrAdminMiddleware)
+	s.gr.PUT("/approve-tasks/:userTaskId", handler.ApproveUserTaskHandler, SuperAdminOrAdminMiddleware)
 
 	// reject user task
-	s.gr.PUT("/reject_tasks/:userTaskId", handler.RejectUserTaskHandler, SuperAdminOrAdminMiddleware)
+	s.gr.PUT("/reject-tasks/:userTaskId", handler.RejectUserTaskHandler, SuperAdminOrAdminMiddleware)
 
 	// get user task details
-	s.gr.GET("/user_task/:userTaskId", handler.GetUserTaskDetailsHandler, SuperAdminOrAdminMiddleware)
+	s.gr.GET("/user-task/:userTaskId", handler.GetUserTaskDetailsHandler, SuperAdminOrAdminMiddleware)
 }
 
 func (s *echoServer) manageAchievement() {
@@ -350,5 +350,5 @@ func (s *echoServer) userVideo() {
 	s.gr.GET("/videos/:videoId", handler.GetVideoDetailHandler, UserMiddleware)
 
 	// add comment
-	s.gr.POST("/videos/comment", handler.AddCommentHandler, UserMiddleware)
+	s.gr.POST("/videos/comments", handler.AddCommentHandler, UserMiddleware)
 }

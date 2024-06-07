@@ -408,17 +408,17 @@ func (handler *UserTaskHandlerImpl) GetUserTaskDetailsHandler(c echo.Context) er
 
 	var dataImages []*dto.DataImages
 	data := dto.GetUserTaskDetailsResponse{
-		Id:        userTask.ID,
-		TitleTask: userTask.TaskChallenge.Title,
-		UserName:  userTask.User.Name,
-		Images:    []*dto.DataImages{},
+		Id:          userTask.ID,
+		TitleTask:   userTask.TaskChallenge.Title,
+		UserName:    userTask.User.Name,
+		Images:      []*dto.DataImages{},
+		Description: userTask.DescriptionImage,
 	}
 
 	for _, image := range images {
 		dataImages = append(dataImages, &dto.DataImages{
-			Id:          image.ID,
-			ImageUrl:    image.ImageUrl,
-			Description: userTask.DescriptionImage,
+			Id:       image.ID,
+			ImageUrl: image.ImageUrl,
 		})
 	}
 	data.Images = dataImages
