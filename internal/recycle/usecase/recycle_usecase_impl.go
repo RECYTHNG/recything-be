@@ -15,7 +15,7 @@ func NewRecycleUsecaseImpl(repository repository.RecycleRepository) *RecycleUsec
 	}
 }
 
-func (usecase *RecycleUsecaseImpl) GetHomeRecycle() (*dto.RecycleHomeResponse, error) {
+func (usecase *RecycleUsecaseImpl) GetHomeRecycleUsecase() (*dto.RecycleHomeResponse, error) {
 	tasks, err := usecase.RecycleRepository.GetTasks()
 	if err != nil {
 		return nil, err
@@ -64,5 +64,28 @@ func (usecase *RecycleUsecaseImpl) GetHomeRecycle() (*dto.RecycleHomeResponse, e
 	data.DataTask = &dataTask
 	data.DataCategory = &dataCategory
 	data.DataVideo = &dataVideo
+	return data, nil
+}
+
+func (usecase *RecycleUsecaseImpl) SearchVideoUsecase(title string, category string) (*dto.SearchVideoResponse, error) {
+	videos, err := usecase.RecycleRepository.SearchVideo(title, category)
+	if err != nil {
+		return nil, err
+	}
+	var dataVideo []dto.DataVideoSearch
+	for _, video := range *videos {
+		dataVideo = append(dataVideo, dto.DataVideoSearch{
+			Id:          video.ID,
+			Title:       video.Title,
+			Description: video.Description,
+			Thumbnail:   video.Thumbnail,
+			Link:        video.Link,
+			Viewer:      video.Viewer,
+			Category:    dto.DataCategory{Id: video.VideoCategoryID, Name: video.Category.Name},
+		})
+	}
+	data := &dto.SearchVideoResponse{
+		DataVideo: &dataVideo,
+	}
 	return data, nil
 }

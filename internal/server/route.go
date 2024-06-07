@@ -387,5 +387,8 @@ func (s *echoServer) recycleHandler() {
 	handler := recycleHandler.NewRecycleHandlerImpl(usecase)
 
 	// Get home recycle
-	s.gr.GET("/recycle", handler.GetHomeRecycle, UserMiddleware)
+	s.gr.GET("/recycle", handler.GetHomeRecycleHandler, UserMiddleware)
+
+	// Search video
+	s.gr.GET("/recycle/search", handler.SearchVideoHandler, UserMiddleware)
 }

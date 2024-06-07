@@ -3,5 +3,6 @@ package handler
 import "github.com/labstack/echo/v4"
 
 type RecycleHandler interface {
-	GetHomeRecycle(c echo.Context) error
+	GetHomeRecycleHandler(c echo.Context) error
+	SearchVideoHandler(c echo.Context) error
 }

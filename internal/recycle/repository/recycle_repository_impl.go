@@ -54,3 +54,24 @@ func (repository *RecycleRepositoryImpl) GetAllVideo() (*[]video.Video, error) {
 
 	return &videos, nil
 }
+
+func (repository *RecycleRepositoryImpl) SearchVideo(title string, category string) (*[]video.Video, error) {
+	var videos []video.Video
+	query := repository.Database.GetDB().Model(&video.Video{}).
+		Preload("Category")
+
+	if category != "" {
+		query = query.Joins("JOIN video_categories ON video_categories.id = videos.video_category_id").
+			Where("video_categories.name LIKE ?", "%"+category+"%")
+	}
+
+	if title != "" {
+		query = query.Where("videos.title LIKE ?", "%"+title+"%")
+	}
+
+	if err := query.Order("videos.created_at desc").Find(&videos).Error; err != nil {
+		return nil, err
+	}
+
+	return &videos, nil
+}

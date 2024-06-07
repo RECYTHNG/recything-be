@@ -9,4 +9,5 @@ type RecycleRepository interface {
 	GetTasks() (*[]task.TaskChallenge, error)
 	GetCategoryVideos() (*[]video.VideoCategory, error)
 	GetAllVideo() (*[]video.Video, error)
+	SearchVideo(title string, category string) (*[]video.Video, error)
 }

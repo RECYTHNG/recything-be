@@ -18,8 +18,8 @@ func NewRecycleHandlerImpl(usecase usecase.RecycleUsecase) *RecycleHandlerImpl {
 	}
 }
 
-func (handler *RecycleHandlerImpl) GetHomeRecycle(c echo.Context) error {
-	data, err := handler.RecycleUsecase.GetHomeRecycle()
+func (handler *RecycleHandlerImpl) GetHomeRecycleHandler(c echo.Context) error {
+	data, err := handler.RecycleUsecase.GetHomeRecycleUsecase()
 	if err != nil {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, details: "+err.Error())
 	}
@@ -28,4 +28,15 @@ func (handler *RecycleHandlerImpl) GetHomeRecycle(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, responseData)
 
+}
+
+func (handler *RecycleHandlerImpl) SearchVideoHandler(c echo.Context) error {
+	title := c.QueryParam("title")
+	category := c.QueryParam("category")
+	data, err := handler.RecycleUsecase.SearchVideoUsecase(title, category)
+	if err != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, details: "+err.Error())
+	}
+	responseData := helper.ResponseData(http.StatusOK, "success", data.DataVideo)
+	return c.JSON(http.StatusOK, responseData)
 }
