@@ -3782,7 +3782,7 @@ paths:
                               type: string
                               format: date
                               example: "2020-01-01"
-  /videos/comments:
+  /videos/comment:
     post:
       tags:
         - user videos
@@ -3922,7 +3922,7 @@ paths:
                   total_page:
                     type: integer
                     example: 1
-  /approve-tasks/{userTaskId}:
+  /user-task/{userTaskId}:
     get:
       tags:
         - approval tasks
@@ -4004,6 +4004,8 @@ paths:
                   message:
                     type: string
                     example: user task not found
+                    
+  /approve-tasks/{userTaskId}:
     put:
       tags:
         - approval tasks
