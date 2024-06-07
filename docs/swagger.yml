@@ -1131,62 +1131,62 @@ paths:
                     type: string
                     example: Invalid data type
   /achievements:
-    post:
-      tags:
-        - manage achievements
-      summary: Add new achievement
-      description: Endpoint admin to add a new achievement
-      operationId: addAchievement
-      security:
-        - Bearer: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                level:
-                  type: string
-                  description: Level of the achievement
-                  example: gold
-                targetPoint:
-                  type: integer
-                  description: Target point of the achievement
-                  example: 1200
-                badge_url:
-                  type: string
-                  description: Badge url of the achievement
-                  example: https://example.com/image.png
-      responses:
-        '201':
-          description: Achievement successfully created!
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 201
-                  message:
-                    type: string
-                    example: achievement successfully created!
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                        example: ACH0001
-                      level:
-                        type: string
-                        example: gold
-                      targetPoint:
-                        type: integer
-                        example: 1200
-                      badge_url:
-                        type: string
-                        example: https://example.com/image.png
+    # post:
+    #   tags:
+    #     - manage achievements
+    #   summary: Add new achievement
+    #   description: Endpoint admin to add a new achievement
+    #   operationId: addAchievement
+    #   security:
+    #     - Bearer: []
+    #   requestBody:
+    #     required: true
+    #     content:
+    #       application/json:
+    #         schema:
+    #           type: object
+    #           properties:
+    #             level:
+    #               type: string
+    #               description: Level of the achievement
+    #               example: gold
+    #             targetPoint:
+    #               type: integer
+    #               description: Target point of the achievement
+    #               example: 1200
+    #             badge_url:
+    #               type: string
+    #               description: Badge url of the achievement
+    #               example: https://example.com/image.png
+    #   responses:
+    #     '201':
+    #       description: Achievement successfully created!
+    #       content:
+    #         application/json:
+    #           schema:
+    #             type: object
+    #             properties:
+    #               code:
+    #                 type: integer
+    #                 example: 201
+    #               message:
+    #                 type: string
+    #                 example: achievement successfully created!
+    #               data:
+    #                 type: object
+    #                 properties:
+    #                   id:
+    #                     type: string
+    #                     example: ACH0001
+    #                   level:
+    #                     type: string
+    #                     example: gold
+    #                   targetPoint:
+    #                     type: integer
+    #                     example: 1200
+    #                   badge_url:
+    #                     type: string
+    #                     example: https://example.com/image.png
     get:
       tags:
         - manage achievements
@@ -1323,49 +1323,49 @@ paths:
                     example: achievement not found
         '400':
           description: Invalid request data
-    delete:
-      tags:
-        - manage achievements
-      summary: Delete an achievement
-      description: Endpoint admin to delete an achievement/badge.
-      operationId: deleteAchievement
-      parameters:
-        - name: achievementId
-          in: path
-          required: true
-          schema:
-            type: string
-          description: ID of the badge to be updated
-          example: ACH0001
-      security:
-        - Bearer: []
-      responses:
-        '200':
-          description: Achievement successfully deleted
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: achievement successfully deleted!
-        '404': 
-          description: Achievement not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 404
-                  message:
-                    type: string
-                    example: achievement not found
+    # delete:
+    #   tags:
+    #     - manage achievements
+    #   summary: Delete an achievement
+    #   description: Endpoint admin to delete an achievement/badge.
+    #   operationId: deleteAchievement
+    #   parameters:
+    #     - name: achievementId
+    #       in: path
+    #       required: true
+    #       schema:
+    #         type: string
+    #       description: ID of the badge to be updated
+    #       example: ACH0001
+    #   security:
+    #     - Bearer: []
+    #   responses:
+    #     '200':
+    #       description: Achievement successfully deleted
+    #       content:
+    #         application/json:
+    #           schema:
+    #             type: object
+    #             properties:
+    #               code:
+    #                 type: integer
+    #                 example: 200
+    #               message:
+    #                 type: string
+    #                 example: achievement successfully deleted!
+    #     '404': 
+    #       description: Achievement not found
+    #       content:
+    #         application/json:
+    #           schema:
+    #             type: object
+    #             properties:
+    #               code:
+    #                 type: integer
+    #                 example: 404
+    #               message:
+    #                 type: string
+    #                 example: achievement not found
 
   /admins:
     get:
@@ -4004,7 +4004,7 @@ paths:
                   message:
                     type: string
                     example: user task not found
-                    
+
   /approve-tasks/{userTaskId}:
     put:
       tags:
@@ -4070,6 +4070,17 @@ paths:
             type: string
             example: UT0001
           description: ID of user task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  description: Reason why got rejected
+                  example: Bukti kurang jelas
       responses:
         '200':
           description: Success
