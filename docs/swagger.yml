@@ -1075,7 +1075,116 @@ paths:
                     example: article successfully deleted!
         '404':
           description: Article not found
-  /admin/achievements:
+  /achievements/badge:
+    post:
+      tags:
+        - manage achievements
+      summary: Upload image badge
+      description: Endpoint admin to upload image badge before adding or updating data achievement.
+      operationId: uploadImageBadge
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                badge:
+                  type: string
+                  format: image
+                  description: Image badge
+      responses:
+        '200':
+          description: Upload Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      badge_url:
+                        type: string
+                        example: https://example.com/image.png
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Invalid data type
+  /achievements:
+    post:
+      tags:
+        - manage achievements
+      summary: Add new achievement
+      description: Endpoint admin to add a new achievement
+      operationId: addAchievement
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                level:
+                  type: string
+                  description: Level of the achievement
+                  example: gold
+                targetPoint:
+                  type: integer
+                  description: Target point of the achievement
+                  example: 1200
+                badge_url:
+                  type: string
+                  description: Badge url of the achievement
+                  example: https://example.com/image.png
+      responses:
+        '201':
+          description: Achievement successfully created!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: achievement successfully created!
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: ACH0001
+                      level:
+                        type: string
+                        example: gold
+                      targetPoint:
+                        type: integer
+                        example: 1200
+                      badge_url:
+                        type: string
+                        example: https://example.com/image.png
     get:
       tags:
         - manage achievements
@@ -1099,36 +1208,28 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Achievement'
-      security:
-        - Bearer: []                      
-    post:
+                      $ref: '#/components/schemas/Achievement'                    
+  
+  /achievements/{achievementId}:
+    get:
       tags:
         - manage achievements
-      summary: Add new achievement
-      description: Endpoint admin to add a new achievement/badge.
-      operationId: addAchievement
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  enum: [classic, silver, gold, platinum]
-                  description: Name of the badge
-                  example: gold
-                targetPoint:
-                  type: integer
-                  description: Target point for the badge
-                  example: 1000
+      summary: Get an achievement by id
+      description: Endpoint admin to get an existing achievement's data by id
+      operationId: getAchievementById
+      parameters:
+        - name: achievementId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the achievement to be updated
+          example: 1
       security:
-        - Bearer: []                  
+        - Bearer: []
       responses:
-        '201':
-          description: Achievement successfully created
+        '200':
+          description: Get data achievement by id
           content:
             application/json:
               schema:
@@ -1139,10 +1240,23 @@ paths:
                     example: 200
                   message:
                     type: string
-                    example: achievement successfully created!
-        '400':
-          description: Invalid request data
-  /admin/achievements/{achievementId}:
+                    example: ok
+                  data:
+                    $ref: '#/components/schemas/Achievement'
+        '404':
+          description: Achievement not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: achievement not found
+
     put:
       tags:
         - manage achievements
@@ -1166,10 +1280,18 @@ paths:
             schema:
               type: object
               properties:
+                level:
+                  type: string
+                  description: New level for the achievement
+                  example: platinum
                 target_point:
                   type: integer
                   description: New target point for the badge
                   example: 1200
+                badge_url:
+                  type: string
+                  description: New badge url for the achievement
+                  example: https://example.com/image.png
       responses:
         '200':
           description: Achievement successfully updated
@@ -1186,6 +1308,17 @@ paths:
                     example: aAchievement successfully updated!
         '404': 
           description: Achievement not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: achievement not found
         '400':
           description: Invalid request data
     delete:
@@ -1220,6 +1353,17 @@ paths:
                     example: achievement successfully deleted!
         '404': 
           description: Achievement not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: achievement not found
 
   /admins:
     get:
@@ -2263,7 +2407,7 @@ paths:
                             example: UT0001
                           status_progress:
                             type: string
-                            example: "completed"
+                            example: "in_progress"
                           status_accepted:
                             type: string
                             example: "need_review"  
@@ -2385,7 +2529,7 @@ paths:
                         example: UT0001
                       status_progress:
                         type: string
-                        example: "completed"
+                        example: "done"
                       status_accepted:
                         type: string
                         example: "need_review"
@@ -2660,7 +2804,7 @@ paths:
                           example: UT0001
                         status_progress:
                           type: string
-                          example: "completed"
+                          example: "done"
                         status_accepted:
                           type: string
                           example: "need_review"  
@@ -4165,13 +4309,19 @@ components:
     Achievement:
       type: object
       properties:
-        name:
+        id:
+          type: integer
+          example: 1
+        level:
           type: string
           enum: [classic, silver, gold, platinum]
           example: gold
         target_point:
           type: integer
           example: 500
+        badge_url:
+          type: string
+          example: "https://example.com/image.png"
     Admin:
       type: object
       properties:
