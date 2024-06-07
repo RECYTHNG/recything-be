@@ -25,6 +25,9 @@ import (
 	faqRepo "github.com/sawalreverr/recything/internal/faq/repository"
 	faqUsecase "github.com/sawalreverr/recything/internal/faq/usecase"
 	"github.com/sawalreverr/recything/internal/middleware"
+	recycleHandler "github.com/sawalreverr/recything/internal/recycle/handler"
+	recycleRepo "github.com/sawalreverr/recything/internal/recycle/repository"
+	recycleUsecase "github.com/sawalreverr/recything/internal/recycle/usecase"
 	reminaiHandler "github.com/sawalreverr/recything/internal/remin-ai/handler"
 	reminaiUsecase "github.com/sawalreverr/recything/internal/remin-ai/usecase"
 	reportHandler "github.com/sawalreverr/recything/internal/report/handler"
@@ -376,4 +379,13 @@ func (s *echoServer) aboutUsHandler() {
 
 	// Get about us by category
 	s.gr.GET("/about-us/category", handler.GetAboutUsByCategory, UserMiddleware)
+}
+
+func (s *echoServer) recycleHandler() {
+	repository := recycleRepo.NewRecycleRepositoryImpl(s.db)
+	usecase := recycleUsecase.NewRecycleUsecaseImpl(repository)
+	handler := recycleHandler.NewRecycleHandlerImpl(usecase)
+
+	// Get home recycle
+	s.gr.GET("/recycle", handler.GetHomeRecycle, UserMiddleware)
 }

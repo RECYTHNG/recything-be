@@ -94,6 +94,9 @@ func (s *echoServer) Start() {
 	// About-us handler
 	s.aboutUsHandler()
 
+	// recycle handler
+	s.recycleHandler()
+
 	serverPORT := fmt.Sprintf(":%d", s.conf.Server.Port)
 	s.app.Logger.Fatal(s.app.Start(serverPORT))
 }
