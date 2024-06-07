@@ -250,6 +250,31 @@ func (m *mysqlDatabase) InitVideoCategories() {
 	log.Println("Video categories data added!")
 }
 
+func (m *mysqlDatabase) InitAboutUs() {
+	// aboutUs := []aboutus.AboutUs{
+	// 	{ID: "ABS01", Category: "perusahaan", Title: "Tentang siapa kami", Description: "RecyThing adalah pemimpin di industri daur ulang sampah yang berkomitmen untuk menjaga lingkungan hidup yang lebih bersih dan lebih berkelanjutan."},
+	// 	{ID: "ABS02", Category: "perusahaan", Title: "Visi Kami", Description: "Menciptakan masyarakat yang sadar lingkungan di mana setiap individu berperan aktif dalam melestarikan bumi kita."},
+	// 	{ID: "ABS03", Category: "perusahaan", Title: "Komitmen Kami", Description: "Prioritaskan penggunaan teknologi terbaru dan praktik terbaik dalam proses daur ulang untuk mengurangi dampak lingkungan."},
+	// 	{ID: "ABS04", Category: "perusahaan", Title: "Pelayanan Pelanggan Unggul", Description: "Tim ahli yang berpengalaman memberikan solusi tepat dan responsif sesuai dengan kebutuhan klien."},
+	// 	{ID: "ABS05", Category: "perusahaan", Title: "Pendidikan Masyarakat", Description: "Berperan aktif dalam mendidik masyarakat tentang pentingnya daur ulang dan pengelolaan limbah yang berkelanjutan."},
+
+	// 	{ID: "ABS06", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
+	// 	{ID: "ABS07", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
+	// 	{ID: "ABS08", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
+	// 	{ID: "ABS09", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
+
+	// 	{ID: "ABS10", Category: "contact_us", Title: "Hubungi Kami", Description: "Jika Anda memiliki pertanyaan, masukan, atau ingin bermitra dengan kami, jangan ragu untuk menghubungi tim kami. Kami siap membantu Anda dengan segala kebutuhan terkait daur ulang dan pengelolaan limbah."},
+	// 	{ID: "ABS11", Category: "contact_us", Title: "Alamat Kantor", Description: "Recything\nJalan Mangga Dua\nJakarta Pusat, 20012\nIndonesia"},
+	// 	{ID: "ABS12", Category: "contact_us", Title: "Jam Operasional", Description: "Senin-Jumat: 08.00 - 17.00 WIB"},
+	// 	{ID: "ABS13", Category: "contact_us", Title: "Telepon", Description: "+6289511223344"},
+	// 	{ID: "ABS14", Category: "contact_us", Title: "Social Media", Description: "Facebook: https://facebook.com/recything\nTwitter: https://x.com/recything\nInstagram: https://instagram.com/recything\nLinkedin: https://linkedin.com/recything"},
+	// }
+
+	// aboutUsImage := []aboutus.AboutUsImage{
+	// 	{AboutUsID: "ABS01", ImageURL: ""}
+	// }
+}
+
 func (m *mysqlDatabase) GetDB() *gorm.DB {
 	return dbInstance.DB
 }
