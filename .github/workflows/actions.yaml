@@ -101,6 +101,9 @@ jobs:
             echo "openai:" >> config.yaml
             echo "  apikey: ${{ secrets.OPENAI_APIKEY }}" >> config.yaml
 
+            echo "openai:" >> config.yaml
+            echo "  apikey: ${{ secrets.YOUTUBE_APIKEY }}" >> config.yaml
+
             docker cp config.yaml recything-be:/config.yaml
             docker container restart recything-be
             rm config.yaml || true
