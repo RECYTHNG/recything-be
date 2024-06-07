@@ -11,6 +11,7 @@ type (
 		Cloudinary *Cloudinary
 		SMTP       *SMTP
 		OpenAI     *OpenAI
+		YouTube    *YouTube
 	}
 
 	Server struct {
@@ -40,6 +41,10 @@ type (
 	}
 
 	OpenAI struct {
+		APIKey string
+	}
+
+	YouTube struct {
 		APIKey string
 	}
 )

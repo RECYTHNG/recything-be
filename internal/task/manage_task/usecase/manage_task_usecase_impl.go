@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"time"
+
 	"github.com/sawalreverr/recything/internal/helper"
 	"github.com/sawalreverr/recything/internal/task/manage_task/dto"
 	task "github.com/sawalreverr/recything/internal/task/manage_task/entity"
@@ -24,6 +26,16 @@ func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskR
 	}
 	findLastId, _ := usecase.ManageTaskRepository.FindLastIdTaskChallenge()
 	id := helper.GenerateCustomID(findLastId, "TM")
+	startDateString := request.StartDate
+	endDateString := request.EndDate
+	parsedStartDate, errParsedStartDate := time.Parse("2006-01-02", startDateString)
+	if errParsedStartDate != nil {
+		return nil, pkg.ErrParsedTime
+	}
+	parsedEndDate, errParsedEndDate := time.Parse("2006-01-02", endDateString)
+	if errParsedEndDate != nil {
+		return nil, pkg.ErrParsedTime
+	}
 
 	taskChallange := &task.TaskChallenge{
 		ID:          id,
@@ -31,8 +43,8 @@ func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskR
 		Title:       request.Title,
 		Description: request.Description,
 		Thumbnail:   request.ThumbnailUrl,
-		StartDate:   request.StartDate,
-		EndDate:     request.EndDate,
+		StartDate:   parsedStartDate,
+		EndDate:     parsedEndDate,
 		Point:       request.Point,
 		TaskSteps:   []task.TaskStep{},
 		DeletedAt:   gorm.DeletedAt{},
@@ -78,6 +90,16 @@ func (usecase *ManageTaskUsecaseImpl) UpdateTaskChallengeUsecase(request *dto.Up
 	if len(request.TaskSteps) == 0 {
 		return nil, pkg.ErrTaskStepsNull
 	}
+	startDateString := request.StartDate
+	endDateString := request.EndDate
+	parsedStartDate, errParsedStartDate := time.Parse("2006-01-02", startDateString)
+	if errParsedStartDate != nil {
+		return nil, pkg.ErrParsedTime
+	}
+	parsedEndDate, errParsedEndDate := time.Parse("2006-01-02", endDateString)
+	if errParsedEndDate != nil {
+		return nil, pkg.ErrParsedTime
+	}
 
 	taskChallenge := &task.TaskChallenge{
 		ID:          id,
@@ -85,8 +107,8 @@ func (usecase *ManageTaskUsecaseImpl) UpdateTaskChallengeUsecase(request *dto.Up
 		Title:       request.Title,
 		Description: request.Description,
 		Thumbnail:   request.ThumbnailUrl,
-		StartDate:   request.StartDate,
-		EndDate:     request.EndDate,
+		StartDate:   parsedStartDate,
+		EndDate:     parsedEndDate,
 		Point:       request.Point,
 	}
 

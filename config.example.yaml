@@ -22,3 +22,6 @@ smtp:
 
 openai:
   apikey: <your_apikey>
+
+youtube:
+  apikey: <your_apikey>

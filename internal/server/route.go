@@ -4,9 +4,15 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	aboutusHandler "github.com/sawalreverr/recything/internal/about-us/handler"
+	aboutusRepo "github.com/sawalreverr/recything/internal/about-us/repository"
+	aboutusUsecase "github.com/sawalreverr/recything/internal/about-us/usecase"
 	achievementHandler "github.com/sawalreverr/recything/internal/achievements/manage_achievements/handler"
 	achievementRepo "github.com/sawalreverr/recything/internal/achievements/manage_achievements/repository"
 	achievementUsecase "github.com/sawalreverr/recything/internal/achievements/manage_achievements/usecase"
+	userAchievementHandler "github.com/sawalreverr/recything/internal/achievements/user_achievements/handler"
+	userAchievementRepo "github.com/sawalreverr/recything/internal/achievements/user_achievements/repository"
+	userAchievementUsecase "github.com/sawalreverr/recything/internal/achievements/user_achievements/usecase"
 	"github.com/sawalreverr/recything/internal/admin/handler"
 	"github.com/sawalreverr/recything/internal/admin/repository"
 	"github.com/sawalreverr/recything/internal/admin/usecase"
@@ -36,6 +42,12 @@ import (
 	userHandler "github.com/sawalreverr/recything/internal/user/handler"
 	userRepo "github.com/sawalreverr/recything/internal/user/repository"
 	userUsecase "github.com/sawalreverr/recything/internal/user/usecase"
+	videoHandler "github.com/sawalreverr/recything/internal/video/manage_video/handler"
+	videoRepo "github.com/sawalreverr/recything/internal/video/manage_video/repository"
+	videoUsecase "github.com/sawalreverr/recything/internal/video/manage_video/usecase"
+	userVideoHandler "github.com/sawalreverr/recything/internal/video/user_video/handler"
+	userVideoRepo "github.com/sawalreverr/recything/internal/video/user_video/repository"
+	userVideoUsecase "github.com/sawalreverr/recything/internal/video/user_video/usecase"
 )
 
 var (
@@ -212,19 +224,22 @@ func (s *echoServer) userTask() {
 	s.gr.POST("/user/tasks/:taskChallengeId", handler.CreateUserTaskHandler, UserMiddleware)
 
 	// get task in progress by user current
-	s.gr.GET("/user_current/tasks/in-progress", handler.GetUserTaskByUserIdHandler, UserMiddleware)
+	s.gr.GET("/user-current/tasks/in-progress", handler.GetUserTaskByUserIdHandler, UserMiddleware)
 
 	// send task done by user current
-	s.gr.POST("/user_current/tasks/:userTaskId", handler.UploadImageTaskHandler, UserMiddleware)
+	s.gr.POST("/user-current/tasks/:userTaskId", handler.UploadImageTaskHandler, UserMiddleware)
 
 	// get task done by user current
-	s.gr.GET("/user_current/tasks/done", handler.GetUserTaskDoneByUserIdHandler, UserMiddleware)
+	s.gr.GET("/user-current/tasks/done", handler.GetUserTaskDoneByUserIdHandler, UserMiddleware)
 
 	// update user task if reject
-	s.gr.PUT("/user_current/tasks/:userTaskId", handler.UpdateUserTaskHandler, UserMiddleware)
+	s.gr.PUT("/user-current/tasks/:userTaskId", handler.UpdateUserTaskHandler, UserMiddleware)
 
 	// get user task details if repair
-	s.gr.GET("/user_current/tasks/:userTaskId", handler.GetUserTaskDetailsHandler, UserMiddleware)
+	s.gr.GET("/user-current/task/:userTaskId", handler.GetUserTaskDetailsHandler, UserMiddleware)
+
+	// get history point by user current
+	s.gr.GET("/user-current/tasks/history", handler.GetHistoryPointByUserIdHandler, UserMiddleware)
 }
 
 func (s *echoServer) approvalTask() {
@@ -233,16 +248,16 @@ func (s *echoServer) approvalTask() {
 	handler := approvalTaskHandler.NewApprovalTaskHandler(usecase)
 
 	// get all pagination user task
-	s.gr.GET("/approve_tasks", handler.GetAllApprovalTaskPaginationHandler, SuperAdminOrAdminMiddleware)
+	s.gr.GET("/approval-tasks", handler.GetAllApprovalTaskPaginationHandler, SuperAdminOrAdminMiddleware)
 
 	// approve user task
-	s.gr.PUT("/approve_tasks/:userTaskId", handler.ApproveUserTaskHandler, SuperAdminOrAdminMiddleware)
+	s.gr.PUT("/approve-tasks/:userTaskId", handler.ApproveUserTaskHandler, SuperAdminOrAdminMiddleware)
 
 	// reject user task
-	s.gr.PUT("/reject_tasks/:userTaskId", handler.RejectUserTaskHandler, SuperAdminOrAdminMiddleware)
+	s.gr.PUT("/reject-tasks/:userTaskId", handler.RejectUserTaskHandler, SuperAdminOrAdminMiddleware)
 
 	// get user task details
-	s.gr.GET("/user_task/:userTaskId", handler.GetUserTaskDetailsHandler, SuperAdminOrAdminMiddleware)
+	s.gr.GET("/user-task/:userTaskId", handler.GetUserTaskDetailsHandler, SuperAdminOrAdminMiddleware)
 }
 
 func (s *echoServer) manageAchievement() {
@@ -300,4 +315,70 @@ func (s *echoServer) reminAIHandler() {
 
 	// ReMin AI Chatbot with user access
 	s.gr.POST("/remin-ai", handler.AskGPT, UserMiddleware)
+}
+
+func (s *echoServer) userAchievement() {
+	repository := userAchievementRepo.NewUserAchievementRepository(s.db)
+	usecase := userAchievementUsecase.NewUserAchievementUsecase(repository)
+	handler := userAchievementHandler.NewUserAchievementHandler(usecase)
+
+	// get achievement by user
+	s.gr.GET("/user/achievements", handler.GetAvhievementsByUserhandler, UserMiddleware)
+}
+
+func (s *echoServer) manageVideo() {
+	repository := videoRepo.NewManageVideoRepository(s.db)
+	usecase := videoUsecase.NewManageVideoUsecaseImpl(repository)
+	handler := videoHandler.NewManageVideoHandlerImpl(usecase)
+
+	// upload thumbnail video
+	s.gr.POST("/videos/thumbnail", handler.UploadThumbnailVideoHandler, SuperAdminOrAdminMiddleware)
+
+	// create data video
+	s.gr.POST("/videos/data", handler.CreateDataVideoHandler, SuperAdminOrAdminMiddleware)
+
+	// create category video
+	s.gr.POST("/videos/categories", handler.CreateCategoryVideoHandler, SuperAdminOrAdminMiddleware)
+
+	// get all category video
+	s.gr.GET("/videos/categories", handler.GetAllCategoryVideoHandler, SuperAdminOrAdminMiddleware)
+
+	// get all data video pagination
+	s.gr.GET("/videos/data", handler.GetAllDataVideoPaginationHandler, SuperAdminOrAdminMiddleware)
+
+	// get details data video by id
+	s.gr.GET("/videos/data/:videoId", handler.GetDetailsDataVideoByIdHandler, SuperAdminOrAdminMiddleware)
+
+	// update data video
+	s.gr.PUT("/videos/data/:videoId", handler.UpdateDataVideoHandler, SuperAdminOrAdminMiddleware)
+
+	// delete data video
+	s.gr.DELETE("/videos/data/:videoId", handler.DeleteDataVideoHandler, SuperAdminOrAdminMiddleware)
+}
+
+func (s *echoServer) userVideo() {
+	repository := userVideoRepo.NewUserVideoRepository(s.db)
+	usecase := userVideoUsecase.NewUserVideoUsecase(repository)
+	handler := userVideoHandler.NewUserVideoHandler(usecase)
+
+	// get all video
+	s.gr.GET("/videos", handler.GetAllVideoHandler, UserMiddleware)
+
+	// search video by title
+	s.gr.GET("/videos/search", handler.SearchVideoByTitleHandler, UserMiddleware)
+
+	// get video detail
+	s.gr.GET("/videos/:videoId", handler.GetVideoDetailHandler, UserMiddleware)
+
+	// add comment
+	s.gr.POST("/videos/comment", handler.AddCommentHandler, UserMiddleware)
+}
+
+func (s *echoServer) aboutUsHandler() {
+	repository := aboutusRepo.NewAboutUsRepository(s.db)
+	usecase := aboutusUsecase.NewAboutUsUsecase(repository)
+	handler := aboutusHandler.NewAboutUsHandler(usecase)
+
+	// Get about us by category
+	s.gr.GET("/about-us/category", handler.GetAboutUsByCategory, UserMiddleware)
 }

@@ -27,6 +27,24 @@ func main() {
 	// Init Custom Data
 	db.InitCustomDatas()
 
+	// Init Tasks
+	db.InitTasks()
+
+	// Init Task Steps
+	db.InitTaskSteps()
+
+	// Init Achievements
+	db.InitAchievements()
+
+	// Init Video Categories
+	db.InitVideoCategories()
+
+	// Init About us
+	db.InitAboutUs()
+
+	// Init Videos
+	db.InitDataVideos()
+
 	app := server.NewEchoServer(conf, db)
 	c := cron.New()
 

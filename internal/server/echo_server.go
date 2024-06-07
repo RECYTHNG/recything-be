@@ -76,11 +76,23 @@ func (s *echoServer) Start() {
 	// manage achievement handler
 	s.manageAchievement()
 
-	// Custom Data Handler
+	// reminai handler
+	s.reminAIHandler()
+
+	// custom data handler
 	s.customDataHandler()
 
-	// ReMin AI Handler
-	s.reminAIHandler()
+	// user achievement handler
+	s.userAchievement()
+
+	// manage video handler
+	s.manageVideo()
+
+	// user video handler
+	s.userVideo()
+
+	// About-us handler
+	s.aboutUsHandler()
 
 	serverPORT := fmt.Sprintf(":%d", s.conf.Server.Port)
 	s.app.Logger.Fatal(s.app.Start(serverPORT))

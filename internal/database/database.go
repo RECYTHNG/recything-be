@@ -8,4 +8,10 @@ type Database interface {
 	InitWasteMaterials()
 	InitFaqs()
 	InitCustomDatas()
+	InitTasks()
+	InitTaskSteps()
+	InitAchievements()
+	InitVideoCategories()
+	InitAboutUs()
+	InitDataVideos()
 }

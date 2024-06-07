@@ -33,17 +33,17 @@ type GetUserTaskPagination struct {
 }
 
 type GetUserTaskDetailsResponse struct {
-	Id        string        `json:"id"`
-	TitleTask string        `json:"title_task"`
-	StartDate time.Time     `json:"start_date"`
-	EndDate   time.Time     `json:"end_date"`
-	UserName  string        `json:"user_name"`
-	Images    []*DataImages `json:"images"`
+	Id          string        `json:"id"`
+	TitleTask   string        `json:"title_task"`
+	StartDate   time.Time     `json:"start_date"`
+	EndDate     time.Time     `json:"end_date"`
+	UserName    string        `json:"user_name"`
+	Images      []*DataImages `json:"images"`
+	Description string        `json:"description_image"`
 }
 
 type DataImages struct {
-	Id          int       `json:"id"`
-	ImageUrl    string    `json:"image_url"`
-	Description string    `json:"description"`
-	UploadedAt  time.Time `json:"uploaded_at"`
+	Id         int       `json:"id"`
+	ImageUrl   string    `json:"image_url"`
+	UploadedAt time.Time `json:"uploaded_at"`
 }
