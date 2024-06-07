@@ -18,6 +18,8 @@ tags:
     description: Endpoint for user doing task
   - name: chatbot (ReMin AI)
     description: Endpoint for user asking question to chatbot
+  - name: about us
+    description: Endpoint for user to get data about us by category
 
   - name: manage users
     description: Endpoint for admin manage users account
@@ -863,7 +865,7 @@ paths:
             type: string
             example: point dan level
           description: The name of the FAQ category to retrieve,
-                       invalid input (profil, littering, rubbish, misi, lokasi sampah, poin dan level, artikel)
+                       valid input (profil, littering, rubbish, misi, lokasi sampah, poin dan level, artikel)
       responses:
         '200':
           description: Get all data by category
@@ -4129,7 +4131,66 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserAchievements'
 
-                
+  /about-us/category:
+    get:
+      tags:
+        - about us
+      summary: Get data about us by category name
+      description: Endpoint for user get data about us by category name
+      operationId: getAboutUsCategory
+      security:
+        - Bearer: []
+      parameters:
+        - in: query
+          name: name
+          required: true
+          schema:
+            type: string
+            example: perusahaan
+          description: The name of the About us category to retrieve,
+                       valid input (perusahaan, tim, contact_us)
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      properties:
+                        id:
+                          type: string
+                          example: ABS01
+                        category:
+                          type: string
+                          example: perusahaan
+                        title:
+                          type: string
+                          example: Tentang siapa kami
+                        description:
+                          type: string
+                          example: RecyThing adalah pemimpin di industri daur ulang sampah yang berkomitmen untuk menjaga lingkungan hidup yang lebih bersih dan lebih berkelanjutan.
+                        images:
+                          type: array
+                          items:
+                            properties:
+                              about_us_id:
+                                type: string
+                                example: ABS01
+                              image_url:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+        '404':
+          description: Category name not found
+
 components:
   schemas:
     User:
