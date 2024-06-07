@@ -31,6 +31,7 @@ var (
 	// Manage Task
 	ErrTaskStepsNull = errors.New("steps cannot be null")
 	ErrTaskNotFound  = errors.New("task not found")
+	ErrParsedTime    = errors.New("start date or end data is invalid")
 
 	// User Task
 	ErrImageTaskNull          = errors.New("image task cannot be null")
