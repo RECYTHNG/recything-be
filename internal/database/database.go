@@ -11,4 +11,5 @@ type Database interface {
 	InitTasks()
 	InitTaskSteps()
 	InitAchievements()
+	InitVideoCategories()
 }

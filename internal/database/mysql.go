@@ -13,6 +13,7 @@ import (
 	"github.com/sawalreverr/recything/internal/helper"
 	"github.com/sawalreverr/recything/internal/report"
 	task "github.com/sawalreverr/recything/internal/task/manage_task/entity"
+	video "github.com/sawalreverr/recything/internal/video/manage_video/entity"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -232,6 +233,21 @@ func (m *mysqlDatabase) InitAchievements() {
 	}
 
 	log.Println("Dummy Achievements added!")
+}
+
+func (m *mysqlDatabase) InitVideoCategories() {
+	videoCategories := []video.VideoCategory{
+		{Name: "Tips"},
+		{Name: "Daur Ulang"},
+		{Name: "Tutorial"},
+		{Name: "Edukasi"},
+		{Name: "Kampanye"},
+		{Name: "Lainnya"},
+	}
+	for _, videoCategory := range videoCategories {
+		m.GetDB().FirstOrCreate(&videoCategory, videoCategory)
+	}
+	log.Println("Video categories data added!")
 }
 
 func (m *mysqlDatabase) GetDB() *gorm.DB {

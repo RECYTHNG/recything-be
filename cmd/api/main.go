@@ -36,6 +36,9 @@ func main() {
 	// Init Achievements
 	db.InitAchievements()
 
+	// Init Video Categories
+	db.InitVideoCategories()
+
 	app := server.NewEchoServer(conf, db)
 	c := cron.New()
 
