@@ -39,6 +39,9 @@ func main() {
 	// Init Video Categories
 	db.InitVideoCategories()
 
+	// Init About us
+	db.InitAboutUs()
+
 	app := server.NewEchoServer(conf, db)
 	c := cron.New()
 

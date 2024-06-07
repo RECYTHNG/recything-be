@@ -3,6 +3,7 @@ package database
 import (
 	"log"
 
+	aboutus "github.com/sawalreverr/recything/internal/about-us"
 	achievement "github.com/sawalreverr/recything/internal/achievements/manage_achievements/entity"
 	"github.com/sawalreverr/recything/internal/admin/entity"
 	customdata "github.com/sawalreverr/recything/internal/custom-data"
@@ -32,6 +33,8 @@ func AutoMigrate(db Database) {
 		&video.Video{},
 		&video.VideoCategory{},
 		&video.Comment{},
+		&aboutus.AboutUs{},
+		&aboutus.AboutUsImage{},
 	); err != nil {
 		log.Fatal("Database Migration Failed!")
 	}

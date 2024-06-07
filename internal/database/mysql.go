@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/sawalreverr/recything/config"
+	aboutus "github.com/sawalreverr/recything/internal/about-us"
 	achievement "github.com/sawalreverr/recything/internal/achievements/manage_achievements/entity"
 	adminEntity "github.com/sawalreverr/recything/internal/admin/entity"
 	customDataEntity "github.com/sawalreverr/recything/internal/custom-data"
@@ -251,28 +252,59 @@ func (m *mysqlDatabase) InitVideoCategories() {
 }
 
 func (m *mysqlDatabase) InitAboutUs() {
-	// aboutUs := []aboutus.AboutUs{
-	// 	{ID: "ABS01", Category: "perusahaan", Title: "Tentang siapa kami", Description: "RecyThing adalah pemimpin di industri daur ulang sampah yang berkomitmen untuk menjaga lingkungan hidup yang lebih bersih dan lebih berkelanjutan."},
-	// 	{ID: "ABS02", Category: "perusahaan", Title: "Visi Kami", Description: "Menciptakan masyarakat yang sadar lingkungan di mana setiap individu berperan aktif dalam melestarikan bumi kita."},
-	// 	{ID: "ABS03", Category: "perusahaan", Title: "Komitmen Kami", Description: "Prioritaskan penggunaan teknologi terbaru dan praktik terbaik dalam proses daur ulang untuk mengurangi dampak lingkungan."},
-	// 	{ID: "ABS04", Category: "perusahaan", Title: "Pelayanan Pelanggan Unggul", Description: "Tim ahli yang berpengalaman memberikan solusi tepat dan responsif sesuai dengan kebutuhan klien."},
-	// 	{ID: "ABS05", Category: "perusahaan", Title: "Pendidikan Masyarakat", Description: "Berperan aktif dalam mendidik masyarakat tentang pentingnya daur ulang dan pengelolaan limbah yang berkelanjutan."},
+	aboutUs := []aboutus.AboutUs{
+		{ID: "ABS01", Category: "perusahaan", Title: "Tentang siapa kami", Description: "RecyThing adalah pemimpin di industri daur ulang sampah yang berkomitmen untuk menjaga lingkungan hidup yang lebih bersih dan lebih berkelanjutan."},
+		{ID: "ABS02", Category: "perusahaan", Title: "Visi Kami", Description: "Menciptakan masyarakat yang sadar lingkungan di mana setiap individu berperan aktif dalam melestarikan bumi kita."},
+		{ID: "ABS03", Category: "perusahaan", Title: "Komitmen Kami", Description: "Prioritaskan penggunaan teknologi terbaru dan praktik terbaik dalam proses daur ulang untuk mengurangi dampak lingkungan."},
+		{ID: "ABS04", Category: "perusahaan", Title: "Pelayanan Pelanggan Unggul", Description: "Tim ahli yang berpengalaman memberikan solusi tepat dan responsif sesuai dengan kebutuhan klien."},
+		{ID: "ABS05", Category: "perusahaan", Title: "Pendidikan Masyarakat", Description: "Berperan aktif dalam mendidik masyarakat tentang pentingnya daur ulang dan pengelolaan limbah yang berkelanjutan."},
 
-	// 	{ID: "ABS06", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
-	// 	{ID: "ABS07", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
-	// 	{ID: "ABS08", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
-	// 	{ID: "ABS09", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
+		{ID: "ABS06", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
+		{ID: "ABS07", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
+		{ID: "ABS08", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
+		{ID: "ABS09", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
 
-	// 	{ID: "ABS10", Category: "contact_us", Title: "Hubungi Kami", Description: "Jika Anda memiliki pertanyaan, masukan, atau ingin bermitra dengan kami, jangan ragu untuk menghubungi tim kami. Kami siap membantu Anda dengan segala kebutuhan terkait daur ulang dan pengelolaan limbah."},
-	// 	{ID: "ABS11", Category: "contact_us", Title: "Alamat Kantor", Description: "Recything\nJalan Mangga Dua\nJakarta Pusat, 20012\nIndonesia"},
-	// 	{ID: "ABS12", Category: "contact_us", Title: "Jam Operasional", Description: "Senin-Jumat: 08.00 - 17.00 WIB"},
-	// 	{ID: "ABS13", Category: "contact_us", Title: "Telepon", Description: "+6289511223344"},
-	// 	{ID: "ABS14", Category: "contact_us", Title: "Social Media", Description: "Facebook: https://facebook.com/recything\nTwitter: https://x.com/recything\nInstagram: https://instagram.com/recything\nLinkedin: https://linkedin.com/recything"},
-	// }
+		{ID: "ABS10", Category: "contact_us", Title: "Hubungi Kami", Description: "Jika Anda memiliki pertanyaan, masukan, atau ingin bermitra dengan kami, jangan ragu untuk menghubungi tim kami. Kami siap membantu Anda dengan segala kebutuhan terkait daur ulang dan pengelolaan limbah."},
+		{ID: "ABS11", Category: "contact_us", Title: "Alamat Kantor", Description: "Recything\nJalan Mangga Dua\nJakarta Pusat, 20012\nIndonesia"},
+		{ID: "ABS12", Category: "contact_us", Title: "Jam Operasional", Description: "Senin-Jumat: 08.00 - 17.00 WIB"},
+		{ID: "ABS13", Category: "contact_us", Title: "Telepon", Description: "+6289511223344"},
+		{ID: "ABS14", Category: "contact_us", Title: "Social Media", Description: "Facebook: https://facebook.com/recything\nTwitter: https://x.com/recything\nInstagram: https://instagram.com/recything\nLinkedin: https://linkedin.com/recything"},
+	}
 
-	// aboutUsImage := []aboutus.AboutUsImage{
-	// 	{AboutUsID: "ABS01", ImageURL: ""}
-	// }
+	aboutUsImages := []aboutus.AboutUsImage{
+		{AboutUsID: "ABS01", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png"},
+
+		{AboutUsID: "ABS05", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758301/recything/about-us/spgrokvm9un0yq5zsycn.png"},
+		{AboutUsID: "ABS05", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758301/recything/about-us/tynymzulgmkwiqu4a7mb.png"},
+
+		{AboutUsID: "ABS06", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{AboutUsID: "ABS06", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{AboutUsID: "ABS06", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+
+		{AboutUsID: "ABS07", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{AboutUsID: "ABS07", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{AboutUsID: "ABS07", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+
+		{AboutUsID: "ABS08", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{AboutUsID: "ABS08", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{AboutUsID: "ABS08", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+
+		{AboutUsID: "ABS09", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{AboutUsID: "ABS09", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{AboutUsID: "ABS09", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+
+		{AboutUsID: "ABS10", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/mfi5xij2xssmztqwaybz.png"},
+	}
+
+	for _, about := range aboutUs {
+		m.GetDB().FirstOrCreate(&about, about)
+	}
+
+	for _, aboutImage := range aboutUsImages {
+		m.GetDB().FirstOrCreate(&aboutImage, aboutImage)
+	}
+
+	log.Println("About-us data added!")
 }
 
 func (m *mysqlDatabase) GetDB() *gorm.DB {
