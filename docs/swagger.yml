@@ -2380,7 +2380,7 @@ paths:
     get:
       tags:
         - user tasks
-      summary: Get user current task
+      summary: Get user current task in-progress
       description: Endpoint user to get current task
       operationId: getUserCurrentTask
       security:
@@ -2712,9 +2712,9 @@ paths:
     get:
       tags:
         - user tasks
-      summary: Get user current task
+      summary: Get user current task by id
       description: Endpoint user to get user current task by id for update if status approve is reject
-      operationId: getUserCurrentTask
+      operationId: getUserCurrentTaskByID
       security:
         - Bearer: []
       parameters:
