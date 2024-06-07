@@ -76,11 +76,8 @@ func (s *echoServer) Start() {
 	// manage achievement handler
 	s.manageAchievement()
 
-	// Custom Data Handler
-	s.customDataHandler()
-
-	// ReMin AI Handler
-	s.reminAIHandler()
+	// user achievement handler
+	s.userAchievement()
 
 	serverPORT := fmt.Sprintf(":%d", s.conf.Server.Port)
 	s.app.Logger.Fatal(s.app.Start(serverPORT))

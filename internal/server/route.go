@@ -7,20 +7,18 @@ import (
 	achievementHandler "github.com/sawalreverr/recything/internal/achievements/manage_achievements/handler"
 	achievementRepo "github.com/sawalreverr/recything/internal/achievements/manage_achievements/repository"
 	achievementUsecase "github.com/sawalreverr/recything/internal/achievements/manage_achievements/usecase"
+	userAchievementHandler "github.com/sawalreverr/recything/internal/achievements/user_achievements/handler"
+	userAchievementRepo "github.com/sawalreverr/recything/internal/achievements/user_achievements/repository"
+	userAchievementUsecase "github.com/sawalreverr/recything/internal/achievements/user_achievements/usecase"
 	"github.com/sawalreverr/recything/internal/admin/handler"
 	"github.com/sawalreverr/recything/internal/admin/repository"
 	"github.com/sawalreverr/recything/internal/admin/usecase"
 	authHandler "github.com/sawalreverr/recything/internal/auth/handler"
 	authUsecase "github.com/sawalreverr/recything/internal/auth/usecase"
-	customDataHandler "github.com/sawalreverr/recything/internal/custom-data/handler"
-	customDataRepository "github.com/sawalreverr/recything/internal/custom-data/repository"
-	customDataUsecase "github.com/sawalreverr/recything/internal/custom-data/usecase"
 	faqHandler "github.com/sawalreverr/recything/internal/faq/handler"
 	faqRepo "github.com/sawalreverr/recything/internal/faq/repository"
 	faqUsecase "github.com/sawalreverr/recything/internal/faq/usecase"
 	"github.com/sawalreverr/recything/internal/middleware"
-	reminaiHandler "github.com/sawalreverr/recything/internal/remin-ai/handler"
-	reminaiUsecase "github.com/sawalreverr/recything/internal/remin-ai/usecase"
 	reportHandler "github.com/sawalreverr/recything/internal/report/handler"
 	reportRepo "github.com/sawalreverr/recything/internal/report/repository"
 	reportUsecase "github.com/sawalreverr/recything/internal/report/usecase"
@@ -36,12 +34,6 @@ import (
 	userHandler "github.com/sawalreverr/recything/internal/user/handler"
 	userRepo "github.com/sawalreverr/recything/internal/user/repository"
 	userUsecase "github.com/sawalreverr/recything/internal/user/usecase"
-	videoHandler "github.com/sawalreverr/recything/internal/video/manage_video/handler"
-	videoRepo "github.com/sawalreverr/recything/internal/video/manage_video/repository"
-	videoUsecase "github.com/sawalreverr/recything/internal/video/manage_video/usecase"
-	userVideoHandler "github.com/sawalreverr/recything/internal/video/user_video/handler"
-	userVideoRepo "github.com/sawalreverr/recything/internal/video/user_video/repository"
-	userVideoUsecase "github.com/sawalreverr/recything/internal/video/user_video/usecase"
 )
 
 var (
@@ -276,79 +268,11 @@ func (s *echoServer) manageAchievement() {
 	s.gr.DELETE("/achievements/:achievementId", handler.DeleteAchievementHandler, SuperAdminOrAdminMiddleware)
 }
 
-func (s *echoServer) customDataHandler() {
-	repository := customDataRepository.NewCustomDataRepository(s.db)
-	usecase := customDataUsecase.NewCustomDataUsecase(repository)
-	handler := customDataHandler.NewCustomDataHandler(usecase)
+func (s *echoServer) userAchievement() {
+	repository := userAchievementRepo.NewUserAchievementRepository(s.db)
+	usecase := userAchievementUsecase.NewUserAchievementUsecase(repository)
+	handler := userAchievementHandler.NewUserAchievementHandler(usecase)
 
-	// Create new custom data for admin
-	s.gr.POST("/custom-data", handler.NewCustomData, SuperAdminOrAdminMiddleware)
-
-	// Update custom data for admin
-	s.gr.PUT("/custom-data/:dataId", handler.UpdateData, SuperAdminOrAdminMiddleware)
-
-	// Delete custom data for admin
-	s.gr.DELETE("/custom-data/:dataId", handler.DeleteData, SuperAdminOrAdminMiddleware)
-
-	// Get custom data by id for admin
-	s.gr.GET("/custom-data/:dataId", handler.GetDataByID, SuperAdminOrAdminMiddleware)
-
-	// Get all custom data for admin
-	s.gr.GET("/custom-datas", handler.GetAllData, SuperAdminMiddleware)
-}
-
-func (s *echoServer) reminAIHandler() {
-	repository := customDataRepository.NewCustomDataRepository(s.db)
-	usecase := reminaiUsecase.NewReminAIUsecase(repository)
-	handler := reminaiHandler.NewReminAIHandler(usecase)
-
-	// ReMin AI Chatbot with user access
-	s.gr.POST("/remin-ai", handler.AskGPT, UserMiddleware)
-}
-func (s *echoServer) manageVideo() {
-	repository := videoRepo.NewManageVideoRepository(s.db)
-	usecase := videoUsecase.NewManageVideoUsecaseImpl(repository)
-	handler := videoHandler.NewManageVideoHandlerImpl(usecase)
-
-	// upload thumbnail video
-	s.gr.POST("/videos/thumbnail", handler.UploadThumbnailVideoHandler, SuperAdminOrAdminMiddleware)
-
-	// create data video
-	s.gr.POST("/videos/data", handler.CreateDataVideoHandler, SuperAdminOrAdminMiddleware)
-
-	// create category video
-	s.gr.POST("/videos/categories", handler.CreateCategoryVideoHandler, SuperAdminOrAdminMiddleware)
-
-	// get all category video
-	s.gr.GET("/videos/categories", handler.GetAllCategoryVideoHandler, SuperAdminOrAdminMiddleware)
-
-	// get all data video pagination
-	s.gr.GET("/videos/data", handler.GetAllDataVideoPaginationHandler, SuperAdminOrAdminMiddleware)
-
-	// get details data video by id
-	s.gr.GET("/videos/data/:videoId", handler.GetDetailsDataVideoByIdHandler, SuperAdminOrAdminMiddleware)
-
-	// update data video
-	s.gr.PUT("/videos/data/:videoId", handler.UpdateDataVideoHandler, SuperAdminOrAdminMiddleware)
-
-	// delete data video
-	s.gr.DELETE("/videos/data/:videoId", handler.DeleteDataVideoHandler, SuperAdminOrAdminMiddleware)
-}
-
-func (s *echoServer) userVideo() {
-	repository := userVideoRepo.NewUserVideoRepository(s.db)
-	usecase := userVideoUsecase.NewUserVideoUsecase(repository)
-	handler := userVideoHandler.NewUserVideoHandler(usecase)
-
-	// get all video
-	s.gr.GET("/videos", handler.GetAllVideoHandler, UserMiddleware)
-
-	// search video by title
-	s.gr.GET("/videos/search", handler.SearchVideoByTitleHandler, UserMiddleware)
-
-	// get video detail
-	s.gr.GET("/videos/:videoId", handler.GetVideoDetailHandler, UserMiddleware)
-
-	// add comment
-	s.gr.POST("/videos/comments", handler.AddCommentHandler, UserMiddleware)
+	// get achievement by user
+	s.gr.GET("/user/achievements", handler.GetAvhievementsByUserhandler, UserMiddleware)
 }
