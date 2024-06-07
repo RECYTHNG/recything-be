@@ -229,3 +229,16 @@ func (repository *UserTaskRepositoryImpl) GetUserTaskDetails(userTaskId string, 
 	}
 	return &userTask, images, nil
 }
+
+func (repository *UserTaskRepositoryImpl) GetHistoryPointByUserId(userId string) ([]user_task.UserTaskChallenge, error) {
+	var userTask []user_task.UserTaskChallenge
+	if err := repository.DB.GetDB().
+		Preload("TaskChallenge").
+		Where("user_id = ?", userId).
+		Where("status_accept = ?", "accept").
+		Order("accepted_at desc").
+		Find(&userTask).Error; err != nil {
+		return nil, err
+	}
+	return userTask, nil
+}

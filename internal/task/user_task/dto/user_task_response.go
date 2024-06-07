@@ -84,14 +84,26 @@ type DataTaskChallenges struct {
 }
 
 type GetUserTaskDetailsResponse struct {
-	Id        string        `json:"id"`
-	TitleTask string        `json:"title_task"`
-	UserName  string        `json:"user_name"`
-	Images    []*DataImages `json:"images"`
+	Id          string        `json:"id"`
+	TitleTask   string        `json:"title_task"`
+	UserName    string        `json:"user_name"`
+	Images      []*DataImages `json:"images"`
+	Description string        `json:"description"`
 }
 
 type DataImages struct {
-	Id          int    `json:"id"`
-	ImageUrl    string `json:"image_url"`
-	Description string `json:"description"`
+	Id       int    `json:"id"`
+	ImageUrl string `json:"image_url"`
+}
+
+type DataHistoryPoint struct {
+	Id         string    `json:"id"`
+	TitleTask  string    `json:"title_task"`
+	Point      int       `json:"point"`
+	AcceptedAt time.Time `json:"accepted_at"`
+}
+
+type HistoryPointResponse struct {
+	TotalPoint int                 `json:"total_point"`
+	Data       []*DataHistoryPoint `json:"data_history_point"`
 }

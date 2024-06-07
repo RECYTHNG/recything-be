@@ -217,3 +217,20 @@ func (usecase *UserTaskUsecaseImpl) GetUserTaskDetailsUsecase(userTaskId string,
 	}
 	return userTask, imageTask, nil
 }
+
+func (usecase *UserTaskUsecaseImpl) GetHistoryPointByUserIdUsecase(userId string) ([]user_task.UserTaskChallenge, int, error) {
+
+	userTask, err := usecase.ManageTaskRepository.GetHistoryPointByUserId(userId)
+	if err != nil {
+		return nil, 0, err
+	}
+	if len(userTask) == 0 {
+		return nil, 0, pkg.ErrUserNoHasTask
+	}
+
+	var totalPoint int
+	for _, task := range userTask {
+		totalPoint += task.Point
+	}
+	return userTask, totalPoint, nil
+}
