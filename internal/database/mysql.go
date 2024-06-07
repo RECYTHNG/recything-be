@@ -10,6 +10,7 @@ import (
 	faqEntity "github.com/sawalreverr/recything/internal/faq"
 	"github.com/sawalreverr/recything/internal/helper"
 	"github.com/sawalreverr/recything/internal/report"
+	video "github.com/sawalreverr/recything/internal/video/manage_video/entity"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -110,6 +111,21 @@ func (m *mysqlDatabase) InitFaqs() {
 		m.GetDB().FirstOrCreate(&faq, faq)
 	}
 	log.Println("FAQs data added!")
+}
+
+func (m *mysqlDatabase) InitVideoCategories() {
+	videoCategories := []video.VideoCategory{
+		{Name: "Tips"},
+		{Name: "Daur Ulang"},
+		{Name: "Tutorial"},
+		{Name: "Edukasi"},
+		{Name: "Kampanye"},
+		{Name: "Lainnya"},
+	}
+	for _, videoCategory := range videoCategories {
+		m.GetDB().FirstOrCreate(&videoCategory, videoCategory)
+	}
+	log.Println("Video categories data added!")
 }
 
 func (m *mysqlDatabase) GetDB() *gorm.DB {

@@ -24,6 +24,9 @@ func main() {
 	// Init Faqs
 	db.InitFaqs()
 
+	// Init Video Categories
+	db.InitVideoCategories()
+
 	app := server.NewEchoServer(conf, db)
 	c := cron.New()
 

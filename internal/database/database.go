@@ -7,4 +7,5 @@ type Database interface {
 	InitSuperAdmin()
 	InitWasteMaterials()
 	InitFaqs()
+	InitVideoCategories()
 }
