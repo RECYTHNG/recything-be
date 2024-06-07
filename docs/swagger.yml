@@ -39,6 +39,8 @@ tags:
     description: Endpoint for user get video
   - name: approval tasks
     description: Endpoint for admin approval task
+  - name: user achievements
+    description: Endpoint for user get achievement
 
 paths:
   /register:
@@ -4095,7 +4097,24 @@ paths:
                     example: 404
                   message:
                     type: string
-                    example: user task not found             
+                    example: user task not found            
+
+  /user/achievements:
+    get:
+      tags: 
+        - user achievements
+      summary: Get user achievements
+      description: Endpoint for user get list achievements
+      operationId: getUserAchievements
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAchievements'
 
                 
 components:
@@ -4429,6 +4448,52 @@ components:
         description:
           type: string
           example: Proses daur ulang plastik melibatkan pengumpulan sampah plastik, pembersihan, penghancuran menjadi serpihan kecil, dan kemudian melelehkannya untuk dibentuk menjadi produk baru. Plastik yang dapat didaur ulang termasuk botol air, wadah makanan, dan kantong belanja tertentu.
+    UserAchievements:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: ok
+        data:
+          type: object
+          properties:
+            data_achievement:
+              type: array
+              items:
+                $ref: '#/components/schemas/Achievement'
+            data_user:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: USR00001
+                name:
+                  type: string
+                  example: John Doe
+                point:
+                  type: integer
+                  example: 1000
+                badge:
+                  type: string
+                  example: "classic"
+            history_user_point:
+              type: array
+              items:
+                type: object
+                properties:
+                  point:
+                    type: integer
+                    example: 100
+                  accepted_at:
+                    type: string
+                    format: date
+                    example: "2020-01-01"
+
+
+            
 
 
         
