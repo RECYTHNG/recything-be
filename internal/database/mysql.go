@@ -214,18 +214,22 @@ func (m *mysqlDatabase) InitAchievements() {
 		{
 			Level:       "classic",
 			TargetPoint: 0,
+			BadgeUrl:    "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758679/achievement_badge/cq2n246e6twuksnia62t.png",
 		},
 		{
 			Level:       "silver",
 			TargetPoint: 50000,
+			BadgeUrl:    "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758731/achievement_badge/b8igluyain8bwyjusfpk.png",
 		},
 		{
 			Level:       "gold",
 			TargetPoint: 150000,
+			BadgeUrl:    "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758761/achievement_badge/lazzyh9tytvb4rophbc3.png",
 		},
 		{
 			Level:       "platinum",
 			TargetPoint: 300000,
+			BadgeUrl:    "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758798/achievement_badge/xc8msr6agowzhfq8ss8a.png",
 		},
 	}
 
@@ -305,6 +309,30 @@ func (m *mysqlDatabase) InitAboutUs() {
 	}
 
 	log.Println("About-us data added!")
+}
+
+func (m *mysqlDatabase) InitDataVideos() {
+	videos := []video.Video{
+		{
+			ID:              1,
+			Title:           "Daur Ulang",
+			Description:     "Tips Daur Ulang",
+			Link:            "https://www.youtube.com/watch?v=MJd3bo_XRaU",
+			VideoCategoryID: 1,
+		},
+		{
+			ID:              2,
+			Title:           "Tutorial Bernapas",
+			Description:     "Tutorial Bernapas Bagi Pemula",
+			Link:            "https://www.youtube.com/watch?v=jp5uhrdhsKI",
+			VideoCategoryID: 3,
+		},
+	}
+
+	for _, video := range videos {
+		m.GetDB().FirstOrCreate(&video, video)
+	}
+	log.Println("Video data added!")
 }
 
 func (m *mysqlDatabase) GetDB() *gorm.DB {

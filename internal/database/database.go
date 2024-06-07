@@ -13,4 +13,5 @@ type Database interface {
 	InitAchievements()
 	InitVideoCategories()
 	InitAboutUs()
+	InitDataVideos()
 }
