@@ -233,10 +233,19 @@ func (handler *ManageVideoHandlerImpl) UpdateDataVideoHandler(c echo.Context) er
 		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid id parameter")
 	}
 	var request dto.UpdateDataVideoRequest
-	if err := c.Bind(&request); err != nil {
+	json_data := c.FormValue("json_data")
+	if err := json.Unmarshal([]byte(json_data), &request); err != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
-	if err := handler.ManageVideoUsecase.UpdateDataVideoUseCase(&request, idInt); err != nil {
+	if err := c.Validate(&request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	}
+	form, errForm := c.MultipartForm()
+	if errForm != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, errForm.Error())
+	}
+	thumbnail := form.File["thumbnail"]
+	if err := handler.ManageVideoUsecase.UpdateDataVideoUseCase(&request, thumbnail, idInt); err != nil {
 		if errors.Is(err, pkg.ErrVideoNotFound) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoNotFound.Error())
 		}
@@ -257,6 +266,21 @@ func (handler *ManageVideoHandlerImpl) UpdateDataVideoHandler(c echo.Context) er
 		}
 		if errors.Is(err, pkg.ErrParsingUrl) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrParsingUrl.Error())
+		}
+		if errors.Is(err, pkg.ErrThumbnail) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrThumbnail.Error())
+		}
+		if errors.Is(err, pkg.ErrThumbnailMaximum) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrThumbnailMaximum.Error())
+		}
+		if errors.Is(err, errors.New("upload image size must less than 2MB")) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "upload image size must less than 2MB")
+		}
+		if errors.Is(err, errors.New("only image allowed")) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "only image allowed")
+		}
+		if errors.Is(err, pkg.ErrUploadCloudinary) {
+			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
 		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
