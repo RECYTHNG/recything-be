@@ -24,6 +24,9 @@ import (
 	faqHandler "github.com/sawalreverr/recything/internal/faq/handler"
 	faqRepo "github.com/sawalreverr/recything/internal/faq/repository"
 	faqUsecase "github.com/sawalreverr/recything/internal/faq/usecase"
+	leaderboardHandler "github.com/sawalreverr/recything/internal/leaderboard/handler"
+	leaderboardRepo "github.com/sawalreverr/recything/internal/leaderboard/repository"
+	leaderboardUsecase "github.com/sawalreverr/recything/internal/leaderboard/usecase"
 	"github.com/sawalreverr/recything/internal/middleware"
 	reminaiHandler "github.com/sawalreverr/recything/internal/remin-ai/handler"
 	reminaiUsecase "github.com/sawalreverr/recything/internal/remin-ai/usecase"
@@ -376,4 +379,13 @@ func (s *echoServer) aboutUsHandler() {
 
 	// Get about us by category
 	s.gr.GET("/about-us/category", handler.GetAboutUsByCategory, UserMiddleware)
+}
+
+func (s *echoServer) leaderboardHandler() {
+	repository := leaderboardRepo.NewLeaderboardRepository(s.db)
+	usecase := leaderboardUsecase.NewLeaderboardUsecase(repository)
+	handler := leaderboardHandler.NewLeaderboardHandler(usecase)
+
+	// Get leaderboard
+	s.gr.GET("/leaderboard", handler.GetLeaderboardHandler, UserMiddleware)
 }
