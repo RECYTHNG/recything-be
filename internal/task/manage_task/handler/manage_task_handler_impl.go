@@ -197,22 +197,41 @@ func (handler *ManageTaskHandlerImpl) GetTaskByIdHandler(c echo.Context) error {
 func (handler *ManageTaskHandlerImpl) UpdateTaskHandler(c echo.Context) error {
 	var request dto.UpdateTaskRequest
 	id := c.Param("taskId")
-	if err := c.Bind(&request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid request body, detail: "+err.Error())
+	json_data := c.FormValue("json_data")
+	if err := json.Unmarshal([]byte(json_data), &request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
-
 	if err := c.Validate(&request); err != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
-
-	if len(request.TaskSteps) == 0 {
-		return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrTaskStepsNull.Error())
+	form, errForm := c.MultipartForm()
+	if errForm != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, errForm.Error())
 	}
+	thumbnail := form.File["thumbnail"]
 
-	task, err := handler.Usecase.UpdateTaskChallengeUsecase(&request, id)
+	task, err := handler.Usecase.UpdateTaskChallengeUsecase(&request, thumbnail, id)
 	if err != nil {
 		if errors.Is(err, pkg.ErrTaskNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrTaskNotFound.Error())
+		}
+		if errors.Is(err, pkg.ErrTaskStepsNull) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrTaskStepsNull.Error())
+		}
+		if errors.Is(err, pkg.ErrThumbnail) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrThumbnail.Error())
+		}
+		if errors.Is(err, pkg.ErrThumbnailMaximum) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrThumbnailMaximum.Error())
+		}
+		if errors.Is(err, errors.New("upload image size must less than 2MB")) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "upload image size must less than 2MB")
+		}
+		if errors.Is(err, errors.New("only image allowed")) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "only image allowed")
+		}
+		if errors.Is(err, pkg.ErrUploadCloudinary) {
+			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
 		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
 	}
