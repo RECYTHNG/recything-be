@@ -1654,41 +1654,45 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data::
             schema:
               type: object
               properties:
-                title:
+                json_data:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      example: "Task 1"
+                    description:
+                      type: string
+                      example: "Task 1 description"
+                    start_date:
+                      type: string
+                      format: date
+                      example: "2020-01-01"
+                    end_date:
+                      type: string
+                      format: date
+                      example: "2020-01-01"
+                    point:
+                      type: integer
+                      example: 100
+                    task_steps:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          title:
+                            type: string
+                            example: "Step 1"
+                          description:
+                            type: string
+                            example: "Step 1 description"
+                thumbnail:
                   type: string
-                  example: "Task 1"
-                description:
-                  type: string
-                  example: "Task 1 description"
-                thumbnail_url:
-                  type: string
-                  example: "https://example.com/thumbnail.jpg"
-                start_date:
-                  type: string
-                  format: date
-                  example: "2020-01-01"
-                end_date:
-                  type: string
-                  format: date
-                  example: "2020-01-01"
-                point:
-                  type: integer
-                  example: 100
-                task_steps:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      title:
-                        type: string
-                        example: "Step 1"
-                      description:
-                        type: string
-                        example: "Step 1 description"
+                  format: image
+                  example: "thumbnail.jpg"
                     
       responses:
         '201':
@@ -1985,44 +1989,45 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data::
             schema:
               type: object
               properties:
-                title:
+                json_data:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      example: "Task 1"
+                    description:
+                      type: string
+                      example: "Task 1 description"
+                    start_date:
+                      type: string
+                      format: date
+                      example: "2020-01-01"
+                    end_date:
+                      type: string
+                      format: date
+                      example: "2020-01-01"
+                    point:
+                      type: integer
+                      example: 100
+                    task_steps:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          title:
+                            type: string
+                            example: "Step 1"
+                          description:
+                            type: string
+                            example: "Step 1 description"
+                thumbnail:
                   type: string
-                  example: "Task 1"
-                description:
-                  type: string
-                  example: "Task 1 description"
-                thumbnail_url:
-                  type: string
-                  example: "https://example.com/thumbnail.jpg"
-                start_date:
-                  type: string
-                  format: date
-                  example: "2020-01-01"
-                end_date:
-                  type: string
-                  format: date 
-                  example: "2020-01-01"
-                point:
-                  type: integer
-                  example: 100
-                task_steps:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      title:
-                        type: string
-                        example: "Step 1"
-                      description:
-                        type: string
-                        example: "Step 1 description"
-                    example:
-                      - title: "Step 1"
-                        description: "Step 1 description"
+                  format: image
+                  example: "thumbnail.jpg"
       responses:
         '200':
           description: Task updated
@@ -3282,25 +3287,30 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
-                title:
+                json_data:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      example: "Video Title"
+                    description:
+                      type: string
+                      example: "Video Description"
+                    link_video:
+                      type: string
+                      example: "https://example.com/video.mp4"
+                    category_id:
+                      type: integer
+                      example: 1
+                thumbnail:
                   type: string
-                  example: "Video Title"
-                description:
-                  type: string
-                  example: "Video Description"
-                url_thumbnail:
-                  type: string
-                  example: "https://example.com/thumbnail.jpg"
-                link_video:
-                  type: string
-                  example: "https://example.com/video.mp4"
-                category_id:
-                  type: integer
-                  example: 1
+                  format: image
+                  example: "thumbnail.jpg"
+
       responses:
         '201':
           description: Success
@@ -3506,25 +3516,30 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
-                title:
+                json_data:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      example: "Video Title"
+                    description:
+                      type: string
+                      example: "Video Description"
+                    link_video:
+                      type: string
+                      example: "https://example.com/video.mp4"
+                    category_id:
+                      type: integer
+                      example: 1
+                thumbnail:
                   type: string
-                  example: "Video Title"
-                description:
-                  type: string
-                  example: "Video Description"
-                url_thumbnail:
-                  type: string
-                  example: "https://example.com/thumbnail.jpg"
-                link_video:
-                  type: string
-                  example: "https://example.com/video.mp4"
-                category_id:
-                  type: integer
-                  example: 1
+                  format: image
+                  example: "thumbnail.jpg"
+                  
       responses:
         '200':
           description: Success
