@@ -4,7 +4,7 @@ type DataTask struct {
 	Id          string `json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
-	Thumbnail   string `json:"thumbnail"`
+	Thumbnail   string `json:"url_thumbnail"`
 }
 
 type DataCategory struct {
@@ -16,8 +16,8 @@ type DataVideo struct {
 	Id          int    `json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
-	Thumbnail   string `json:"thumbnail"`
-	Link        string `json:"link"`
+	Thumbnail   string `json:"url_thumbnail"`
+	Link        string `json:"link_video"`
 	Viewer      int    `json:"viewer"`
 }
 
@@ -31,8 +31,8 @@ type DataVideoSearch struct {
 	Id          int          `json:"id"`
 	Title       string       `json:"title"`
 	Description string       `json:"description"`
-	Thumbnail   string       `json:"thumbnail"`
-	Link        string       `json:"link"`
+	Thumbnail   string       `json:"url_thumbnail"`
+	Link        string       `json:"link_video"`
 	Viewer      int          `json:"viewer"`
 	Category    DataCategory `json:"category"`
 }

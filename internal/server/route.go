@@ -393,5 +393,5 @@ func (s *echoServer) recycleHandler() {
 	s.gr.GET("/recycle/video/categories", handler.GetAllCategoryVideoHandler, UserMiddleware)
 
 	// Search video
-	s.gr.GET("/recycle/search", handler.SearchVideoHandler, UserMiddleware)
+	s.gr.GET("/recycle/video/search", handler.SearchVideoHandler, UserMiddleware)
 }
