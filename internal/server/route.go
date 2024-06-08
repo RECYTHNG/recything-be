@@ -184,9 +184,6 @@ func (s *echoServer) manageTask() {
 	usecase := taskUsecase.NewManageTaskUsecase(repository)
 	handler := taskHandler.NewManageTaskHandler(usecase)
 
-	// upload thumbnail task
-	s.gr.POST("/tasks/thumbnail", handler.UploadThumbnailHandler, SuperAdminOrAdminMiddleware)
-
 	// create task by admin or super admin
 	s.gr.POST("/tasks", handler.CreateTaskHandler, SuperAdminOrAdminMiddleware)
 
