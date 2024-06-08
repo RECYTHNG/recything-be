@@ -29,8 +29,10 @@ var (
 	ErrDateFormat = errors.New("invalid date format")
 
 	// Manage Task
-	ErrTaskStepsNull = errors.New("steps cannot be null")
-	ErrTaskNotFound  = errors.New("task not found")
+	ErrTaskStepsNull    = errors.New("steps cannot be null")
+	ErrTaskNotFound     = errors.New("task not found")
+	ErrThumbnail        = errors.New("thumbnail is required")
+	ErrThumbnailMaximum = errors.New("thumbnail maximum 1 image")
 
 	// User Task
 	ErrImageTaskNull          = errors.New("image task cannot be null")

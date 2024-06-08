@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"errors"
 	"math"
 	"net/http"
@@ -27,13 +28,19 @@ func NewManageVideoHandlerImpl(manageVideoUsecase usecase.ManageVideoUsecase) *M
 func (handler *ManageVideoHandlerImpl) CreateDataVideoHandler(c echo.Context) error {
 	var request dto.CreateDataVideoRequest
 
-	if err := c.Bind(&request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid request body, detail+"+err.Error())
+	json_data := c.FormValue("json_data")
+	if err := json.Unmarshal([]byte(json_data), &request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
 	if err := c.Validate(&request); err != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
-	if err := handler.ManageVideoUsecase.CreateDataVideoUseCase(&request); err != nil {
+	form, errForm := c.MultipartForm()
+	if errForm != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, errForm.Error())
+	}
+	thumbnail := form.File["thumbnail"]
+	if err := handler.ManageVideoUsecase.CreateDataVideoUseCase(&request, thumbnail); err != nil {
 		if errors.Is(err, pkg.ErrVideoTitleAlreadyExist) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoTitleAlreadyExist.Error())
 		}
@@ -54,6 +61,21 @@ func (handler *ManageVideoHandlerImpl) CreateDataVideoHandler(c echo.Context) er
 		}
 		if errors.Is(err, pkg.ErrParsingUrl) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrParsingUrl.Error())
+		}
+		if errors.Is(err, pkg.ErrThumbnail) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrThumbnail.Error())
+		}
+		if errors.Is(err, pkg.ErrThumbnailMaximum) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrThumbnailMaximum.Error())
+		}
+		if errors.Is(err, errors.New("upload image size must less than 2MB")) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "upload image size must less than 2MB")
+		}
+		if errors.Is(err, errors.New("only image allowed")) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "only image allowed")
+		}
+		if errors.Is(err, pkg.ErrUploadCloudinary) {
+			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
 		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
