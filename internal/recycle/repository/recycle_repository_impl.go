@@ -20,7 +20,7 @@ func (repository *RecycleRepositoryImpl) GetTasks() (*[]task.TaskChallenge, erro
 	var tasks []task.TaskChallenge
 	if err := repository.Database.GetDB().
 		Limit(2).
-		Order("id desc").
+		Order("created_at desc").
 		Find(&tasks).
 		Error; err != nil {
 		return nil, err
@@ -33,7 +33,6 @@ func (repository *RecycleRepositoryImpl) GetCategoryVideos() (*[]video.VideoCate
 	var categories []video.VideoCategory
 	if err := repository.Database.GetDB().
 		Limit(4).
-		Order("id desc").
 		Find(&categories).
 		Error; err != nil {
 		return nil, err
@@ -46,7 +45,7 @@ func (repository *RecycleRepositoryImpl) GetAllVideo() (*[]video.Video, error) {
 	var videos []video.Video
 	if err := repository.Database.GetDB().
 		Limit(2).
-		Order("id desc").
+		Order("created_at desc").
 		Find(&videos).
 		Error; err != nil {
 		return nil, err
