@@ -75,3 +75,14 @@ func (repository *RecycleRepositoryImpl) SearchVideo(title string, category stri
 
 	return &videos, nil
 }
+
+func (repository *RecycleRepositoryImpl) GetAllCategoryVideo() (*[]video.VideoCategory, error) {
+	var categories []video.VideoCategory
+	if err := repository.Database.GetDB().
+		Find(&categories).
+		Error; err != nil {
+		return nil, err
+	}
+
+	return &categories, nil
+}

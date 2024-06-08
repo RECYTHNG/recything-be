@@ -40,3 +40,7 @@ type DataVideoSearch struct {
 type SearchVideoResponse struct {
 	DataVideo *[]DataVideoSearch `json:"data_video"`
 }
+
+type GetAllCategoryVideoResponse struct {
+	DataCategory *[]DataCategory `json:"data_category"`
+}

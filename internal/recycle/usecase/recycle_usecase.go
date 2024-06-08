@@ -7,4 +7,5 @@ import (
 type RecycleUsecase interface {
 	GetHomeRecycleUsecase() (*dto.RecycleHomeResponse, error)
 	SearchVideoUsecase(title string, category string) (*dto.SearchVideoResponse, error)
+	GetAllCategoryVideoUsecase() (*dto.GetAllCategoryVideoResponse, error)
 }

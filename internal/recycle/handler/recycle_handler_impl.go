@@ -12,7 +12,7 @@ type RecycleHandlerImpl struct {
 	RecycleUsecase usecase.RecycleUsecase
 }
 
-func NewRecycleHandlerImpl(usecase usecase.RecycleUsecase) *RecycleHandlerImpl {
+func NewRecycleHandlerImpl(usecase usecase.RecycleUsecase) RecycleHandler {
 	return &RecycleHandlerImpl{
 		RecycleUsecase: usecase,
 	}
@@ -38,5 +38,14 @@ func (handler *RecycleHandlerImpl) SearchVideoHandler(c echo.Context) error {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, details: "+err.Error())
 	}
 	responseData := helper.ResponseData(http.StatusOK, "success", data.DataVideo)
+	return c.JSON(http.StatusOK, responseData)
+}
+
+func (handler *RecycleHandlerImpl) GetAllCategoryVideoHandler(c echo.Context) error {
+	data, err := handler.RecycleUsecase.GetAllCategoryVideoUsecase()
+	if err != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, details: "+err.Error())
+	}
+	responseData := helper.ResponseData(http.StatusOK, "success", data.DataCategory)
 	return c.JSON(http.StatusOK, responseData)
 }

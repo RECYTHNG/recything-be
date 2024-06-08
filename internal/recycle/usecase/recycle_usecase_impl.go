@@ -89,3 +89,21 @@ func (usecase *RecycleUsecaseImpl) SearchVideoUsecase(title string, category str
 	}
 	return data, nil
 }
+
+func (usecase *RecycleUsecaseImpl) GetAllCategoryVideoUsecase() (*dto.GetAllCategoryVideoResponse, error) {
+	categories, err := usecase.RecycleRepository.GetAllCategoryVideo()
+	if err != nil {
+		return nil, err
+	}
+	var dataCategory []dto.DataCategory
+	for _, category := range *categories {
+		dataCategory = append(dataCategory, dto.DataCategory{
+			Id:   category.ID,
+			Name: category.Name,
+		})
+	}
+	data := &dto.GetAllCategoryVideoResponse{
+		DataCategory: &dataCategory,
+	}
+	return data, nil
+}
