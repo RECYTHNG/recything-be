@@ -1,11 +1,11 @@
 package handler
 
 import (
+	"encoding/json"
 	"errors"
 	"math"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sawalreverr/recything/internal/helper"
@@ -18,22 +18,26 @@ type ManageVideoHandlerImpl struct {
 	ManageVideoUsecase usecase.ManageVideoUsecase
 }
 
-func NewManageVideoHandlerImpl(manageVideoUsecase usecase.ManageVideoUsecase) *ManageVideoHandlerImpl {
-	return &ManageVideoHandlerImpl{
-		ManageVideoUsecase: manageVideoUsecase,
-	}
+func NewManageVideoHandlerImpl(manageVideoUsecase usecase.ManageVideoUsecase) ManageVideoHandler {
+	return &ManageVideoHandlerImpl{ManageVideoUsecase: manageVideoUsecase}
 }
 
 func (handler *ManageVideoHandlerImpl) CreateDataVideoHandler(c echo.Context) error {
 	var request dto.CreateDataVideoRequest
 
-	if err := c.Bind(&request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid request body, detail+"+err.Error())
+	json_data := c.FormValue("json_data")
+	if err := json.Unmarshal([]byte(json_data), &request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
 	if err := c.Validate(&request); err != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
-	if err := handler.ManageVideoUsecase.CreateDataVideoUseCase(&request); err != nil {
+	form, errForm := c.MultipartForm()
+	if errForm != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, errForm.Error())
+	}
+	thumbnail := form.File["thumbnail"]
+	if err := handler.ManageVideoUsecase.CreateDataVideoUseCase(&request, thumbnail); err != nil {
 		if errors.Is(err, pkg.ErrVideoTitleAlreadyExist) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoTitleAlreadyExist.Error())
 		}
@@ -55,40 +59,24 @@ func (handler *ManageVideoHandlerImpl) CreateDataVideoHandler(c echo.Context) er
 		if errors.Is(err, pkg.ErrParsingUrl) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrParsingUrl.Error())
 		}
+		if errors.Is(err, pkg.ErrThumbnail) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrThumbnail.Error())
+		}
+		if errors.Is(err, pkg.ErrThumbnailMaximum) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrThumbnailMaximum.Error())
+		}
+		if errors.Is(err, errors.New("upload image size must less than 2MB")) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "upload image size must less than 2MB")
+		}
+		if errors.Is(err, errors.New("only image allowed")) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "only image allowed")
+		}
+		if errors.Is(err, pkg.ErrUploadCloudinary) {
+			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
+		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
 	return helper.ResponseHandler(c, http.StatusCreated, "success create data video", nil)
-}
-
-func (handler *ManageVideoHandlerImpl) UploadThumbnailVideoHandler(c echo.Context) error {
-	file, errFile := c.FormFile("thumbnail")
-	if errFile != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "thumbnail is required")
-	}
-
-	if file.Size > 2*1024*1024 {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "file is too large")
-	}
-
-	if !strings.HasPrefix(file.Header.Get("Content-Type"), "image") {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid file type")
-	}
-
-	src, errOpen := file.Open()
-	if errOpen != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "failed to open file: "+errOpen.Error())
-	}
-	defer src.Close()
-
-	imageUrl, err := helper.UploadToCloudinary(src, "video_thumbnail")
-	if err != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
-	}
-
-	data := dto.UploadThumbnailResponse{UrlThumbnail: imageUrl}
-	responseData := helper.ResponseData(http.StatusOK, "success", data)
-	return c.JSON(http.StatusOK, responseData)
-
 }
 
 func (handler *ManageVideoHandlerImpl) CreateCategoryVideoHandler(c echo.Context) error {
@@ -211,10 +199,19 @@ func (handler *ManageVideoHandlerImpl) UpdateDataVideoHandler(c echo.Context) er
 		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid id parameter")
 	}
 	var request dto.UpdateDataVideoRequest
-	if err := c.Bind(&request); err != nil {
+	json_data := c.FormValue("json_data")
+	if err := json.Unmarshal([]byte(json_data), &request); err != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
-	if err := handler.ManageVideoUsecase.UpdateDataVideoUseCase(&request, idInt); err != nil {
+	if err := c.Validate(&request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	}
+	form, errForm := c.MultipartForm()
+	if errForm != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, errForm.Error())
+	}
+	thumbnail := form.File["thumbnail"]
+	if err := handler.ManageVideoUsecase.UpdateDataVideoUseCase(&request, thumbnail, idInt); err != nil {
 		if errors.Is(err, pkg.ErrVideoNotFound) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoNotFound.Error())
 		}
@@ -235,6 +232,21 @@ func (handler *ManageVideoHandlerImpl) UpdateDataVideoHandler(c echo.Context) er
 		}
 		if errors.Is(err, pkg.ErrParsingUrl) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrParsingUrl.Error())
+		}
+		if errors.Is(err, pkg.ErrThumbnail) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrThumbnail.Error())
+		}
+		if errors.Is(err, pkg.ErrThumbnailMaximum) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrThumbnailMaximum.Error())
+		}
+		if errors.Is(err, errors.New("upload image size must less than 2MB")) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "upload image size must less than 2MB")
+		}
+		if errors.Is(err, errors.New("only image allowed")) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "only image allowed")
+		}
+		if errors.Is(err, pkg.ErrUploadCloudinary) {
+			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
 		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}

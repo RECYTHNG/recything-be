@@ -323,9 +323,6 @@ func (s *echoServer) manageVideo() {
 	usecase := videoUsecase.NewManageVideoUsecaseImpl(repository)
 	handler := videoHandler.NewManageVideoHandlerImpl(usecase)
 
-	// upload thumbnail video
-	s.gr.POST("/videos/thumbnail", handler.UploadThumbnailVideoHandler, SuperAdminOrAdminMiddleware)
-
 	// create data video
 	s.gr.POST("/videos/data", handler.CreateDataVideoHandler, SuperAdminOrAdminMiddleware)
 
