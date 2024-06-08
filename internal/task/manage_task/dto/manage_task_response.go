@@ -42,10 +42,6 @@ type GetTaskPagination struct {
 	TotalPage int         `json:"total_page"`
 }
 
-type TaskUploadThumbnailResponse struct {
-	Thumbnail string `json:"thumbnail"`
-}
-
 type TaskGetByIdResponse struct {
 	Id          string           `json:"id"`
 	Title       string           `json:"title"`

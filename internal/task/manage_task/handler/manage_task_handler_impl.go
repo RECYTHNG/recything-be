@@ -1,10 +1,10 @@
 package handler
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sawalreverr/recything/internal/helper"
@@ -24,18 +24,39 @@ func NewManageTaskHandler(usecase usecase.ManageTaskUsecase) *ManageTaskHandlerI
 func (handler *ManageTaskHandlerImpl) CreateTaskHandler(c echo.Context) error {
 	claims := c.Get("user").(*helper.JwtCustomClaims)
 	var request dto.CreateTaskResquest
-	if err := c.Bind(&request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid request body, detail : "+err.Error())
+	json_data := c.FormValue("json_data")
+	if err := json.Unmarshal([]byte(json_data), &request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
-
 	if err := c.Validate(&request); err != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
-	taskChallange, err := handler.Usecase.CreateTaskUsecase(&request, claims.UserID)
+	form, errForm := c.MultipartForm()
+	if errForm != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, errForm.Error())
+	}
+	thumbnail := form.File["thumbnail"]
+
+	taskChallange, err := handler.Usecase.CreateTaskUsecase(&request, thumbnail, claims.UserID)
 
 	if err != nil {
 		if errors.Is(err, pkg.ErrTaskStepsNull) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrTaskStepsNull.Error())
+		}
+		if errors.Is(err, pkg.ErrThumbnail) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrThumbnail.Error())
+		}
+		if errors.Is(err, pkg.ErrThumbnailMaximum) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrThumbnailMaximum.Error())
+		}
+		if errors.Is(err, errors.New("upload image size must less than 2MB")) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "upload image size must less than 2MB")
+		}
+		if errors.Is(err, errors.New("only image allowed")) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "only image allowed")
+		}
+		if errors.Is(err, pkg.ErrUploadCloudinary) {
+			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
 		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
@@ -63,7 +84,7 @@ func (handler *ManageTaskHandlerImpl) CreateTaskHandler(c echo.Context) error {
 	}
 	data.Steps = taskStep
 
-	responseData := helper.ResponseData(http.StatusOK, "success", data)
+	responseData := helper.ResponseData(http.StatusCreated, "success", data)
 	return c.JSON(http.StatusOK, responseData)
 
 }
@@ -134,40 +155,6 @@ func (handler *ManageTaskHandlerImpl) GetTaskChallengePaginationHandler(c echo.C
 	}
 
 	return c.JSON(http.StatusOK, responseDataPagination)
-}
-
-func (handler *ManageTaskHandlerImpl) UploadThumbnailHandler(c echo.Context) error {
-	file, errFile := c.FormFile("thumbnail")
-	if errFile != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "thumbnail is required")
-	}
-
-	if file.Size > 2*1024*1024 {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "file is too large")
-	}
-
-	if !strings.HasPrefix(file.Header.Get("Content-Type"), "image") {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid file type")
-	}
-
-	src, errOpen := file.Open()
-	if errOpen != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "failed to open file: "+errOpen.Error())
-	}
-	defer src.Close()
-
-	imageUrl, err := helper.UploadToCloudinary(src, "task_thumbnail")
-	if err != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
-	}
-
-	data := dto.TaskUploadThumbnailResponse{
-		Thumbnail: imageUrl,
-	}
-
-	responseData := helper.ResponseData(http.StatusOK, "success", data)
-	return c.JSON(http.StatusOK, responseData)
-
 }
 
 func (handler *ManageTaskHandlerImpl) GetTaskByIdHandler(c echo.Context) error {

@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"mime/multipart"
 	"time"
 
 	"github.com/sawalreverr/recything/internal/helper"
@@ -19,11 +20,25 @@ func NewManageTaskUsecase(repository repository.ManageTaskRepository) *ManageTas
 	return &ManageTaskUsecaseImpl{ManageTaskRepository: repository}
 }
 
-func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskResquest, adminId string) (*task.TaskChallenge, error) {
+func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskResquest, thumbnail []*multipart.FileHeader, adminId string) (*task.TaskChallenge, error) {
+	if len(thumbnail) == 0 {
+		return nil, pkg.ErrThumbnail
+	}
+	if len(thumbnail) > 1 {
+		return nil, pkg.ErrThumbnailMaximum
+	}
 	if len(request.TaskSteps) == 0 {
 		return nil, pkg.ErrTaskStepsNull
-
 	}
+	validImages, errImages := helper.ImagesValidation(thumbnail)
+	if errImages != nil {
+		return nil, errImages
+	}
+	urlThumbnail, errUpload := helper.UploadToCloudinary(validImages[0], "task_thumbnail")
+	if errUpload != nil {
+		return nil, pkg.ErrUploadCloudinary
+	}
+
 	findLastId, _ := usecase.ManageTaskRepository.FindLastIdTaskChallenge()
 	id := helper.GenerateCustomID(findLastId, "TM")
 	startDateString := request.StartDate
@@ -42,7 +57,7 @@ func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskR
 		AdminId:     adminId,
 		Title:       request.Title,
 		Description: request.Description,
-		Thumbnail:   request.ThumbnailUrl,
+		Thumbnail:   urlThumbnail,
 		StartDate:   parsedStartDate,
 		EndDate:     parsedEndDate,
 		Point:       request.Point,
