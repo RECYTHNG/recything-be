@@ -72,7 +72,7 @@ func (handler ManageAchievementHandlerImpl) UpdateAchievementHandler(c echo.Cont
 		return helper.ErrorHandler(c, http.StatusBadRequest, "Invalid request param, details: "+errConvert.Error())
 	}
 
-	request := &dto.UpdateAchievementRequest{}
+	request := dto.UpdateAchievementRequest{}
 	json_data := c.FormValue("json_data")
 	if err := json.Unmarshal([]byte(json_data), &request); err != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
@@ -85,7 +85,7 @@ func (handler ManageAchievementHandlerImpl) UpdateAchievementHandler(c echo.Cont
 		return helper.ErrorHandler(c, http.StatusBadRequest, errForm.Error())
 	}
 	badge := form.File["badge"]
-	err := handler.usecae.UpdateAchievementUsecase(request, badge, achievementIdInt)
+	err := handler.usecae.UpdateAchievementUsecase(&request, badge, achievementIdInt)
 	if err != nil {
 		if errors.Is(err, pkg.ErrAchievementNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrAchievementNotFound.Error())
