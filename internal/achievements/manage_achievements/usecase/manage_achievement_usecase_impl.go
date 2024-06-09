@@ -37,28 +37,37 @@ func (repository ManageAchievementUsecaseImpl) GetAchievementByIdUsecase(id int)
 }
 
 func (repository ManageAchievementUsecaseImpl) UpdateAchievementUsecase(request *dto.UpdateAchievementRequest, badge []*multipart.FileHeader, id int) error {
-	if len(badge) == 0 {
-		return pkg.ErrBadge
-	}
 	if len(badge) > 1 {
 		return pkg.ErrBadgeMaximum
 	}
-	validImages, errImages := helper.ImagesValidation(badge)
-	if errImages != nil {
-		return errImages
-	}
-	urlBadge, errUpload := helper.UploadToCloudinary(validImages[0], "achievements_badge")
-	if errUpload != nil {
-		return pkg.ErrUploadCloudinary
+	var urlBadge string
+	if len(badge) == 1 {
+		validImages, errImages := helper.ImagesValidation(badge)
+		if errImages != nil {
+			return errImages
+		}
+		urlBadgeUpload, errUpload := helper.UploadToCloudinary(validImages[0], "achievements_badge")
+		if errUpload != nil {
+			return pkg.ErrUploadCloudinary
+		}
+		urlBadge = urlBadgeUpload
 	}
 
 	achievement, err := repository.repository.GetAchievementById(id)
 	if err != nil {
 		return pkg.ErrAchievementNotFound
 	}
-	achievement.Level = strings.ToLower(request.Level)
-	achievement.TargetPoint = request.TargetPoint
-	achievement.BadgeUrl = urlBadge
+
+	if request.Level != "" {
+		achievement.Level = strings.ToLower(request.Level)
+	}
+	if request.TargetPoint != 0 {
+		achievement.TargetPoint = request.TargetPoint
+	}
+	if urlBadge != "" {
+		achievement.BadgeUrl = urlBadge
+	}
+
 	if err := repository.repository.UpdateAchievement(achievement, id); err != nil {
 		return err
 	}
