@@ -21,7 +21,7 @@ type User struct {
 	PictureURL string    `json:"picture_url"`
 	OTP        uint      `json:"otp"`
 	IsVerified bool      `json:"is_verified" gorm:"default:false"`
-	Badge      string    `json:"badge" gorm:"type:enum('classic', 'silver', 'gold', 'platinum');default:classic"`
+	Badge      string    `json:"badge" gorm:"default:'https://res.cloudinary.com/dymhvau8n/image/upload/v1717758679/achievement_badge/cq2n246e6twuksnia62t.png'"`
 
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`

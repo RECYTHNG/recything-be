@@ -262,20 +262,11 @@ func (s *echoServer) manageAchievement() {
 	usecase := achievementUsecase.NewManageAchievementUsecase(repository)
 	handler := achievementHandler.NewManageAchievementHandler(usecase)
 
-	// upload badge achievement
-	s.gr.POST("/achievements/badge", handler.UploadBadgeHandler, SuperAdminOrAdminMiddleware)
-
-	// create achievement
-	s.gr.POST("/achievements", handler.CreateAchievementHandler, SuperAdminOrAdminMiddleware)
-
 	// get all achievement
 	s.gr.GET("/achievements", handler.GetAllAchievementHandler, SuperAdminOrAdminMiddleware)
 
 	// get achievement by id
 	s.gr.GET("/achievements/:achievementId", handler.GetAchievementByIdHandler, SuperAdminOrAdminMiddleware)
-
-	// update badge achievement
-	s.gr.PUT("/achievements/badge", handler.UpdateBadgeHandler, SuperAdminOrAdminMiddleware)
 
 	// update achievement
 	s.gr.PUT("/achievements/:achievementId", handler.UpdateAchievementHandler, SuperAdminOrAdminMiddleware)

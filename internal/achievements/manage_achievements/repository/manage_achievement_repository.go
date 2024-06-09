@@ -5,7 +5,6 @@ import (
 )
 
 type ManageAchievementRepository interface {
-	CreateAchievement(achievement *archievement.Achievement) (*archievement.Achievement, error)
 	FindArchievementByLevel(level string) (*archievement.Achievement, error)
 	GetAllArchievement() ([]*archievement.Achievement, error)
 	GetAchievementById(id int) (*archievement.Achievement, error)

@@ -1,10 +1,10 @@
 package handler
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sawalreverr/recything/internal/achievements/manage_achievements/dto"
@@ -17,64 +17,8 @@ type ManageAchievementHandlerImpl struct {
 	usecae usecase.ManageAchievementUsecase
 }
 
-func NewManageAchievementHandler(usecae usecase.ManageAchievementUsecase) *ManageAchievementHandlerImpl {
+func NewManageAchievementHandler(usecae usecase.ManageAchievementUsecase) ManageAchievementHandler {
 	return &ManageAchievementHandlerImpl{usecae: usecae}
-}
-
-func (handler ManageAchievementHandlerImpl) UploadBadgeHandler(c echo.Context) error {
-
-	badge, errFile := c.FormFile("badge")
-
-	if errFile != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "Invalid request body, details: "+errFile.Error())
-	}
-	if badge.Size > 2*1024*1024 {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "file is too large")
-	}
-
-	if !strings.HasPrefix(badge.Header.Get("Content-Type"), "image") {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid file type")
-	}
-	src, errFileOpen := badge.Open()
-	if errFileOpen != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, details: "+errFileOpen.Error())
-	}
-	defer src.Close()
-	imageUrl, err := helper.UploadToCloudinary(src, "achievement_badge")
-	if err != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, details: "+err.Error())
-	}
-	responseData := &dto.UploadBadgeResponse{
-		BadgeUrl: imageUrl,
-	}
-
-	return helper.ResponseHandler(c, http.StatusCreated, "Success", responseData)
-}
-
-func (handler ManageAchievementHandlerImpl) CreateAchievementHandler(c echo.Context) error {
-
-	request := &dto.CreateArchievementRequest{}
-	if err := c.Bind(request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "Invalid request body, details: "+err.Error())
-	}
-
-	if err := c.Validate(request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "Invalid request body, details: "+err.Error())
-	}
-
-	archievement, err := handler.usecae.CreateArchievementUsecase(request)
-	if err != nil {
-		if errors.Is(err, pkg.ErrAchievementLevelAlreadyExist) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrAchievementLevelAlreadyExist.Error())
-		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, details: "+err.Error())
-	}
-	responseData := &dto.CreateArchievementResponse{
-		Level:       archievement.Level,
-		TargetPoint: archievement.TargetPoint,
-		BadgeUrl:    archievement.BadgeUrl,
-	}
-	return helper.ResponseHandler(c, http.StatusCreated, "Success", responseData)
 }
 
 func (handler ManageAchievementHandlerImpl) GetAllAchievementHandler(c echo.Context) error {
@@ -121,35 +65,6 @@ func (handler ManageAchievementHandlerImpl) GetAchievementByIdHandler(c echo.Con
 	return helper.ResponseHandler(c, http.StatusOK, "Success", responseData)
 }
 
-func (handler ManageAchievementHandlerImpl) UpdateBadgeHandler(c echo.Context) error {
-	badge, errFile := c.FormFile("badge")
-
-	if errFile != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "Invalid request body, details: "+errFile.Error())
-	}
-	if badge.Size > 2*1024*1024 {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "file is too large")
-	}
-
-	if !strings.HasPrefix(badge.Header.Get("Content-Type"), "image") {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid file type")
-	}
-	src, errFileOpen := badge.Open()
-	if errFileOpen != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, details: "+errFileOpen.Error())
-	}
-	defer src.Close()
-	imageUrl, err := helper.UploadToCloudinary(src, "achievement_badge_update")
-	if err != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, details: "+err.Error())
-	}
-	responseData := &dto.UploadBadgeResponse{
-		BadgeUrl: imageUrl,
-	}
-
-	return helper.ResponseHandler(c, http.StatusCreated, "Success", responseData)
-}
-
 func (handler ManageAchievementHandlerImpl) UpdateAchievementHandler(c echo.Context) error {
 	achievementId := c.Param("achievementId")
 	achievementIdInt, errConvert := strconv.Atoi(achievementId)
@@ -157,18 +72,38 @@ func (handler ManageAchievementHandlerImpl) UpdateAchievementHandler(c echo.Cont
 		return helper.ErrorHandler(c, http.StatusBadRequest, "Invalid request param, details: "+errConvert.Error())
 	}
 
-	request := &dto.UpdateAchievementRequest{}
-	if err := c.Bind(request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "Invalid request body, details: "+err.Error())
+	request := dto.UpdateAchievementRequest{}
+	json_data := c.FormValue("json_data")
+	if err := json.Unmarshal([]byte(json_data), &request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
-	if err := c.Validate(request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "Invalid request body, details: "+err.Error())
+	if err := c.Validate(&request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
-
-	err := handler.usecae.UpdateAchievementUsecase(request, achievementIdInt)
+	form, errForm := c.MultipartForm()
+	if errForm != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, errForm.Error())
+	}
+	badge := form.File["badge"]
+	err := handler.usecae.UpdateAchievementUsecase(&request, badge, achievementIdInt)
 	if err != nil {
 		if errors.Is(err, pkg.ErrAchievementNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrAchievementNotFound.Error())
+		}
+		if errors.Is(err, pkg.ErrBadge) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrBadge.Error())
+		}
+		if errors.Is(err, pkg.ErrBadgeMaximum) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrBadgeMaximum.Error())
+		}
+		if errors.Is(err, errors.New("upload image size must less than 2MB")) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "upload image size must less than 2MB")
+		}
+		if errors.Is(err, errors.New("only image allowed")) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "only image allowed")
+		}
+		if errors.Is(err, pkg.ErrUploadCloudinary) {
+			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
 		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, details: "+err.Error())
 	}
