@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"errors"
+	"mime/multipart"
 	"net/http"
 	"strconv"
 
@@ -84,14 +85,14 @@ func (handler ManageAchievementHandlerImpl) UpdateAchievementHandler(c echo.Cont
 	if errForm != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, errForm.Error())
 	}
-	badge := form.File["badge"]
+	var badge []*multipart.FileHeader
+	if form != nil {
+		badge = form.File["badge"]
+	}
 	err := handler.usecae.UpdateAchievementUsecase(&request, badge, achievementIdInt)
 	if err != nil {
 		if errors.Is(err, pkg.ErrAchievementNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrAchievementNotFound.Error())
-		}
-		if errors.Is(err, pkg.ErrBadge) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrBadge.Error())
 		}
 		if errors.Is(err, pkg.ErrBadgeMaximum) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrBadgeMaximum.Error())
