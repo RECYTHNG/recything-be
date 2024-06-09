@@ -189,9 +189,6 @@ func (s *echoServer) manageTask() {
 	usecase := taskUsecase.NewManageTaskUsecase(repository)
 	handler := taskHandler.NewManageTaskHandler(usecase)
 
-	// upload thumbnail task
-	s.gr.POST("/tasks/thumbnail", handler.UploadThumbnailHandler, SuperAdminOrAdminMiddleware)
-
 	// create task by admin or super admin
 	s.gr.POST("/tasks", handler.CreateTaskHandler, SuperAdminOrAdminMiddleware)
 
@@ -330,9 +327,6 @@ func (s *echoServer) manageVideo() {
 	repository := videoRepo.NewManageVideoRepository(s.db)
 	usecase := videoUsecase.NewManageVideoUsecaseImpl(repository)
 	handler := videoHandler.NewManageVideoHandlerImpl(usecase)
-
-	// upload thumbnail video
-	s.gr.POST("/videos/thumbnail", handler.UploadThumbnailVideoHandler, SuperAdminOrAdminMiddleware)
 
 	// create data video
 	s.gr.POST("/videos/data", handler.CreateDataVideoHandler, SuperAdminOrAdminMiddleware)
