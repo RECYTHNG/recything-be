@@ -121,6 +121,7 @@ func (repository *UserTaskRepositoryImpl) UploadImageTask(userTask *user_task.Us
 
 	tx.Preload("UserTaskImage").
 		Preload("TaskChallenge.TaskSteps").
+		Where("id = ?", userTaskId).
 		First(&userTask)
 
 	if err := tx.Commit().Error; err != nil {
