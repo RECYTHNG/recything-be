@@ -1638,7 +1638,7 @@ paths:
                             example: "Step 1 description"
                 thumbnail:
                   type: string
-                  format: image
+                  format: binary
                   example: "thumbnail.jpg"
                     
       responses:
@@ -1973,7 +1973,7 @@ paths:
                             example: "Step 1 description"
                 thumbnail:
                   type: string
-                  format: image
+                  format: binary
                   example: "thumbnail.jpg"
       responses:
         '200':
@@ -2461,7 +2461,7 @@ paths:
                   type: array
                   items:
                     type: string
-                    format: image
+                    format: binary
                   example: ["image1.jpg", "image2.jpg"]
       responses:
         '200':
@@ -2578,7 +2578,7 @@ paths:
                   type: array
                   items:
                     type: string
-                    format: image
+                    format: binary
                   example: ["image1.jpg", "image2.jpg"]
       responses:
         '200':
@@ -3202,7 +3202,7 @@ paths:
                       example: 1
                 thumbnail:
                   type: string
-                  format: image
+                  format: binary
                   example: "thumbnail.jpg"
 
       responses:
@@ -3431,7 +3431,7 @@ paths:
                       example: 1
                 thumbnail:
                   type: string
-                  format: image
+                  format: binary
                   example: "thumbnail.jpg"
                   
       responses:
@@ -4345,7 +4345,7 @@ components:
           example: admin
         profile_photo:
           type: string
-          format: image
+          format: binary
           example: "profile.jpg"
     EditAdmin:
       type: object
@@ -4368,7 +4368,7 @@ components:
           example: admin
         profile_photo:
           type: string
-          format: image
+          format: binary
           example: "profile.jpg"
     AdminResponse:
       type: object
