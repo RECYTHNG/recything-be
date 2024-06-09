@@ -50,6 +50,8 @@ var (
 	// manage achievement
 	ErrAchievementLevelAlreadyExist = errors.New("archievement level already exist")
 	ErrAchievementNotFound          = errors.New("archievement not found")
+	ErrBadge                        = errors.New("badge is required")
+	ErrBadgeMaximum                 = errors.New("badge must be one image")
 
 	// Custom Data
 	ErrCustomDataNotFound = errors.New("custom data not found")
