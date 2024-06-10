@@ -1177,17 +1177,14 @@ paths:
             schema:
               type: object
               properties:
-                json_data:
-                  type: object
-                  properties:
-                    level:
-                      type: string
-                      description: New level for the achievement
-                      example: platinum
-                    target_point:
-                      type: integer
-                      description: New target point for the badge
-                      example: 1200
+                level:
+                  type: string
+                  description: New level for the achievement
+                  example: platinum
+                target_point:
+                  type: integer
+                  description: New target point for the badge
+                  example: 1200
                 badge:
                   type: string
                   format: binary
