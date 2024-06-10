@@ -31,10 +31,20 @@ type WasteCategory struct {
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
+type ContentCategory struct {
+	ID   uint   `json:"id" gorm:"primaryKey"`
+	Name string `json:"name" gorm:"type:varchar(50);unique;not null"`
+
+	CreatedAt time.Time      `json:"-"`
+	UpdatedAt time.Time      `json:"-"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
+}
+
 type ArticleCategories struct {
-	ID         uint   `gorm:"primaryKey"`
-	ArticleID  string `gorm:"type:varchar(7)"`
-	CategoryID uint
+	ID                uint   `gorm:"primaryKey"`
+	ArticleID         string `gorm:"type:varchar(7)"`
+	WasteCategoryID   uint
+	ContentCategoryID int
 
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`

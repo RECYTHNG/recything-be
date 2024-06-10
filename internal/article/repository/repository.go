@@ -94,7 +94,7 @@ func (r *articleRepository) Delete(articleID string) error {
 
 func (r *articleRepository) FindCategories(articleID string) (*[]art.WasteCategory, error) {
 	var articleCategories []art.ArticleCategories
-	var categories []art.WasteCategory
+	var wasteCategories []art.WasteCategory
 
 	if err := r.DB.GetDB().Where("article_id = ?", articleID).Find(&articleCategories).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -105,12 +105,12 @@ func (r *articleRepository) FindCategories(articleID string) (*[]art.WasteCatego
 
 	var categoryIDs []uint
 	for _, ac := range articleCategories {
-		categoryIDs = append(categoryIDs, ac.CategoryID)
+		categoryIDs = append(categoryIDs, ac.WasteCategoryID)
 	}
 
-	if err := r.DB.GetDB().Where("id IN (?)", categoryIDs).Find(&categories).Error; err != nil {
+	if err := r.DB.GetDB().Where("id IN (?)", categoryIDs).Find(&wasteCategories).Error; err != nil {
 		return nil, err
 	}
 
-	return &categories, nil
+	return &wasteCategories, nil
 }

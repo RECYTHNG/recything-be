@@ -32,8 +32,9 @@ type ArticleDetail struct {
 	ThumbnailURL string      `json:"thumbnail_url"`
 	CreatedAt    time.Time   `json:"created_at"`
 
-	Categories []WasteCategory  `json:"categories"`
-	Sections   []ArticleSection `json:"sections"`
+	WasteCategories   []WasteCategory   `json:"waste_categories"`
+	ContentCategories []ContentCategory `json:"content_categories"`
+	Sections          []ArticleSection  `json:"sections"`
 }
 
 type ArticleResponsePagination struct {

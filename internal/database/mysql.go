@@ -380,9 +380,9 @@ func (m *mysqlDatabase) InitArticle() {
 	}
 
 	articleCategories := []article.ArticleCategories{
-		{ID: 1, ArticleID: "ART0001", CategoryID: 1},
-		{ID: 2, ArticleID: "ART0001", CategoryID: 3},
-		{ID: 3, ArticleID: "ART0002", CategoryID: 7},
+		{ID: 1, ArticleID: "ART0001", WasteCategoryID: 1},
+		{ID: 2, ArticleID: "ART0001", WasteCategoryID: 3},
+		{ID: 3, ArticleID: "ART0002", WasteCategoryID: 7},
 	}
 
 	for _, article := range articles {
