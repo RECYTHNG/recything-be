@@ -201,12 +201,12 @@ func (handler *ManageVideoHandlerImpl) UpdateDataVideoHandler(c echo.Context) er
 	}
 	var request dto.UpdateDataVideoRequest
 	json_data := c.FormValue("json_data")
-	if err := json.Unmarshal([]byte(json_data), &request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	if json_data != "" {
+		if err := json.Unmarshal([]byte(json_data), &request); err != nil {
+			return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+		}
 	}
-	if err := c.Validate(&request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
-	}
+
 	form, errForm := c.MultipartForm()
 	if errForm != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, errForm.Error())
