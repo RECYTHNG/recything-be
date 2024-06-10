@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"math"
+	"mime/multipart"
 	"net/http"
 	"strconv"
 
@@ -210,7 +211,11 @@ func (handler *ManageVideoHandlerImpl) UpdateDataVideoHandler(c echo.Context) er
 	if errForm != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, errForm.Error())
 	}
-	thumbnail := form.File["thumbnail"]
+	var thumbnail []*multipart.FileHeader
+	if form != nil {
+		thumbnail = form.File["thumbnail"]
+	}
+
 	if err := handler.ManageVideoUsecase.UpdateDataVideoUseCase(&request, thumbnail, idInt); err != nil {
 		if errors.Is(err, pkg.ErrVideoNotFound) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoNotFound.Error())

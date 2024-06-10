@@ -15,9 +15,9 @@ type CreateCategoryVideoRequest struct {
 }
 
 type UpdateDataVideoRequest struct {
-	Title       string                `json:"title" validate:"required"`
-	Description string                `json:"description" validate:"required"`
-	LinkVideo   string                `json:"link_video" validate:"required"`
-	CategoryId  int                   `json:"category_id" validate:"required"`
+	Title       string                `json:"title"`
+	Description string                `json:"description"`
+	LinkVideo   string                `json:"link_video"`
+	CategoryId  int                   `json:"category_id"`
 	Thumbnail   *multipart.FileHeader `json:"-"`
 }
