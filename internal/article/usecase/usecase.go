@@ -57,17 +57,18 @@ func (uc *articleUsecase) Delete(articleID string) error {
 
 func (uc *articleUsecase) GetArticleDetail(article art.Article) *art.ArticleDetail {
 	adminDetail, _ := uc.GetDetailAuthor(article.AuthorID)
-	// categories, _ := uc.articleRepo.FindCategories(article.ID)
+	wasteCategories, contentCategories, _ := uc.articleRepo.FindCategories(article.ID)
 
 	articleDetail := art.ArticleDetail{
-		ID:           article.ID,
-		AuthorID:     *adminDetail,
-		Title:        article.Title,
-		Description:  article.Description,
-		ThumbnailURL: article.ThumbnailURL,
-		CreatedAt:    article.CreatedAt,
-		// Categories:   *categories,
-		Sections: article.Sections,
+		ID:                article.ID,
+		AuthorID:          *adminDetail,
+		Title:             article.Title,
+		Description:       article.Description,
+		ThumbnailURL:      article.ThumbnailURL,
+		CreatedAt:         article.CreatedAt,
+		WasteCategories:   *wasteCategories,
+		ContentCategories: *contentCategories,
+		Sections:          article.Sections,
 	}
 
 	return &articleDetail

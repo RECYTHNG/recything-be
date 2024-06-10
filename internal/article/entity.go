@@ -31,7 +31,7 @@ type WasteCategory struct {
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
-type ContentCategory struct {
+type VideoCategory struct {
 	ID   uint   `json:"id" gorm:"primaryKey"`
 	Name string `json:"name" gorm:"type:varchar(50);unique;not null"`
 
@@ -75,7 +75,7 @@ type ArticleRepository interface {
 	Delete(articleID string) error
 
 	// Category Repository
-	FindCategories(articleID string) (*[]WasteCategory, error)
+	FindCategories(articleID string) (*[]WasteCategory, *[]VideoCategory, error)
 
 	// Article Section Repository
 }

@@ -92,25 +92,40 @@ func (r *articleRepository) Delete(articleID string) error {
 	return nil
 }
 
-func (r *articleRepository) FindCategories(articleID string) (*[]art.WasteCategory, error) {
+func (r *articleRepository) FindCategories(articleID string) (*[]art.WasteCategory, *[]art.VideoCategory, error) {
 	var articleCategories []art.ArticleCategories
 	var wasteCategories []art.WasteCategory
+	var contentCategories []art.VideoCategory
 
 	if err := r.DB.GetDB().Where("article_id = ?", articleID).Find(&articleCategories).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, pkg.ErrArticleNotFound
+			return nil, nil, pkg.ErrArticleNotFound
 		}
-		return nil, err
+		return nil, nil, err
 	}
 
-	var categoryIDs []uint
+	var wasteCategoryIDs []uint
+	var contentCategoryIDs []uint
 	for _, ac := range articleCategories {
-		categoryIDs = append(categoryIDs, ac.WasteCategoryID)
+		if ac.WasteCategoryID != 0 {
+			wasteCategoryIDs = append(wasteCategoryIDs, ac.WasteCategoryID)
+		}
+		if ac.ContentCategoryID != 0 {
+			contentCategoryIDs = append(contentCategoryIDs, uint(ac.ContentCategoryID))
+		}
 	}
 
-	if err := r.DB.GetDB().Where("id IN (?)", categoryIDs).Find(&wasteCategories).Error; err != nil {
-		return nil, err
+	if len(wasteCategoryIDs) > 0 {
+		if err := r.DB.GetDB().Where("id IN (?)", wasteCategoryIDs).Find(&wasteCategories).Error; err != nil {
+			return nil, nil, err
+		}
 	}
 
-	return &wasteCategories, nil
+	if len(contentCategoryIDs) > 0 {
+		if err := r.DB.GetDB().Where("id IN (?)", contentCategoryIDs).Find(&contentCategories).Error; err != nil {
+			return nil, nil, err
+		}
+	}
+
+	return &wasteCategories, &contentCategories, nil
 }
