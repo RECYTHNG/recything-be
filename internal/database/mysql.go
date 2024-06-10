@@ -9,6 +9,7 @@ import (
 	aboutus "github.com/sawalreverr/recything/internal/about-us"
 	achievement "github.com/sawalreverr/recything/internal/achievements/manage_achievements/entity"
 	adminEntity "github.com/sawalreverr/recything/internal/admin/entity"
+	"github.com/sawalreverr/recything/internal/article"
 	customDataEntity "github.com/sawalreverr/recything/internal/custom-data"
 	faqEntity "github.com/sawalreverr/recything/internal/faq"
 	"github.com/sawalreverr/recything/internal/helper"
@@ -340,6 +341,63 @@ func (m *mysqlDatabase) InitDataVideos() {
 		m.GetDB().FirstOrCreate(&video, video)
 	}
 	log.Println("Video data added!")
+}
+
+func (m *mysqlDatabase) InitArticleCategory() {
+	categories := []article.WasteCategory{
+		{ID: 1, Name: "plastik"},
+		{ID: 2, Name: "besi"},
+		{ID: 3, Name: "kaca"},
+		{ID: 4, Name: "organik"},
+		{ID: 5, Name: "kayu"},
+		{ID: 6, Name: "kertas"},
+		{ID: 7, Name: "baterai"},
+		{ID: 8, Name: "kaleng"},
+		{ID: 9, Name: "elektronik"},
+		{ID: 10, Name: "tekstil"},
+		{ID: 11, Name: "minyak"},
+		{ID: 12, Name: "bola lampu"},
+		{ID: 13, Name: "berbahaya"},
+	}
+
+	for _, category := range categories {
+		m.GetDB().FirstOrCreate(&category, category)
+	}
+	log.Println("Article categories data added!")
+}
+
+func (m *mysqlDatabase) InitArticle() {
+	articles := []article.Article{
+		{ID: "ART0001", Title: "The Future of AI", Description: "An in-depth look at the future of artificial intelligence.", ThumbnailURL: "http://example.com/ai.jpg", AuthorID: "AD0001"},
+		{ID: "ART0002", Title: "Healthy Living Tips", Description: "Tips for a healthier lifestyle.", ThumbnailURL: "http://example.com/health.jpg", AuthorID: "AD0001"},
+	}
+
+	articleSections := []article.ArticleSection{
+		{ID: 1, ArticleID: "ART0001", Title: "Introduction", Description: "Introduction to AI", ImageURL: "http://example.com/ai.jpg"},
+		{ID: 2, ArticleID: "ART0001", Title: "Impact on Society", Description: "How AI will impact society.", ImageURL: "http://example.com/ai.jpg"},
+		{ID: 3, ArticleID: "ART0002", Title: "Diet", Description: "Healthy eating habits.", ImageURL: "http://example.com/diet.jpg"},
+		{ID: 4, ArticleID: "ART0002", Title: "Exercise", Description: "The importance of regular exercise.", ImageURL: "http://example.com/ai.jpg"},
+	}
+
+	articleCategories := []article.ArticleCategories{
+		{ID: 1, ArticleID: "ART0001", CategoryID: 1},
+		{ID: 2, ArticleID: "ART0001", CategoryID: 3},
+		{ID: 3, ArticleID: "ART0002", CategoryID: 7},
+	}
+
+	for _, article := range articles {
+		m.GetDB().FirstOrCreate(&article, article)
+	}
+
+	for _, articleSection := range articleSections {
+		m.GetDB().FirstOrCreate(&articleSection, articleSection)
+	}
+
+	for _, articleCategory := range articleCategories {
+		m.GetDB().FirstOrCreate(&articleCategory, articleCategory)
+	}
+
+	log.Println("Article data added!")
 }
 
 func (m *mysqlDatabase) GetDB() *gorm.DB {
