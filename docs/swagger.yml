@@ -1814,7 +1814,7 @@ paths:
                   message:
                     type: string
                     example: task not found
-    put:
+    patch:
       tags:
         - manage tasks
       summary: Update task
@@ -1831,7 +1831,7 @@ paths:
           description: ID of the task to be updated
           example: TM0001
       requestBody:
-        required: true
+        required: false
         content:
           multipart/form-data::
             schema:
