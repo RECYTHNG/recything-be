@@ -43,7 +43,7 @@ func (r *userRepository) FindByPhoneNumber(phoneNumber string) (*u.User, error) 
 
 func (r *userRepository) FindByID(userID string) (*u.User, error) {
 	var user u.User
-	if err := r.DB.GetDB().Where("id = ?", userID).First(&user).Error; err != nil {
+	if err := r.DB.GetDB().Unscoped().Where("id = ?", userID).First(&user).Error; err != nil {
 		return nil, err
 	}
 
