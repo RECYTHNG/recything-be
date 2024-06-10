@@ -1154,11 +1154,11 @@ paths:
                     type: string
                     example: achievement not found
 
-    put:
+    patch:
       tags:
         - manage achievements
-      summary: Update target point of an achievement
-      description: Endpoint admin to update the target point of an existing achievement/badge.
+      summary: Update data achievement
+      description: Endpoint admin for update data achievement.
       operationId: updateAchievement
       parameters:
         - name: achievementId
@@ -1171,7 +1171,7 @@ paths:
       security:
         - Bearer: []          
       requestBody:
-        required: true
+        required: false
         content:
           multipart/form-data::
             schema:
