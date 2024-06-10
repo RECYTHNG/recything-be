@@ -134,20 +134,20 @@ func (handler *ApprovalTaskHandlerImpl) GetUserTaskDetailsHandler(c echo.Context
 
 	var dataImages []*dto.DataImages
 	data := dto.GetUserTaskDetailsResponse{
-		Id:        task.ID,
-		TitleTask: task.TaskChallenge.Title,
-		StartDate: task.TaskChallenge.StartDate,
-		EndDate:   task.TaskChallenge.EndDate,
-		UserName:  task.User.Name,
-		Images:    []*dto.DataImages{},
+		Id:          task.ID,
+		TitleTask:   task.TaskChallenge.Title,
+		StartDate:   task.TaskChallenge.StartDate,
+		EndDate:     task.TaskChallenge.EndDate,
+		UserName:    task.User.Name,
+		Images:      []*dto.DataImages{},
+		Description: task.DescriptionImage,
 	}
 
 	for _, image := range images {
 		dataImages = append(dataImages, &dto.DataImages{
-			Id:          image.ID,
-			ImageUrl:    image.ImageUrl,
-			Description: task.DescriptionImage,
-			UploadedAt:  image.CreatedAt,
+			Id:         image.ID,
+			ImageUrl:   image.ImageUrl,
+			UploadedAt: image.CreatedAt,
 		})
 	}
 

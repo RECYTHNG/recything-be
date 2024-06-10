@@ -408,20 +408,49 @@ func (handler *UserTaskHandlerImpl) GetUserTaskDetailsHandler(c echo.Context) er
 
 	var dataImages []*dto.DataImages
 	data := dto.GetUserTaskDetailsResponse{
-		Id:        userTask.ID,
-		TitleTask: userTask.TaskChallenge.Title,
-		UserName:  userTask.User.Name,
-		Images:    []*dto.DataImages{},
+		Id:          userTask.ID,
+		TitleTask:   userTask.TaskChallenge.Title,
+		UserName:    userTask.User.Name,
+		Images:      []*dto.DataImages{},
+		Description: userTask.DescriptionImage,
 	}
 
 	for _, image := range images {
 		dataImages = append(dataImages, &dto.DataImages{
-			Id:          image.ID,
-			ImageUrl:    image.ImageUrl,
-			Description: userTask.DescriptionImage,
+			Id:       image.ID,
+			ImageUrl: image.ImageUrl,
 		})
 	}
 	data.Images = dataImages
+	responseData := helper.ResponseData(http.StatusOK, "success", data)
+	return c.JSON(http.StatusOK, responseData)
+}
+
+func (handler *UserTaskHandlerImpl) GetHistoryPointByUserIdHandler(c echo.Context) error {
+	userId := c.Get("user").(*helper.JwtCustomClaims).UserID
+	userTask, totalPoint, err := handler.Usecase.GetHistoryPointByUserIdUsecase(userId)
+	if err != nil {
+		if errors.Is(err, pkg.ErrUserNoHasTask) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserNoHasTask.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+	}
+
+	var dataHistoryPoints []*dto.DataHistoryPoint
+	for _, task := range userTask {
+		dataHistoryPoints = append(dataHistoryPoints, &dto.DataHistoryPoint{
+			Id:         task.ID,
+			TitleTask:  task.TaskChallenge.Title,
+			Point:      task.Point,
+			AcceptedAt: task.AcceptedAt,
+		})
+	}
+
+	data := dto.HistoryPointResponse{
+		TotalPoint: totalPoint,
+		Data:       dataHistoryPoints,
+	}
+
 	responseData := helper.ResponseData(http.StatusOK, "success", data)
 	return c.JSON(http.StatusOK, responseData)
 }

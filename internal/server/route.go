@@ -4,18 +4,32 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	aboutusHandler "github.com/sawalreverr/recything/internal/about-us/handler"
+	aboutusRepo "github.com/sawalreverr/recything/internal/about-us/repository"
+	aboutusUsecase "github.com/sawalreverr/recything/internal/about-us/usecase"
 	achievementHandler "github.com/sawalreverr/recything/internal/achievements/manage_achievements/handler"
 	achievementRepo "github.com/sawalreverr/recything/internal/achievements/manage_achievements/repository"
 	achievementUsecase "github.com/sawalreverr/recything/internal/achievements/manage_achievements/usecase"
+	userAchievementHandler "github.com/sawalreverr/recything/internal/achievements/user_achievements/handler"
+	userAchievementRepo "github.com/sawalreverr/recything/internal/achievements/user_achievements/repository"
+	userAchievementUsecase "github.com/sawalreverr/recything/internal/achievements/user_achievements/usecase"
 	"github.com/sawalreverr/recything/internal/admin/handler"
 	"github.com/sawalreverr/recything/internal/admin/repository"
 	"github.com/sawalreverr/recything/internal/admin/usecase"
 	authHandler "github.com/sawalreverr/recything/internal/auth/handler"
 	authUsecase "github.com/sawalreverr/recything/internal/auth/usecase"
+	customDataHandler "github.com/sawalreverr/recything/internal/custom-data/handler"
+	customDataRepository "github.com/sawalreverr/recything/internal/custom-data/repository"
+	customDataUsecase "github.com/sawalreverr/recything/internal/custom-data/usecase"
 	faqHandler "github.com/sawalreverr/recything/internal/faq/handler"
 	faqRepo "github.com/sawalreverr/recything/internal/faq/repository"
 	faqUsecase "github.com/sawalreverr/recything/internal/faq/usecase"
+	leaderboardHandler "github.com/sawalreverr/recything/internal/leaderboard/handler"
+	leaderboardRepo "github.com/sawalreverr/recything/internal/leaderboard/repository"
+	leaderboardUsecase "github.com/sawalreverr/recything/internal/leaderboard/usecase"
 	"github.com/sawalreverr/recything/internal/middleware"
+	reminaiHandler "github.com/sawalreverr/recything/internal/remin-ai/handler"
+	reminaiUsecase "github.com/sawalreverr/recything/internal/remin-ai/usecase"
 	reportHandler "github.com/sawalreverr/recything/internal/report/handler"
 	reportRepo "github.com/sawalreverr/recything/internal/report/repository"
 	reportUsecase "github.com/sawalreverr/recything/internal/report/usecase"
@@ -173,9 +187,6 @@ func (s *echoServer) manageTask() {
 	usecase := taskUsecase.NewManageTaskUsecase(repository)
 	handler := taskHandler.NewManageTaskHandler(usecase)
 
-	// upload thumbnail task
-	s.gr.POST("/tasks/thumbnail", handler.UploadThumbnailHandler, SuperAdminOrAdminMiddleware)
-
 	// create task by admin or super admin
 	s.gr.POST("/tasks", handler.CreateTaskHandler, SuperAdminOrAdminMiddleware)
 
@@ -208,19 +219,22 @@ func (s *echoServer) userTask() {
 	s.gr.POST("/user/tasks/:taskChallengeId", handler.CreateUserTaskHandler, UserMiddleware)
 
 	// get task in progress by user current
-	s.gr.GET("/user_current/tasks/in-progress", handler.GetUserTaskByUserIdHandler, UserMiddleware)
+	s.gr.GET("/user-current/tasks/in-progress", handler.GetUserTaskByUserIdHandler, UserMiddleware)
 
 	// send task done by user current
-	s.gr.POST("/user_current/tasks/:userTaskId", handler.UploadImageTaskHandler, UserMiddleware)
+	s.gr.POST("/user-current/tasks/:userTaskId", handler.UploadImageTaskHandler, UserMiddleware)
 
 	// get task done by user current
-	s.gr.GET("/user_current/tasks/done", handler.GetUserTaskDoneByUserIdHandler, UserMiddleware)
+	s.gr.GET("/user-current/tasks/done", handler.GetUserTaskDoneByUserIdHandler, UserMiddleware)
 
 	// update user task if reject
-	s.gr.PUT("/user_current/tasks/:userTaskId", handler.UpdateUserTaskHandler, UserMiddleware)
+	s.gr.PUT("/user-current/tasks/:userTaskId", handler.UpdateUserTaskHandler, UserMiddleware)
 
 	// get user task details if repair
-	s.gr.GET("/user_current/tasks/:userTaskId", handler.GetUserTaskDetailsHandler, UserMiddleware)
+	s.gr.GET("/user-current/task/:userTaskId", handler.GetUserTaskDetailsHandler, UserMiddleware)
+
+	// get history point by user current
+	s.gr.GET("/user-current/tasks/history", handler.GetHistoryPointByUserIdHandler, UserMiddleware)
 }
 
 func (s *echoServer) approvalTask() {
@@ -229,16 +243,16 @@ func (s *echoServer) approvalTask() {
 	handler := approvalTaskHandler.NewApprovalTaskHandler(usecase)
 
 	// get all pagination user task
-	s.gr.GET("/approve_tasks", handler.GetAllApprovalTaskPaginationHandler, SuperAdminOrAdminMiddleware)
+	s.gr.GET("/approval-tasks", handler.GetAllApprovalTaskPaginationHandler, SuperAdminOrAdminMiddleware)
 
 	// approve user task
-	s.gr.PUT("/approve_tasks/:userTaskId", handler.ApproveUserTaskHandler, SuperAdminOrAdminMiddleware)
+	s.gr.PUT("/approve-tasks/:userTaskId", handler.ApproveUserTaskHandler, SuperAdminOrAdminMiddleware)
 
 	// reject user task
-	s.gr.PUT("/reject_tasks/:userTaskId", handler.RejectUserTaskHandler, SuperAdminOrAdminMiddleware)
+	s.gr.PUT("/reject-tasks/:userTaskId", handler.RejectUserTaskHandler, SuperAdminOrAdminMiddleware)
 
 	// get user task details
-	s.gr.GET("/user_task/:userTaskId", handler.GetUserTaskDetailsHandler, SuperAdminOrAdminMiddleware)
+	s.gr.GET("/user-task/:userTaskId", handler.GetUserTaskDetailsHandler, SuperAdminOrAdminMiddleware)
 }
 
 func (s *echoServer) manageAchievement() {
@@ -246,26 +260,56 @@ func (s *echoServer) manageAchievement() {
 	usecase := achievementUsecase.NewManageAchievementUsecase(repository)
 	handler := achievementHandler.NewManageAchievementHandler(usecase)
 
-	// upload badge achievement
-	s.gr.POST("/achievements/badge", handler.UploadBadgeHandler, SuperAdminOrAdminMiddleware)
-
-	// create achievement
-	s.gr.POST("/achievements", handler.CreateAchievementHandler, SuperAdminOrAdminMiddleware)
-
 	// get all achievement
 	s.gr.GET("/achievements", handler.GetAllAchievementHandler, SuperAdminOrAdminMiddleware)
 
 	// get achievement by id
 	s.gr.GET("/achievements/:achievementId", handler.GetAchievementByIdHandler, SuperAdminOrAdminMiddleware)
 
-	// update badge achievement
-	s.gr.PUT("/achievements/badge", handler.UpdateBadgeHandler, SuperAdminOrAdminMiddleware)
-
 	// update achievement
 	s.gr.PUT("/achievements/:achievementId", handler.UpdateAchievementHandler, SuperAdminOrAdminMiddleware)
 
 	// delete achievement
 	s.gr.DELETE("/achievements/:achievementId", handler.DeleteAchievementHandler, SuperAdminOrAdminMiddleware)
+}
+
+func (s *echoServer) customDataHandler() {
+	repository := customDataRepository.NewCustomDataRepository(s.db)
+	usecase := customDataUsecase.NewCustomDataUsecase(repository)
+	handler := customDataHandler.NewCustomDataHandler(usecase)
+
+	// Create new custom data for admin
+	s.gr.POST("/custom-data", handler.NewCustomData, SuperAdminOrAdminMiddleware)
+
+	// Update custom data for admin
+	s.gr.PUT("/custom-data/:dataId", handler.UpdateData, SuperAdminOrAdminMiddleware)
+
+	// Delete custom data for admin
+	s.gr.DELETE("/custom-data/:dataId", handler.DeleteData, SuperAdminOrAdminMiddleware)
+
+	// Get custom data by id for admin
+	s.gr.GET("/custom-data/:dataId", handler.GetDataByID, SuperAdminOrAdminMiddleware)
+
+	// Get all custom data for admin
+	s.gr.GET("/custom-datas", handler.GetAllData, SuperAdminMiddleware)
+}
+
+func (s *echoServer) reminAIHandler() {
+	repository := customDataRepository.NewCustomDataRepository(s.db)
+	usecase := reminaiUsecase.NewReminAIUsecase(repository)
+	handler := reminaiHandler.NewReminAIHandler(usecase)
+
+	// ReMin AI Chatbot with user access
+	s.gr.POST("/remin-ai", handler.AskGPT, UserMiddleware)
+}
+
+func (s *echoServer) userAchievement() {
+	repository := userAchievementRepo.NewUserAchievementRepository(s.db)
+	usecase := userAchievementUsecase.NewUserAchievementUsecase(repository)
+	handler := userAchievementHandler.NewUserAchievementHandler(usecase)
+
+	// get achievement by user
+	s.gr.GET("/user/achievements", handler.GetAvhievementsByUserhandler, UserMiddleware)
 }
 
 func (s *echoServer) manageVideo() {
@@ -311,4 +355,22 @@ func (s *echoServer) userVideo() {
 
 	// add comment
 	s.gr.POST("/videos/comment", handler.AddCommentHandler, UserMiddleware)
+}
+
+func (s *echoServer) aboutUsHandler() {
+	repository := aboutusRepo.NewAboutUsRepository(s.db)
+	usecase := aboutusUsecase.NewAboutUsUsecase(repository)
+	handler := aboutusHandler.NewAboutUsHandler(usecase)
+
+	// Get about us by category
+	s.gr.GET("/about-us/category", handler.GetAboutUsByCategory, UserMiddleware)
+}
+
+func (s *echoServer) leaderboardHandler() {
+	repository := leaderboardRepo.NewLeaderboardRepository(s.db)
+	usecase := leaderboardUsecase.NewLeaderboardUsecase(repository)
+	handler := leaderboardHandler.NewLeaderboardHandler(usecase)
+
+	// Get leaderboard
+	s.gr.GET("/leaderboard", handler.GetLeaderboardHandler, AllRoleMiddleware)
 }

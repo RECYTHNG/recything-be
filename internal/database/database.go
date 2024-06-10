@@ -7,5 +7,11 @@ type Database interface {
 	InitSuperAdmin()
 	InitWasteMaterials()
 	InitFaqs()
+	InitCustomDatas()
+	InitTasks()
+	InitTaskSteps()
+	InitAchievements()
 	InitVideoCategories()
+	InitAboutUs()
+	InitDataVideos()
 }

@@ -25,16 +25,15 @@ func (usecase *ApprovalTaskUsecaseImpl) GetAllApprovalTaskPaginationUseCase(limi
 }
 
 func (usecase *ApprovalTaskUsecaseImpl) ApproveUserTaskUseCase(userTaskId string) error {
+	if _, err := usecase.ApprovalTaskRepository.FindUserTask(userTaskId); err != nil {
+		return pkg.ErrUserTaskNotFound
+	}
+
 	if _, err := usecase.ApprovalTaskRepository.FindUserTaskForApprove(userTaskId); err != nil {
 		return pkg.ErrUserTaskAlreadyApprove
 	}
 
-	if _, err := usecase.ApprovalTaskRepository.FindUserTask(userTaskId); err != nil {
-		return pkg.ErrUserTaskNotFound
-	}
-	status := "accept"
-
-	if err := usecase.ApprovalTaskRepository.ApproveUserTask(status, userTaskId); err != nil {
+	if err := usecase.ApprovalTaskRepository.ApproveUserTask(userTaskId); err != nil {
 		return err
 	}
 	return nil
@@ -42,12 +41,13 @@ func (usecase *ApprovalTaskUsecaseImpl) ApproveUserTaskUseCase(userTaskId string
 }
 
 func (usecase *ApprovalTaskUsecaseImpl) RejectUserTaskUseCase(request *dto.RejectUserTaskRequest, userTaskId string) error {
-	if _, err := usecase.ApprovalTaskRepository.FindUserTaskForReject(userTaskId); err != nil {
-		return pkg.ErrUserTaskAlreadyReject
-	}
 	if _, err := usecase.ApprovalTaskRepository.FindUserTask(userTaskId); err != nil {
 		return pkg.ErrUserTaskNotFound
 	}
+	if _, err := usecase.ApprovalTaskRepository.FindUserTaskForReject(userTaskId); err != nil {
+		return pkg.ErrUserTaskAlreadyReject
+	}
+
 	status := "reject"
 	if err := usecase.ApprovalTaskRepository.RejectUserTask(&user_task.UserTaskChallenge{
 		StatusAccept: status,

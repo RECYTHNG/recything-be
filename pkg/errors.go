@@ -31,8 +31,9 @@ var (
 	// Manage Task
 	ErrTaskStepsNull    = errors.New("steps cannot be null")
 	ErrTaskNotFound     = errors.New("task not found")
+	ErrParsedTime       = errors.New("start date or end data is invalid")
 	ErrThumbnail        = errors.New("thumbnail is required")
-	ErrThumbnailMaximum = errors.New("thumbnail maximum 1 image")
+	ErrThumbnailMaximum = errors.New("thumbnail must be one image")
 
 	// User Task
 	ErrImageTaskNull          = errors.New("image task cannot be null")
@@ -49,6 +50,11 @@ var (
 	// manage achievement
 	ErrAchievementLevelAlreadyExist = errors.New("archievement level already exist")
 	ErrAchievementNotFound          = errors.New("archievement not found")
+	ErrBadge                        = errors.New("badge is required")
+	ErrBadgeMaximum                 = errors.New("badge must be one image")
+
+	// Custom Data
+	ErrCustomDataNotFound = errors.New("custom data not found")
 
 	// manage video
 	ErrVideoTitleAlreadyExist        = errors.New("video title already exist")
@@ -59,4 +65,10 @@ var (
 	ErrApiYouTube                    = errors.New("api youtube error")
 	ErrParsingUrl                    = errors.New("parsing url error")
 	ErrVideoCategoryNotFound         = errors.New("video category not found")
+
+	// user achievement
+	ErrUserNotHasHistoryPoint = errors.New("user not has history points")
+
+	// About Us
+	ErrAboutUsCategoryNotFound = errors.New("about us with that category not found")
 )

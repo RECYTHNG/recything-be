@@ -5,6 +5,7 @@ import (
 
 	achievement "github.com/sawalreverr/recything/internal/achievements/manage_achievements/entity"
 	"github.com/sawalreverr/recything/internal/database"
+	"github.com/sawalreverr/recything/internal/helper"
 	user_task "github.com/sawalreverr/recything/internal/task/user_task/entity"
 	user_entity "github.com/sawalreverr/recything/internal/user"
 )
@@ -47,7 +48,7 @@ func (repository *ApprovalTaskRepositoryImpl) FindUserTask(userTaskId string) (*
 	return &userTask, nil
 }
 
-func (repository *ApprovalTaskRepositoryImpl) ApproveUserTask(status string, userTaskId string) error {
+func (repository *ApprovalTaskRepositoryImpl) ApproveUserTask(userTaskId string) error {
 	var userTask user_task.UserTaskChallenge
 	tx := repository.DB.GetDB().Begin()
 
@@ -59,7 +60,7 @@ func (repository *ApprovalTaskRepositoryImpl) ApproveUserTask(status string, use
 
 	acceptedAt := time.Now()
 	if err := tx.Model(&userTask).Where("id = ?", userTaskId).Updates(map[string]interface{}{
-		"status_accept": status,
+		"status_accept": "accept",
 		"accepted_at":   acceptedAt,
 	}).Error; err != nil {
 		tx.Rollback()
@@ -74,15 +75,13 @@ func (repository *ApprovalTaskRepositoryImpl) ApproveUserTask(status string, use
 		return err
 	}
 
-	pointUpdate := int(user.Point) + point
-	if err := tx.Model(&user_entity.User{}).Where("id = ?", userTask.UserId).Update("point", pointUpdate).Error; err != nil {
-		tx.Rollback()
-		return err
-	}
+	pointBonus := helper.BonusTask(user.Badge, point)
+
+	pointUpdate := int(user.Point) + pointBonus
 
 	var achievements []achievement.Achievement
 
-	if err := tx.Model(&achievement.Achievement{}).Find(&achievements).Error; err != nil {
+	if err := tx.Model(&achievement.Achievement{}).Order("target_point desc").Find(&achievements).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -93,14 +92,15 @@ func (repository *ApprovalTaskRepositoryImpl) ApproveUserTask(status string, use
 	}
 	var badge string
 	for _, ach := range achievements {
-		if point >= ach.TargetPoint {
-			badge = ach.Level
+		if pointUpdate >= ach.TargetPoint {
+			badge = ach.BadgeUrl
 			break
 		}
 	}
 
 	if badge != "" {
-		if err := tx.Model(&user_entity.User{}).Where("id = ?", userTask.UserId).Update("badge", badge).Error; err != nil {
+		if err := tx.Model(&user_entity.User{}).Where("id = ?", userTask.UserId).
+			Updates(map[string]interface{}{"badge": badge, "point": pointUpdate}).Error; err != nil {
 			tx.Rollback()
 			return err
 		}

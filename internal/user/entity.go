@@ -9,19 +9,19 @@ import (
 
 // struct
 type User struct {
-	ID          string    `json:"id" gorm:"primaryKey"`
-	Name        string    `json:"name"`
-	Email       string    `json:"email"`
-	PhoneNumber string    `json:"phone_number"`
-	Password    string    `json:"-"`
-	Point       uint      `json:"point" gorm:"default:0"`
-	Gender      string    `json:"gender" gorm:"type:enum('laki-laki', 'perempuan', '-');default:-"`
-	BirthDate   time.Time `json:"birth_date"`
-	Address     string    `json:"address"`
-	PictureURL  string    `json:"picture_url"`
-	OTP         uint      `json:"otp"`
-	IsVerified  bool      `json:"is_verified" gorm:"default:false"`
-	Badge       string    `json:"badge" gorm:"type:enum('classic', 'silver', 'gold', 'platinum');default:classic"`
+	ID    string `json:"id" gorm:"primaryKey"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	// PhoneNumber string    `json:"phone_number"`
+	Password   string    `json:"-"`
+	Point      uint      `json:"point" gorm:"default:0"`
+	Gender     string    `json:"gender" gorm:"type:enum('laki-laki', 'perempuan', '-');default:-"`
+	BirthDate  time.Time `json:"birth_date"`
+	Address    string    `json:"address"`
+	PictureURL string    `json:"picture_url"`
+	OTP        uint      `json:"otp"`
+	IsVerified bool      `json:"is_verified" gorm:"default:false"`
+	Badge      string    `json:"badge" gorm:"default:'https://res.cloudinary.com/dymhvau8n/image/upload/v1717758679/achievement_badge/cq2n246e6twuksnia62t.png'"`
 
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`
