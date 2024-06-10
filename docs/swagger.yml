@@ -3285,7 +3285,7 @@ paths:
                   message:
                     type: string
                     example: video not found
-    put:
+    patch:
       tags:
         - manage videos
       summary: Update Data Video
@@ -3302,7 +3302,7 @@ paths:
             example: 1
           description: ID of video
       requestBody:
-        required: true
+        required: false
         content:
           multipart/form-data:
             schema:
