@@ -197,7 +197,7 @@ func (s *echoServer) manageTask() {
 	s.gr.GET("/tasks/:taskId", handler.GetTaskByIdHandler, SuperAdminOrAdminMiddleware)
 
 	// update task challenge
-	s.gr.PUT("/tasks/:taskId", handler.UpdateTaskHandler, SuperAdminOrAdminMiddleware)
+	s.gr.PATCH("/tasks/:taskId", handler.UpdateTaskHandler, SuperAdminOrAdminMiddleware)
 
 	// delete task challenge
 	s.gr.DELETE("/tasks/:taskId", handler.DeleteTaskHandler, SuperAdminOrAdminMiddleware)

@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"errors"
+	"mime/multipart"
 	"net/http"
 	"strconv"
 
@@ -17,7 +18,7 @@ type ManageTaskHandlerImpl struct {
 	Usecase usecase.ManageTaskUsecase
 }
 
-func NewManageTaskHandler(usecase usecase.ManageTaskUsecase) *ManageTaskHandlerImpl {
+func NewManageTaskHandler(usecase usecase.ManageTaskUsecase) ManageTaskHandler {
 	return &ManageTaskHandlerImpl{Usecase: usecase}
 }
 
@@ -198,17 +199,19 @@ func (handler *ManageTaskHandlerImpl) UpdateTaskHandler(c echo.Context) error {
 	var request dto.UpdateTaskRequest
 	id := c.Param("taskId")
 	json_data := c.FormValue("json_data")
-	if err := json.Unmarshal([]byte(json_data), &request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
-	}
-	if err := c.Validate(&request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	if json_data != "" {
+		if err := json.Unmarshal([]byte(json_data), &request); err != nil {
+			return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+		}
 	}
 	form, errForm := c.MultipartForm()
 	if errForm != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, errForm.Error())
 	}
-	thumbnail := form.File["thumbnail"]
+	var thumbnail []*multipart.FileHeader
+	if form != nil {
+		thumbnail = form.File["thumbnail"]
+	}
 
 	task, err := handler.Usecase.UpdateTaskChallengeUsecase(&request, thumbnail, id)
 	if err != nil {
