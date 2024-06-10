@@ -43,6 +43,7 @@ tags:
     description: Endpoint for admin approval task
   - name: user achievements
     description: Endpoint for user get achievement
+  - name: leaderboard
 
 paths:
   /register:
@@ -3995,6 +3996,47 @@ paths:
                                 example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
         '404':
           description: Category name not found
+  /leaderboard:
+    get:
+      tags:
+        - leaderboard
+      summary: Get leaderboard
+      description: Endpoint for user get leaderboard
+      operationId: getLeaderboard
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      properties:
+                        id:
+                          type: string
+                          example: USR0001
+                        name:
+                          type: string
+                          example: John Doe
+                        picture_url:
+                          type: string
+                          example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                        point:
+                          type: integer
+                          example: 1000
+                        badge:
+                          type: string
+                          example: https://res.cloudinary.com/dymhvau8n/image/upload/v1717758679/achievement_badge/cq2n246e6twuksnia62t.png
 
 components:
   schemas:
