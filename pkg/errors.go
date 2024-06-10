@@ -71,4 +71,9 @@ var (
 
 	// About Us
 	ErrAboutUsCategoryNotFound = errors.New("about us with that category not found")
+
+	// Error file
+	ErrFileTooLarge    = errors.New("upload image size must less than 2MB")
+	ErrInvalidFileType = errors.New("invalid file type")
+	ErrOpenFile        = errors.New("failed to open file")
 )

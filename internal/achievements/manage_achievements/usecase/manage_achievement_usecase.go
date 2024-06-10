@@ -10,6 +10,6 @@ import (
 type ManageAchievementUsecase interface {
 	GetAllArchievementUsecase() ([]*archievement.Achievement, error)
 	GetAchievementByIdUsecase(id int) (*archievement.Achievement, error)
-	UpdateAchievementUsecase(request *dto.UpdateAchievementRequest, badge []*multipart.FileHeader, id int) error
+	UpdateAchievementUsecase(request *dto.UpdateAchievementRequest, badge *multipart.FileHeader, id int) error
 	DeleteAchievementUsecase(id int) error
 }
