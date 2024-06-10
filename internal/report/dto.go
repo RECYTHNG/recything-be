@@ -24,20 +24,26 @@ type UpdateStatus struct {
 	Reason string `json:"reason"`
 }
 
+type UserDetail struct {
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	ImageURL string `json:"image_url"`
+}
+
 type ReportDetail struct {
-	ID          string  `json:"id"`
-	AuthorID    string  `json:"author_id"`
-	ReportType  string  `json:"report_type"`
-	Title       string  `json:"title"`
-	Description string  `json:"description"`
-	WasteType   string  `json:"waste_type"`
-	Latitude    float64 `json:"latitude"`
-	Longitude   float64 `json:"longitude"`
-	Address     string  `json:"address"`
-	City        string  `json:"city"`
-	Province    string  `json:"province"`
-	Status      string  `json:"status"`
-	Reason      string  `json:"reason"`
+	ID          string     `json:"id"`
+	Author      UserDetail `json:"author"`
+	ReportType  string     `json:"report_type"`
+	Title       string     `json:"title"`
+	Description string     `json:"description"`
+	WasteType   string     `json:"waste_type"`
+	Latitude    float64    `json:"latitude"`
+	Longitude   float64    `json:"longitude"`
+	Address     string     `json:"address"`
+	City        string     `json:"city"`
+	Province    string     `json:"province"`
+	Status      string     `json:"status"`
+	Reason      string     `json:"reason"`
 
 	WasteMaterials []WasteMaterial `json:"waste_materials"`
 	ReportImages   []string        `json:"report_images"`

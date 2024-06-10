@@ -150,8 +150,9 @@ func (s *echoServer) supAdminHttpHandler() {
 }
 
 func (s *echoServer) reportHttpHandler() {
-	repository := reportRepo.NewReportRepository(s.db)
-	usecase := reportUsecase.NewReportUsecase(repository)
+	reportRepository := reportRepo.NewReportRepository(s.db)
+	userRepository := userRepo.NewUserRepository(s.db)
+	usecase := reportUsecase.NewReportUsecase(reportRepository, userRepository)
 	handler := reportHandler.NewReportHandler(usecase)
 
 	// User create new report
