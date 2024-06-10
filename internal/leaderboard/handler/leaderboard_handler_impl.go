@@ -21,5 +21,7 @@ func (handler LeaderboardHandlerImpl) GetLeaderboardHandler(c echo.Context) erro
 	if err != nil {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
-	return c.JSON(http.StatusOK, leaderboard.DataLeaderboard)
+
+	responseData := helper.ResponseData(http.StatusOK, "data successfully retrieved", leaderboard.DataLeaderboard)
+	return c.JSON(http.StatusOK, responseData)
 }
