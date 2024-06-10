@@ -250,12 +250,11 @@ func (m *mysqlDatabase) InitAchievements() {
 
 func (m *mysqlDatabase) InitVideoCategories() {
 	videoCategories := []video.VideoCategory{
-		{Name: "Tips"},
-		{Name: "Daur Ulang"},
-		{Name: "Tutorial"},
-		{Name: "Edukasi"},
-		{Name: "Kampanye"},
-		{Name: "Lainnya"},
+		{Name: "tips"},
+		{Name: "daur ulang"},
+		{Name: "tutorial"},
+		{Name: "edukasi"},
+		{Name: "kampanye"},
 	}
 	for _, videoCategory := range videoCategories {
 		m.GetDB().FirstOrCreate(&videoCategory, videoCategory)
