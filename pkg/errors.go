@@ -71,4 +71,7 @@ var (
 
 	// About Us
 	ErrAboutUsCategoryNotFound = errors.New("about us with that category not found")
+
+	// Article
+	ErrArticleNotFound = errors.New("article not found")
 )

@@ -97,6 +97,9 @@ func (s *echoServer) Start() {
 	// leaderboard handler
 	s.leaderboardHandler()
 
+	// Article Handler
+	s.articleHandler()
+
 	serverPORT := fmt.Sprintf(":%d", s.conf.Server.Port)
 	s.app.Logger.Fatal(s.app.Start(serverPORT))
 }

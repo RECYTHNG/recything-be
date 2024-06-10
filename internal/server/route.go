@@ -16,6 +16,9 @@ import (
 	"github.com/sawalreverr/recything/internal/admin/handler"
 	"github.com/sawalreverr/recything/internal/admin/repository"
 	"github.com/sawalreverr/recything/internal/admin/usecase"
+	articleHandler "github.com/sawalreverr/recything/internal/article/handler"
+	articleRepository "github.com/sawalreverr/recything/internal/article/repository"
+	articleUsecase "github.com/sawalreverr/recything/internal/article/usecase"
 	authHandler "github.com/sawalreverr/recything/internal/auth/handler"
 	authUsecase "github.com/sawalreverr/recything/internal/auth/usecase"
 	customDataHandler "github.com/sawalreverr/recything/internal/custom-data/handler"
@@ -374,4 +377,14 @@ func (s *echoServer) leaderboardHandler() {
 
 	// Get leaderboard
 	s.gr.GET("/leaderboard", handler.GetLeaderboardHandler, AllRoleMiddleware)
+}
+
+func (s *echoServer) articleHandler() {
+	repositoryArticle := articleRepository.NewArticleRepository(s.db)
+	repositoryAdmin := repository.NewAdminRepository(s.db)
+	usecase := articleUsecase.NewArticleUsecase(repositoryArticle, repositoryAdmin)
+	handler := articleHandler.NewArticleHandler(usecase)
+
+	// Get article by id
+	s.gr.GET("/article/:articleId", handler.GetArticleByID, AllRoleMiddleware)
 }
