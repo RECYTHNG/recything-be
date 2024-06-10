@@ -3999,9 +3999,9 @@ paths:
   /leaderboard:
     get:
       tags:
-        - leaderboard
+        - leaderboards
       summary: Get leaderboard
-      description: Endpoint for user get leaderboard
+      description: Endpoint for user or admin get leaderboard
       operationId: getLeaderboard
       security:
         - Bearer: []

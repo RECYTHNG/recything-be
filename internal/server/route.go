@@ -372,5 +372,5 @@ func (s *echoServer) leaderboardHandler() {
 	handler := leaderboardHandler.NewLeaderboardHandler(usecase)
 
 	// Get leaderboard
-	s.gr.GET("/leaderboard", handler.GetLeaderboardHandler, UserMiddleware)
+	s.gr.GET("/leaderboard", handler.GetLeaderboardHandler, AllRoleMiddleware)
 }
