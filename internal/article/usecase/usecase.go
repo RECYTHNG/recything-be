@@ -76,7 +76,8 @@ func (u *articleUsecase) NewArticle(article art.ArticleInput, authorId string) (
 		}
 	}
 
-	return u.GetArticleDetail(*createdArticle), nil
+	articleFound, _ := u.articleRepo.FindByID(createdArticle.ID)
+	return u.GetArticleDetail(*articleFound), nil
 }
 
 func (uc *articleUsecase) GetArticleByID(articleID string) (*art.ArticleDetail, error) {
@@ -88,8 +89,8 @@ func (uc *articleUsecase) GetArticleByID(articleID string) (*art.ArticleDetail, 
 	return uc.GetArticleDetail(*articleFound), nil
 }
 
-func (u *articleUsecase) GetAllArticle(page, limit int) (*art.ArticleResponsePagination, error) {
-	articles, total, err := u.articleRepo.FindAll(uint(page), uint(limit))
+func (u *articleUsecase) GetAllArticle(page, limit int, sortBy string, sortType string) (*art.ArticleResponsePagination, error) {
+	articles, total, err := u.articleRepo.FindAll(uint(page), uint(limit), sortBy, sortType)
 	if err != nil {
 		return nil, err
 	}
@@ -200,13 +201,22 @@ func (u *articleUsecase) Update(articleID string, article art.ArticleInput) erro
 }
 
 func (uc *articleUsecase) Delete(articleID string) error {
-	_, err := uc.articleRepo.FindByID(articleID)
+	articleFound, err := uc.articleRepo.FindByID(articleID)
 	if err != nil {
 		return err
 	}
 
-	_ = uc.articleRepo.DeleteAllSection(articleID)
-	_ = uc.articleRepo.DeleteAllArticleCategory(articleID)
+	if err := uc.articleRepo.Delete(articleFound.ID); err != nil {
+		return err
+	}
+
+	if err := uc.articleRepo.DeleteAllSection(articleFound.ID); err != nil {
+		return err
+	}
+
+	if err := uc.articleRepo.DeleteAllArticleCategory(articleFound.ID); err != nil {
+		return err
+	}
 
 	return nil
 }

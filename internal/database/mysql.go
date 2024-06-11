@@ -367,21 +367,24 @@ func (m *mysqlDatabase) InitArticleCategory() {
 
 func (m *mysqlDatabase) InitArticle() {
 	articles := []article.Article{
-		{ID: "ART0001", Title: "The Future of AI", Description: "An in-depth look at the future of artificial intelligence.", ThumbnailURL: "http://example.com/ai.jpg", AuthorID: "AD0001"},
-		{ID: "ART0002", Title: "Healthy Living Tips", Description: "Tips for a healthier lifestyle.", ThumbnailURL: "http://example.com/health.jpg", AuthorID: "AD0001"},
+		{ID: "ART0001", Title: "Cara Mendaur Ulang Botol Plastik", Description: "Panduan langkah demi langkah tentang cara mendaur ulang botol plastik di rumah.", ThumbnailURL: "https://example.com/daur-ulang-plastik.jpg", AuthorID: "AD0001"},
+		{ID: "ART0002", Title: "Bahaya Limbah Elektronik dan Cara Pembuangan yang Bertanggung Jawab", Description: "Pelajari tentang bahaya lingkungan dan kesehatan dari limbah elektronik dan temukan metode pembuangan yang aman.", ThumbnailURL: "https://example.com/limbah-elektronik.jpg", AuthorID: "AD0001"},
 	}
 
 	articleSections := []article.ArticleSection{
-		{ID: 1, ArticleID: "ART0001", Title: "Introduction", Description: "Introduction to AI", ImageURL: "http://example.com/ai.jpg"},
-		{ID: 2, ArticleID: "ART0001", Title: "Impact on Society", Description: "How AI will impact society.", ImageURL: "http://example.com/ai.jpg"},
-		{ID: 3, ArticleID: "ART0002", Title: "Diet", Description: "Healthy eating habits.", ImageURL: "http://example.com/diet.jpg"},
-		{ID: 4, ArticleID: "ART0002", Title: "Exercise", Description: "The importance of regular exercise.", ImageURL: "http://example.com/ai.jpg"},
+		{ID: 1, ArticleID: "ART0001", Title: "Membersihkan dan Menyortir", Description: "Bilas botol, lepaskan label, dan pisahkan berdasarkan jenisnya (PET, HDPE, dll.).", ImageURL: "https://example.com/membersihkan-botol.jpg"},
+		{ID: 2, ArticleID: "ART0001", Title: "Meremukkan dan Menyimpan", Description: "Remukkan botol untuk menghemat ruang dan simpan dalam tempat khusus.", ImageURL: "https://example.com/meremukkan-botol.jpg"},
+		{ID: 3, ArticleID: "ART0001", Title: "Mengantar atau Dijemput", Description: "Temukan pusat daur ulang terdekat atau jadwalkan layanan penjemputan.", ImageURL: "https://example.com/pusat-daur-ulang.jpg"},
+
+		{ID: 4, ArticleID: "ART0002", Title: "Apa itu Limbah Elektronik?", Description: "Limbah elektronik mencakup barang elektronik bekas seperti ponsel, komputer, peralatan rumah tangga, dll.", ImageURL: "https://example.com/tumpukan-limbah-elektronik.jpg"},
+		{ID: 5, ArticleID: "ART0002", Title: "Komponen Beracun", Description: "Limbah elektronik mengandung zat berbahaya seperti timbal, merkuri, dan kadmium.", ImageURL: "https://example.com/simbol-beracun.jpg"},
+		{ID: 6, ArticleID: "ART0002", Title: "Pembuangan yang Benar", Description: "Cari pendaur ulang limbah elektronik bersertifikat atau program pengembalian yang ditawarkan oleh produsen.", ImageURL: "https://example.com/daur-ulang-limbah-elektronik.jpg"},
 	}
 
 	articleCategories := []article.ArticleCategories{
-		{ID: 1, ArticleID: "ART0001", WasteCategoryID: 1},
-		{ID: 2, ArticleID: "ART0001", ContentCategoryID: 2},
-		{ID: 3, ArticleID: "ART0001", ContentCategoryID: 4},
+		{ID: 1, ArticleID: "ART0001", WasteCategoryID: 1, ContentCategoryID: 3},
+		{ID: 2, ArticleID: "ART0002", WasteCategoryID: 9, ContentCategoryID: 4},
+		{ID: 3, ArticleID: "ART0002", WasteCategoryID: 13, ContentCategoryID: 5},
 	}
 
 	for _, article := range articles {

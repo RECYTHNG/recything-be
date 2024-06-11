@@ -396,4 +396,13 @@ func (s *echoServer) articleHandler() {
 
 	// Get article by id
 	s.gr.GET("/article/:articleId", handler.GetArticleByID, AllRoleMiddleware)
+
+	// Create new article by admin
+	s.gr.POST("/article", handler.NewArticle, SuperAdminOrAdminMiddleware)
+
+	// Update article by admin
+	s.gr.PUT("/article/:articleId", handler.UpdateArticle, SuperAdminOrAdminMiddleware)
+
+	// Delete article by admin
+	s.gr.DELETE("/article/:articleId", handler.DeleteArticle, SuperAdminOrAdminMiddleware)
 }

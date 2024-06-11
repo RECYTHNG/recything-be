@@ -67,7 +67,7 @@ type ArticleRepository interface {
 	// Article Repository
 	Create(article Article) (*Article, error)
 	FindByID(articleID string) (*Article, error)
-	FindAll(page, limit uint) (*[]Article, int64, error)
+	FindAll(page, limit uint, sortBy string, sortType string) (*[]Article, int64, error)
 	FindLastID() (string, error)
 	FindByKeyword(keyword string) (*[]Article, error)
 	FindByCategory(categoryName string, categoryType string) (*[]Article, error)
@@ -93,7 +93,7 @@ type ArticleRepository interface {
 type ArticleUsecase interface {
 	NewArticle(article ArticleInput, authorId string) (*ArticleDetail, error)
 	GetArticleByID(articleID string) (*ArticleDetail, error)
-	GetAllArticle(page, limit int) (*ArticleResponsePagination, error)
+	GetAllArticle(page, limit int, sortBy string, sortType string) (*ArticleResponsePagination, error)
 	GetArticleByKeyword(keyword string) (*[]ArticleDetail, error)
 	GetArticleByCategory(categoryName string, categoryType string) (*[]ArticleDetail, error)
 	Update(articleID string, article ArticleInput) error
@@ -101,11 +101,12 @@ type ArticleUsecase interface {
 
 	GetArticleDetail(article Article) *ArticleDetail
 	GetDetailAuthor(authorID string) (*AdminDetail, error)
-
-	// add usecase yang belum saya buat dibawah
 }
 
 type ArticleHandler interface {
+	NewArticle(c echo.Context) error
+	UpdateArticle(c echo.Context) error
+	DeleteArticle(c echo.Context) error
 	GetAllArticle(c echo.Context) error
 	GetArticleByKeyword(c echo.Context) error
 	GetArticleByCategory(c echo.Context) error

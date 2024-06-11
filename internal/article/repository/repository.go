@@ -2,6 +2,7 @@ package article
 
 import (
 	"errors"
+	"fmt"
 
 	art "github.com/sawalreverr/recything/internal/article"
 	"github.com/sawalreverr/recything/internal/database"
@@ -36,15 +37,22 @@ func (r *articleRepository) FindByID(articleID string) (*art.Article, error) {
 	return &article, nil
 }
 
-func (r *articleRepository) FindAll(page, limit uint) (*[]art.Article, int64, error) {
+func (r *articleRepository) FindAll(page, limit uint, sortBy string, sortType string) (*[]art.Article, int64, error) {
 	var articles []art.Article
 	var total int64
 
 	db := r.DB.GetDB().Model(&art.Article{})
-	db.Count(&total)
 
 	offset := (page - 1) * limit
-	if err := r.DB.GetDB().Preload("Categories").Preload("Sections").Limit(int(limit)).Offset(int(offset)).Find(&articles).Error; err != nil {
+
+	if sortBy != "" {
+		sort := fmt.Sprintf("%s %s", sortBy, sortType)
+		db = db.Order(sort)
+	}
+
+	db.Count(&total)
+
+	if err := db.Preload("Categories").Preload("Sections").Limit(int(limit)).Offset(int(offset)).Find(&articles).Error; err != nil {
 		return nil, 0, err
 	}
 
