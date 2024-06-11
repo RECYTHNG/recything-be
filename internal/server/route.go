@@ -358,7 +358,7 @@ func (s *echoServer) userVideo() {
 	s.gr.GET("/videos/trash-category", handler.SearchVideoByTrashCategoryVideoHandler, UserMiddleware)
 
 	// get video detail
-	s.gr.GET("/videos/:videoId", handler.GetVideoDetailHandler, UserMiddleware)
+	s.gr.GET("/video/:videoId", handler.GetVideoDetailHandler, UserMiddleware)
 
 	// add comment
 	s.gr.POST("/videos/comment", handler.AddCommentHandler, UserMiddleware)

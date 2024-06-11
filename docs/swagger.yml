@@ -3559,7 +3559,7 @@ paths:
                   message:
                     type: string
                     example: internal server error
-  /videos/{videoId}:
+  /video/{videoId}:
     get:
       tags:
         - user videos
@@ -3681,6 +3681,258 @@ paths:
                   message:
                     type: string
                     example: video not found
+  /videos/content-category:
+    get:
+      tags:
+        - user videos
+      summary: Get all video by content category
+      description: Enpoint for user get all video by content categories
+      operationId: getContentCategories
+      security:
+        - Bearer: []
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "tips"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        data_video:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              title:
+                                type: string
+                                example: "Video Title"
+                              description:
+                                type: string
+                                example: "Video Description"
+                              url_thumbnail:
+                                type: string
+                                example: "https://example.com/thumbnail.jpg"
+                              link_video:
+                                type: string
+                                example: "https://example.com/video.mp4"
+                              viewer:
+                                type: integer
+                                example: 1000
+                              video_categories:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: integer
+                                      example: 1
+                                    name:
+                                      type: string
+                                      example: "tips"
+                              trash_categories:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: integer
+                                      example: 1
+                                    name:
+                                      type: string
+                                      example: "berbahaya"
+        '404':
+          description: Content category not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: content category not found
+                  
+    
+  /videos/trash-category:
+      get:
+        tags:
+          - user videos
+        summary: Get all video by trash category
+        description: Enpoint for user get all video by trash categories
+        operationId: getTrashCategories
+        security:
+          - Bearer: []
+        parameters:
+          - name: query
+            in: query
+            required: true
+            schema:
+              type: string
+              example: "berbahaya"
+        responses:
+          '200':
+            description: Success
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    code:
+                      type: integer
+                      example: 200
+                    message:
+                      type: string
+                    data:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          data_video:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                title:
+                                  type: string
+                                  example: "Video Title"
+                                description:
+                                  type: string
+                                  example: "Video Description"
+                                url_thumbnail:
+                                  type: string
+                                  example: "https://example.com/thumbnail.jpg"
+                                link_video:
+                                  type: string
+                                  example: "https://example.com/video.mp4"
+                                viewer:
+                                  type: integer
+                                  example: 1000
+                                video_categories:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      id:
+                                        type: integer
+                                        example: 1
+                                      name:
+                                        type: string
+                                        example: "tips"
+                                trash_categories:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      id:
+                                        type: integer
+                                        example: 1
+                                      name:
+                                        type: string
+                                        example: "berbahaya"
+          '404':
+            description: Trash category not found
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    code:
+                      type: integer
+                      example: 404
+                    message:
+                      type: string
+                      example: trash category not found
+
+  /videos/content-categories:
+    get:
+      tags:
+        - user videos
+      summary: Get all content categories
+      description: Enpoint for user get all content categories
+      operationId: getContentCategories
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: "tips"
+
+  /videos/trash-categories:
+    get:
+      tags:
+        - user videos
+      summary: Get all trash categories
+      description: Enpoint for user get all trash categories
+      operationId: getTrashCategories
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: "berbahaya"
+
   /approval-tasks:
     get:
       tags:
