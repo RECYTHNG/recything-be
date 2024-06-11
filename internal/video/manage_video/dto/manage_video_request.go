@@ -24,9 +24,10 @@ type CreateCategoryVideoRequest struct {
 }
 
 type UpdateDataVideoRequest struct {
-	Title       string                `json:"title"`
-	Description string                `json:"description"`
-	LinkVideo   string                `json:"link_video"`
-	CategoryId  int                   `json:"category_id"`
-	Thumbnail   *multipart.FileHeader `json:"-"`
+	Title           string                `json:"title"`
+	Description     string                `json:"description"`
+	LinkVideo       string                `json:"link_video"`
+	VideoCategories []DataCategoryVideo   `json:"video_categories"`
+	TrashCategories []DataTrashCategory   `json:"trash_categories"`
+	Thumbnail       *multipart.FileHeader `json:"-"`
 }

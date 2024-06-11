@@ -1,8 +1,11 @@
 package repository
 
 import (
+	"log"
+
 	"github.com/sawalreverr/recything/internal/database"
 	video "github.com/sawalreverr/recything/internal/video/manage_video/entity"
+	"gorm.io/gorm"
 )
 
 type ManageVideoRepositoryImpl struct {
@@ -96,10 +99,39 @@ func (repository *ManageVideoRepositoryImpl) GetDetailsDataVideoById(id int) (*v
 	return &video, nil
 }
 
-func (repository *ManageVideoRepositoryImpl) UpdateDataVideo(video *video.Video, id int) error {
-	if err := repository.DB.GetDB().Model(&video).Where("id = ?", id).Updates(&video).Error; err != nil {
+func (repository *ManageVideoRepositoryImpl) UpdateDataVideo(videos *video.Video, id int) error {
+
+	tx := repository.DB.GetDB().Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+			log.Println("Transaction rollback due to panic:", r)
+		}
+	}()
+
+	if len(videos.VideoCategories) > 0 {
+		if err := tx.Model(&video.VideoCategory{}).Where("video_id = ?", id).Delete(&video.VideoCategory{}).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	if len(videos.TrashCategories) > 0 {
+		if err := tx.Model(&video.TrashCategory{}).Where("video_id = ?", id).Delete(&video.TrashCategory{}).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+
+	}
+	if err := tx.Session(&gorm.Session{FullSaveAssociations: true}).Save(&videos).Error; err != nil {
+		tx.Rollback()
 		return err
 	}
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
 	return nil
 }
 

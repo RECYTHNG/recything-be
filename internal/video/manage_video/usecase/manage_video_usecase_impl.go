@@ -125,60 +125,92 @@ func (usecase *ManageVideoUsecaseImpl) GetDetailsDataVideoByIdUseCase(id int) (*
 	return video, nil
 }
 
-// func (usecase *ManageVideoUsecaseImpl) UpdateDataVideoUseCase(request *dto.UpdateDataVideoRequest, thumbnail []*multipart.FileHeader, id int) error {
-// 	if len(thumbnail) > 1 {
-// 		return pkg.ErrThumbnailMaximum
-// 	}
-// 	var urlThumbnail string
-// 	if len(thumbnail) == 1 {
-// 		validImages, errImages := helper.ImagesValidation(thumbnail)
-// 		if errImages != nil {
-// 			return errImages
-// 		}
-// 		urlThumbnailUpload, errUpload := helper.UploadToCloudinary(validImages[0], "video_thumbnail_update")
-// 		if errUpload != nil {
-// 			return pkg.ErrUploadCloudinary
-// 		}
-// 		urlThumbnail = urlThumbnailUpload
-// 	}
+func (usecase *ManageVideoUsecaseImpl) UpdateDataVideoUseCase(request *dto.UpdateDataVideoRequest, thumbnail []*multipart.FileHeader, id int) error {
+	if len(thumbnail) > 1 {
+		return pkg.ErrThumbnailMaximum
+	}
 
-// 	video, err := usecase.manageVideoRepository.GetDetailsDataVideoById(id)
-// 	if err != nil {
-// 		return pkg.ErrVideoNotFound
-// 	}
+	dataVideo, err := usecase.manageVideoRepository.GetDetailsDataVideoById(id)
+	if err != nil {
+		return pkg.ErrVideoNotFound
+	}
+	var videoCategories []video.VideoCategory
+	var trashCategories []video.TrashCategory
 
-// 	if request.Title != "" {
-// 		video.Title = request.Title
-// 	}
-// 	if request.Description != "" {
-// 		video.Description = request.Description
-// 	}
-// 	if urlThumbnail != "" {
-// 		video.Thumbnail = urlThumbnail
-// 	}
-// 	if request.LinkVideo != "" {
-// 		view, errGetView := helper.GetVideoViewCount(request.LinkVideo)
-// 		if errGetView != nil {
-// 			return errGetView
-// 		}
-// 		if view != 0 {
-// 			intView := int(view)
-// 			video.Viewer = intView
-// 		}
-// 		video.Link = request.LinkVideo
-// 	}
-// 	if request.CategoryId != 0 {
-// 		if _, err := usecase.manageVideoRepository.GetCategoryVideoById(request.CategoryId); err != nil {
-// 			return pkg.ErrVideoCategoryNotFound
-// 		}
-// 		video.VideoCategoryID = request.CategoryId
-// 	}
+	if request.VideoCategories != nil {
+		for _, category := range request.VideoCategories {
+			name := strings.ToLower(category.Name)
+			if err := usecase.manageVideoRepository.FindNameCategoryVideo(name); err == gorm.ErrRecordNotFound {
+				return pkg.ErrNameCategoryVideoNotFound
+			}
+			videoCategory := video.VideoCategory{
+				VideoID:   id,
+				Name:      name,
+				DeletedAt: gorm.DeletedAt{},
+			}
+			videoCategories = append(videoCategories, videoCategory)
+		}
+		dataVideo.VideoCategories = videoCategories
+	} else {
+		videoCategories = dataVideo.VideoCategories
+	}
 
-// 	if err := usecase.manageVideoRepository.UpdateDataVideo(video, id); err != nil {
-// 		return err
-// 	}
-// 	return nil
-// }
+	if request.TrashCategories != nil {
+		for _, category := range request.TrashCategories {
+			name := strings.ToLower(category.Name)
+			if err := usecase.manageVideoRepository.FindNamaTrashCategory(name); err == gorm.ErrRecordNotFound {
+				return pkg.ErrNameTrashCategoryNotFound
+			}
+			trashCategory := video.TrashCategory{
+				VideoID:   id,
+				Name:      name,
+				DeletedAt: gorm.DeletedAt{},
+			}
+			trashCategories = append(trashCategories, trashCategory)
+		}
+		dataVideo.TrashCategories = trashCategories
+	} else {
+		trashCategories = dataVideo.TrashCategories
+	}
+	var urlThumbnail string
+	if len(thumbnail) == 1 {
+		validImages, errImages := helper.ImagesValidation(thumbnail)
+		if errImages != nil {
+			return errImages
+		}
+		urlThumbnailUpload, errUpload := helper.UploadToCloudinary(validImages[0], "video_thumbnail_update")
+		if errUpload != nil {
+			return pkg.ErrUploadCloudinary
+		}
+		urlThumbnail = urlThumbnailUpload
+	}
+
+	if request.Title != "" {
+		dataVideo.Title = request.Title
+	}
+	if request.Description != "" {
+		dataVideo.Description = request.Description
+	}
+	if urlThumbnail != "" {
+		dataVideo.Thumbnail = urlThumbnail
+	}
+	if request.LinkVideo != "" {
+		view, errGetView := helper.GetVideoViewCount(request.LinkVideo)
+		if errGetView != nil {
+			return errGetView
+		}
+		if view != 0 {
+			intView := int(view)
+			dataVideo.Viewer = intView
+		}
+		dataVideo.Link = request.LinkVideo
+	}
+
+	if err := usecase.manageVideoRepository.UpdateDataVideo(dataVideo, id); err != nil {
+		return err
+	}
+	return nil
+}
 
 func (usecase *ManageVideoUsecaseImpl) DeleteDataVideoUseCase(id int) error {
 	if _, err := usecase.manageVideoRepository.GetDetailsDataVideoById(id); err != nil {
