@@ -18,6 +18,8 @@ func (repository *UserVideoRepositoryImpl) GetAllVideo() (*[]video.Video, error)
 	var videos []video.Video
 	if err := repository.DB.GetDB().
 		Order("created_at desc").
+		Preload("VideoCategories").
+		Preload("TrashCategories").
 		Find(&videos).
 		Error; err != nil {
 		return nil, err

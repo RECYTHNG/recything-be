@@ -25,25 +25,40 @@ func (handler *UserVideoHandlerImpl) GetAllVideoHandler(c echo.Context) error {
 	if err != nil {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
-	var dataVideo []dto.DataVideo
-	data := dto.GetAllVideoResponse{
-		DataVideo: dataVideo,
-	}
-
+	var dataVideo []*dto.DataVideoSearchByCategory
 	for _, video := range *videos {
-		dataVideo = append(dataVideo, dto.DataVideo{
-			Id:           video.ID,
-			Title:        video.Title,
-			Description:  video.Description,
-			UrlThumbnail: video.Thumbnail,
-			LinkVideo:    video.Link,
-			Viewer:       video.Viewer,
+		videoCategories := make([]*dto.DataCategoryVideo, len(video.VideoCategories))
+		for i, vc := range video.VideoCategories {
+			videoCategories[i] = &dto.DataCategoryVideo{
+				Id:   vc.ID,
+				Name: vc.Name,
+			}
+		}
+
+		trashCategories := make([]*dto.DataTrashCategoryVideo, len(video.TrashCategories))
+		for i, tc := range video.TrashCategories {
+			trashCategories[i] = &dto.DataTrashCategoryVideo{
+				Id:   tc.ID,
+				Name: tc.Name,
+			}
+		}
+
+		dataVideo = append(dataVideo, &dto.DataVideoSearchByCategory{
+			Id:            video.ID,
+			Title:         video.Title,
+			Description:   video.Description,
+			UrlThumbnail:  video.Thumbnail,
+			LinkVideo:     video.Link,
+			Viewer:        video.Viewer,
+			VideoCategory: videoCategories,
+			TrashCategory: trashCategories,
 		})
 	}
-	data.DataVideo = dataVideo
-	responseData := helper.ResponseData(http.StatusOK, "success get all video", data.DataVideo)
 
-	return c.JSON(http.StatusOK, responseData)
+	responseData := dto.SearchVideoByCategoryVideoResponse{
+		DataVideo: dataVideo,
+	}
+	return c.JSON(http.StatusOK, helper.ResponseData(http.StatusOK, "success", responseData.DataVideo))
 }
 
 func (handler *UserVideoHandlerImpl) SearchVideoByKeywordHandler(c echo.Context) error {
@@ -130,7 +145,7 @@ func (handler *UserVideoHandlerImpl) SearchVideoByCategoryHandler(c echo.Context
 	responseData := dto.SearchVideoByCategoryVideoResponse{
 		DataVideo: dataVideo,
 	}
-	return c.JSON(http.StatusOK, helper.ResponseData(http.StatusOK, "success", responseData))
+	return c.JSON(http.StatusOK, helper.ResponseData(http.StatusOK, "success", responseData.DataVideo))
 }
 
 func (handler *UserVideoHandlerImpl) GetVideoDetailHandler(c echo.Context) error {
