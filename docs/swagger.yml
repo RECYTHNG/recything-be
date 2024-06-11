@@ -20,6 +20,12 @@ tags:
     description: Endpoint for user asking question to chatbot
   - name: about us
     description: Endpoint for user to get data about us by category
+  - name: user achievements
+    description: Endpoint for user get achievement
+  - name: user videos
+    description: Endpoint for user get video
+  - name: articles
+    description: Endpoint for user get data article
 
   - name: manage users
     description: Endpoint for admin manage users account
@@ -37,13 +43,10 @@ tags:
     description: Endpoint for admin manage custom data
   - name: manage videos
     description: Endpoint for admin manage videos
-  - name: user videos
-    description: Endpoint for user get video
   - name: approval tasks
     description: Endpoint for admin approval task
-  - name: user achievements
-    description: Endpoint for user get achievement
-  - name: leaderboard
+  - name: leaderboards
+    description: Endpoint for leaderboards 
 
 paths:
   /register:
@@ -919,64 +922,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/FAQs'
 
-  /admin/articles:
-    get:
-      tags:
-        - manage articles
-      summary: Get all articles
-      description: Endpoint admin to get all articles with pagination.
-      operationId: viewAllArticles
-      parameters:
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            default: 1
-          description: Page number for pagination
-          example: 1
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
-            default: 10
-          description: Number of articles per page
-          example: 10
-      security:
-        - Bearer: []
-      responses:
-        '200':
-          description: Successfully get articles
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: ok
-                  data:
-                    type: object
-                    properties:
-                      total:
-                        type: integer
-                        example: 50
-                      page:
-                        type: integer
-                        example: 1
-                      limit:
-                        type: integer
-                        example: 10
-                      articles:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Article'
-        '400':
-          description: Invalid request parameters
+  /article:
     post:
       tags:
         - manage articles
@@ -986,7 +932,7 @@ paths:
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
               $ref: '#/components/schemas/Article'
       security:
@@ -1004,10 +950,52 @@ paths:
                     example: 201
                   message:
                     type: string
-                    example: article successfully created!
+                    example: article created!
         '400':
           description: Invalid request data
-  /admin/articles/{articleId}:
+
+  /article/{articleId}:
+    get:
+      tags:
+        - articles
+        - manage articles
+      summary: Get article data by id
+      description: Endpoint user to get article by id
+      operationId: getArticleById
+      parameters:
+        - name: articleId
+          in: query
+          required: true
+          schema:
+            type: string
+            # default: ART0001
+          description: Article ID
+          example: ART0001
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Get data article
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      schema:
+                        $ref: '#/components/schemas/Article'
+        '400':
+          description: Invalid param request
+        '404':
+          description: Article not found
     put:
       tags:
         - manage articles
@@ -1025,7 +1013,7 @@ paths:
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
               $ref: '#/components/schemas/Article'
       security:
@@ -1043,7 +1031,7 @@ paths:
                     example: 200
                   message:
                     type: string
-                    example: article successfully updated!
+                    example: article updated!
         '404':
           description: Article not found
         '400':
@@ -4034,6 +4022,225 @@ paths:
                         badge:
                           type: string
                           example: https://res.cloudinary.com/dymhvau8n/image/upload/v1717758679/achievement_badge/cq2n246e6twuksnia62t.png
+  /articles:
+    get:
+      tags:
+        - articles
+        - manage articles
+      summary: View all articles with pagination
+      description: Endpoint user or admin to view all articles with pagination.
+      operationId: viewAllArticles
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+          example: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of articles per page
+          example: 10
+        - name: sort_by
+          in: query
+          required: false
+          schema:
+            type: string
+            default: created_at
+          description: Sorted by
+          example: created_at
+        - name: sort_type
+          in: query
+          required: false
+          schema:
+            type: string
+            default: asc
+          description: Sorted type
+          example: asc
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Get all articles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                        example: 100
+                      page:
+                        type: integer
+                        example: 1
+                      limit:
+                        type: integer
+                        example: 10
+                      articles:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            schema:
+                              $ref: '#/components/schemas/Article'
+        '400':
+          description: Invalid param request
+  
+  /article/search:
+    get:
+      tags:
+        - articles
+      summary: View all articles by keyword
+      description: Endpoint user to view all articles by keyword.
+      operationId: viewAllArticlesByKeyword
+      parameters:
+        - name: keyword
+          in: query
+          required: true
+          schema:
+            type: string
+            # default: plastik
+          description: Search by keyword
+          example: plastik
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Get all articles by keyword
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: '#/components/schemas/Article'
+        '400':
+          description: Invalid param request
+
+  /article/category:
+    get:
+      tags:
+        - articles
+      summary: View all articles by category type and category name
+      description: Endpoint user to view all articles by category type and category name.
+      operationId: viewAllArticlesByCategory
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            # default: waste
+          description: Category Type (waste, content)
+          example: plastik
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+            # default: plastik
+          description: Category Name, waste(plastik, besi, kaca, organik, kayu, kertas, baterai, kaleng, elektronik, tekstil, minyak, bola lampu, berbahaya), content(tips, daur ulang, tutorial, edukasi, kampanye)
+          example: plastik
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Get all articles by category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: '#/components/schemas/Article'
+        '400':
+          description: Invalid param request
+
+  /article/{articleId}/comment:
+    post:
+      tags:
+        - articles
+      summary: Add new comment to article
+      description: Endpoint user to add comment 
+      operationId: addCommentArticle
+      parameters:
+        - name: articleId
+          in: query
+          required: true
+          schema:
+            type: string
+            # default: ART0001
+          description: Article ID
+          example: ART0001
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string
+                  description: User comment
+                  example: Test comment
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: comment added!
+                  data:
+                    type: object
+                    properties:
+                      schema:
+                        $ref: '#/components/schemas/Article'
+        '400':
+          description: Invalid param request
+        '404':
+          description: Article not found
 
 components:
   schemas:
@@ -4228,21 +4435,55 @@ components:
         id:
           type: string
           example: ART0001
+        author:
+          type: object
+          properties:
+            id:
+              type: string
+              example: AD0001
+            name: 
+              type: string
+              example: John Doe
+            image_url:
+              type: string
+              example: http://example.com/image.png
         title:
           type: string
-          example: "The Benefits of Recycling"
+          example: Bahaya Limbah Elektronik dan Cara Pembuangan yang Bertanggung Jawab
         description:
           type: string
-          example: "Recycling has numerous benefits for the environment."
-        category:
+          example: Pelajari tentang bahaya lingkungan dan kesehatan dari limbah elektronik dan temukan metode pembuangan yang aman.
+        thumbnail_url:
+          type: string
+          format: uri
+          example: http://example.com/image.png
+        waste_categories:
           type: array
           items:
             type: string
-            enum: [organic, plastic, paper, glass, textile, can, electronic, others]
-            example: "plastic"
-        thumbnail:
+          example: ["elektronik", "berbahaya"]
+        content_categories:
+          type: array
+          items:
+            type: string
+          example: ["edukasi", "kampanye"]
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArticleSection'
+    ArticleSection:
+      type: object
+      properties:
+        title:
           type: string
-          example: "thumbnail.jpg"
+          example: Apa itu Limbah Elektronik?
+        description:
+          type: string
+          example: Limbah elektronik mencakup barang elektronik bekas seperti ponsel, komputer, peralatan rumah tangga, dll.
+        image_url:
+          type: string
+          format: uri
+          example: http://example.com/image.png
     Achievement:
       type: object
       properties:

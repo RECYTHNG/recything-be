@@ -37,7 +37,7 @@ func (h *articleHandler) NewArticle(c echo.Context) error {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return helper.ResponseHandler(c, http.StatusCreated, "new article created!", response)
+	return helper.ResponseHandler(c, http.StatusCreated, "article created!", response)
 }
 
 func (h *articleHandler) UpdateArticle(c echo.Context) error {
