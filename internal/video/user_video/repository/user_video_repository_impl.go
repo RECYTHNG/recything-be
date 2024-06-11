@@ -32,6 +32,55 @@ func (repository *UserVideoRepositoryImpl) SearchVideoByTitle(title string) (*[]
 	return &video, nil
 }
 
+func (repository *UserVideoRepositoryImpl) SearchVideoByCategoryVideo(categoryVideo string) (*[]video.Video, error) {
+	var videos []video.Video
+	if err := repository.DB.GetDB().
+		Order("created_at desc").
+		Joins("JOIN video_categories ON video_categories.video_id = videos.id").
+		Where("video_categories.name LIKE ?", "%"+categoryVideo+"%").
+		Preload("VideoCategories").
+		Preload("TrashCategories").
+		Find(&videos).Error; err != nil {
+		return nil, err
+	}
+
+	videoMap := make(map[int]video.Video)
+	for _, v := range videos {
+		videoMap[v.ID] = v
+	}
+
+	uniqueVideos := make([]video.Video, 0, len(videoMap))
+	for _, v := range videoMap {
+		uniqueVideos = append(uniqueVideos, v)
+	}
+
+	return &uniqueVideos, nil
+}
+
+func (repository *UserVideoRepositoryImpl) SearchVideoByTrashCategoryVideo(trashCategory string) (*[]video.Video, error) {
+	var videos []video.Video
+	if err := repository.DB.GetDB().
+		Order("created_at desc").
+		Joins("JOIN trash_categories ON trash_categories.video_id = videos.id").
+		Where("trash_categories.name LIKE ?", "%"+trashCategory+"%").
+		Preload("VideoCategories").
+		Preload("TrashCategories").
+		Find(&videos).Error; err != nil {
+		return nil, err
+	}
+	videoMap := make(map[int]video.Video)
+	for _, v := range videos {
+		videoMap[v.ID] = v
+	}
+
+	uniqueVideos := make([]video.Video, 0, len(videoMap))
+	for _, v := range videoMap {
+		uniqueVideos = append(uniqueVideos, v)
+	}
+
+	return &uniqueVideos, nil
+}
+
 func (repository *UserVideoRepositoryImpl) GetVideoDetail(id int) (*video.Video, *[]video.Comment, error) {
 	var videos video.Video
 	var comments []video.Comment

@@ -325,7 +325,7 @@ func (s *echoServer) manageVideo() {
 	s.gr.POST("/videos/data", handler.CreateDataVideoHandler, SuperAdminOrAdminMiddleware)
 
 	// get all category video
-	s.gr.GET("/videos/categories", handler.GetAllCategoryVideoHandler, SuperAdminOrAdminMiddleware)
+	s.gr.GET("/videos/categories", handler.GetAllCategoryVideoHandler, AllRoleMiddleware)
 
 	// get all data video pagination
 	s.gr.GET("/videos/data", handler.GetAllDataVideoPaginationHandler, SuperAdminOrAdminMiddleware)
@@ -350,6 +350,12 @@ func (s *echoServer) userVideo() {
 
 	// search video by title
 	s.gr.GET("/videos/search", handler.SearchVideoByTitleHandler, UserMiddleware)
+
+	// search video by category video
+	s.gr.GET("/videos/content-category", handler.SearchVideoByCategoryVideoHandler, UserMiddleware)
+
+	// search video by trash category video
+	s.gr.GET("/videos/trash-category", handler.SearchVideoByTrashCategoryVideoHandler, UserMiddleware)
 
 	// get video detail
 	s.gr.GET("/videos/:videoId", handler.GetVideoDetailHandler, UserMiddleware)
