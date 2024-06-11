@@ -67,32 +67,47 @@ type ArticleRepository interface {
 	// Article Repository
 	Create(article Article) (*Article, error)
 	FindByID(articleID string) (*Article, error)
-	FindAll(page, limit uint) (*[]Article, error)
+	FindAll(page, limit uint) (*[]Article, int64, error)
 	FindLastID() (string, error)
 	FindByKeyword(keyword string) (*[]Article, error)
-	FindByCategory(categoryName string) (*[]Article, error)
+	FindByCategory(categoryName string, categoryType string) (*[]Article, error)
 	Update(article Article) error
 	Delete(articleID string) error
 
 	// Category Repository
 	FindCategories(articleID string) (*[]WasteCategory, *[]VideoCategory, error)
+	FindCategoryByName(categoryName, categoryType string) (uint, error)
 
 	// Article Section Repository
+	CreateSection(section ArticleSection) error
+	UpdateSection(section ArticleSection) error
+	DeleteSection(sectionID uint) error
+	DeleteAllSection(articleID string) error
+
+	// Article Categories Repository
+	CreateArticleCategory(categories ArticleCategories) error
+	UpdateArticleCategory(categories ArticleCategories) error
+	DeleteAllArticleCategory(articleID string) error
 }
 
 type ArticleUsecase interface {
-	NewArticle(article ArticleInput) (*ArticleDetail, error)
+	NewArticle(article ArticleInput, authorId string) (*ArticleDetail, error)
 	GetArticleByID(articleID string) (*ArticleDetail, error)
-	GetAllArticle(page, limit uint) (*ArticleResponsePagination, error)
+	GetAllArticle(page, limit int) (*ArticleResponsePagination, error)
 	GetArticleByKeyword(keyword string) (*[]ArticleDetail, error)
-	GetArticleByCategory(categoryName string) (*[]ArticleDetail, error)
+	GetArticleByCategory(categoryName string, categoryType string) (*[]ArticleDetail, error)
 	Update(articleID string, article ArticleInput) error
 	Delete(articleID string) error
 
 	GetArticleDetail(article Article) *ArticleDetail
 	GetDetailAuthor(authorID string) (*AdminDetail, error)
+
+	// add usecase yang belum saya buat dibawah
 }
 
 type ArticleHandler interface {
+	GetAllArticle(c echo.Context) error
+	GetArticleByKeyword(c echo.Context) error
+	GetArticleByCategory(c echo.Context) error
 	GetArticleByID(c echo.Context) error
 }

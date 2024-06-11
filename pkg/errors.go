@@ -73,7 +73,8 @@ var (
 	ErrAboutUsCategoryNotFound = errors.New("about us with that category not found")
 
 	// Article
-	ErrArticleNotFound = errors.New("article not found")
+	ErrArticleNotFound         = errors.New("article not found")
+	ErrCategoryArticleNotFound = errors.New("invalid category type")
 
 	// Error file
 	ErrFileTooLarge    = errors.New("upload image size must less than 2MB")

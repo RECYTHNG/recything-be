@@ -385,6 +385,15 @@ func (s *echoServer) articleHandler() {
 	usecase := articleUsecase.NewArticleUsecase(repositoryArticle, repositoryAdmin)
 	handler := articleHandler.NewArticleHandler(usecase)
 
+	// Get all article
+	s.gr.GET("/articles", handler.GetAllArticle, AllRoleMiddleware)
+
+	// Get by keyword
+	s.gr.GET("/article/search", handler.GetArticleByKeyword, AllRoleMiddleware)
+
+	// Get by category
+	s.gr.GET("/article/category", handler.GetArticleByCategory, AllRoleMiddleware)
+
 	// Get article by id
 	s.gr.GET("/article/:articleId", handler.GetArticleByID, AllRoleMiddleware)
 }

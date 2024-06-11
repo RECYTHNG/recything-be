@@ -5,14 +5,16 @@ import (
 )
 
 type ArticleInput struct {
-	Title        string                `json:"title"`
-	Description  string                `json:"description"`
-	ThumbnailURL string                `json:"thumbnail_url"`
-	Categories   []string              `json:"categories"`
-	Sections     []ArticleSectionInput `json:"sections"`
+	Title             string           `json:"title"`
+	Description       string           `json:"description"`
+	ThumbnailURL      string           `json:"thumbnail_url"`
+	WasteCategories   []string         `json:"waste_categories"`
+	ContentCategories []string         `json:"content_categories"`
+	Sections          []ArticleSection `json:"sections"`
 }
 
 type ArticleSectionInput struct {
+	ArticleID   string `json:"article_id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	ImageURL    string `json:"image_url"`
@@ -39,7 +41,7 @@ type ArticleDetail struct {
 
 type ArticleResponsePagination struct {
 	Total    int64           `json:"total"`
-	Page     int             `json:"page"`
-	Limit    int             `json:"limit"`
+	Page     uint            `json:"page"`
+	Limit    uint            `json:"limit"`
 	Articles []ArticleDetail `json:"articles"`
 }
