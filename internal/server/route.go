@@ -382,7 +382,8 @@ func (s *echoServer) leaderboardHandler() {
 func (s *echoServer) articleHandler() {
 	repositoryArticle := articleRepository.NewArticleRepository(s.db)
 	repositoryAdmin := repository.NewAdminRepository(s.db)
-	usecase := articleUsecase.NewArticleUsecase(repositoryArticle, repositoryAdmin)
+	repositoryUser := userRepo.NewUserRepository(s.db)
+	usecase := articleUsecase.NewArticleUsecase(repositoryArticle, repositoryAdmin, repositoryUser)
 	handler := articleHandler.NewArticleHandler(usecase)
 
 	// Get all article
@@ -405,4 +406,7 @@ func (s *echoServer) articleHandler() {
 
 	// Delete article by admin
 	s.gr.DELETE("/article/:articleId", handler.DeleteArticle, SuperAdminOrAdminMiddleware)
+
+	// Add new comment by user
+	s.gr.POST("/article/:articleId/comment", handler.NewArticleComment, UserMiddleware)
 }

@@ -4,15 +4,18 @@ import (
 	admin "github.com/sawalreverr/recything/internal/admin/repository"
 	art "github.com/sawalreverr/recything/internal/article"
 	"github.com/sawalreverr/recything/internal/helper"
+	user "github.com/sawalreverr/recything/internal/user"
+	"github.com/sawalreverr/recything/pkg"
 )
 
 type articleUsecase struct {
 	articleRepo art.ArticleRepository
 	adminRepo   admin.AdminRepository
+	userRepo    user.UserRepository
 }
 
-func NewArticleUsecase(articleRepo art.ArticleRepository, adminRepo admin.AdminRepository) art.ArticleUsecase {
-	return &articleUsecase{articleRepo: articleRepo, adminRepo: adminRepo}
+func NewArticleUsecase(articleRepo art.ArticleRepository, adminRepo admin.AdminRepository, userRepo user.UserRepository) art.ArticleUsecase {
+	return &articleUsecase{articleRepo: articleRepo, adminRepo: adminRepo, userRepo: userRepo}
 }
 
 func (u *articleUsecase) NewArticle(article art.ArticleInput, authorId string) (*art.ArticleDetail, error) {
@@ -218,16 +221,21 @@ func (uc *articleUsecase) Delete(articleID string) error {
 		return err
 	}
 
+	if err := uc.articleRepo.DeleteAllArticleComment(articleFound.ID); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (uc *articleUsecase) GetArticleDetail(article art.Article) *art.ArticleDetail {
 	adminDetail, _ := uc.GetDetailAuthor(article.AuthorID)
 	wasteCategories, contentCategories, _ := uc.articleRepo.FindCategories(article.ID)
+	comments, _ := uc.GetDetailComments(article.Comments)
 
 	articleDetail := art.ArticleDetail{
 		ID:                article.ID,
-		AuthorID:          *adminDetail,
+		Author:            *adminDetail,
 		Title:             article.Title,
 		Description:       article.Description,
 		ThumbnailURL:      article.ThumbnailURL,
@@ -235,6 +243,7 @@ func (uc *articleUsecase) GetArticleDetail(article art.Article) *art.ArticleDeta
 		WasteCategories:   *wasteCategories,
 		ContentCategories: *contentCategories,
 		Sections:          article.Sections,
+		Comments:          *comments,
 	}
 
 	return &articleDetail
@@ -253,4 +262,61 @@ func (uc *articleUsecase) GetDetailAuthor(authorID string) (*art.AdminDetail, er
 	}
 
 	return &adminDetail, nil
+}
+
+func (uc *articleUsecase) NewArticleComment(comment art.CommentInput) error {
+	articleFound, err := uc.GetArticleByID(comment.ArticleID)
+	if err != nil {
+		return pkg.ErrArticleNotFound
+	}
+
+	userFound, err := uc.userRepo.FindByID(comment.UserID)
+	if err != nil {
+		return pkg.ErrUserNotFound
+	}
+
+	newComment := art.ArticleComment{
+		UserID:    userFound.ID,
+		ArticleID: articleFound.ID,
+		Comment:   comment.Comment,
+	}
+
+	if err := uc.articleRepo.CreateArticleComment(newComment); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (uc *articleUsecase) GetDetailUser(userID string) (*art.UserDetail, error) {
+	userFound, err := uc.userRepo.FindByID(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	userDetail := art.UserDetail{
+		ID:       userFound.ID,
+		Name:     userFound.Name,
+		ImageURL: userFound.PictureURL,
+	}
+
+	return &userDetail, nil
+}
+
+func (uc *articleUsecase) GetDetailComments(comments []art.ArticleComment) (*[]art.CommentDetail, error) {
+	commentDetails := make([]art.CommentDetail, len(comments))
+	for i, comment := range comments {
+		user, _ := uc.GetDetailUser(comment.UserID)
+		detail := art.CommentDetail{
+			ID:        comment.ID,
+			User:      *user,
+			ArticleID: comment.ArticleID,
+			Comment:   comment.Comment,
+			CreatedAt: comment.CreatedAt,
+		}
+
+		commentDetails[i] = detail
+	}
+
+	return &commentDetails, nil
 }

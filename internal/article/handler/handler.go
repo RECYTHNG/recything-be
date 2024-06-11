@@ -37,7 +37,7 @@ func (h *articleHandler) NewArticle(c echo.Context) error {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return helper.ResponseHandler(c, http.StatusCreated, "ok", response)
+	return helper.ResponseHandler(c, http.StatusCreated, "new article created!", response)
 }
 
 func (h *articleHandler) UpdateArticle(c echo.Context) error {
@@ -60,7 +60,7 @@ func (h *articleHandler) UpdateArticle(c echo.Context) error {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return helper.ResponseHandler(c, http.StatusOK, "ok", nil)
+	return helper.ResponseHandler(c, http.StatusOK, "article updated!", nil)
 }
 
 func (h *articleHandler) DeleteArticle(c echo.Context) error {
@@ -74,7 +74,7 @@ func (h *articleHandler) DeleteArticle(c echo.Context) error {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
 	}
 
-	return helper.ResponseHandler(c, http.StatusOK, "ok", nil)
+	return helper.ResponseHandler(c, http.StatusOK, "article deleted!", nil)
 }
 
 func (h *articleHandler) GetAllArticle(c echo.Context) error {
@@ -143,4 +143,35 @@ func (h *articleHandler) GetArticleByID(c echo.Context) error {
 	}
 
 	return helper.ResponseHandler(c, http.StatusOK, "ok", articleFound)
+}
+
+func (h *articleHandler) NewArticleComment(c echo.Context) error {
+	var request art.CommentInput
+	articleID := c.Param("articleId")
+	userID := c.Get("user").(*helper.JwtCustomClaims).UserID
+
+	if err := c.Bind(&request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	}
+
+	if err := c.Validate(&request); err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	}
+
+	request.ArticleID = articleID
+	request.UserID = userID
+
+	if err := h.usecase.NewArticleComment(request); err != nil {
+		if errors.Is(pkg.ErrArticleNotFound, err) {
+			return helper.ErrorHandler(c, http.StatusNotFound, err.Error())
+		}
+
+		if errors.Is(pkg.ErrUserNotFound, err) {
+			return helper.ErrorHandler(c, http.StatusNotFound, err.Error())
+		}
+
+		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
+	}
+
+	return helper.ResponseHandler(c, http.StatusCreated, "comment added!", nil)
 }

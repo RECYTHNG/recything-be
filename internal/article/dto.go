@@ -26,9 +26,15 @@ type AdminDetail struct {
 	ImageURL string `json:"image_url"`
 }
 
+type UserDetail struct {
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	ImageURL string `json:"image_url"`
+}
+
 type ArticleDetail struct {
 	ID           string      `json:"id"`
-	AuthorID     AdminDetail `json:"author"`
+	Author       AdminDetail `json:"author"`
 	Title        string      `json:"title"`
 	Description  string      `json:"description"`
 	ThumbnailURL string      `json:"thumbnail_url"`
@@ -37,6 +43,21 @@ type ArticleDetail struct {
 	WasteCategories   []WasteCategory  `json:"waste_categories"`
 	ContentCategories []VideoCategory  `json:"content_categories"`
 	Sections          []ArticleSection `json:"sections"`
+	Comments          []CommentDetail  `json:"comments"`
+}
+
+type CommentInput struct {
+	UserID    string `json:"user_id"`
+	ArticleID string `json:"article_id"`
+	Comment   string `json:"comment"`
+}
+
+type CommentDetail struct {
+	ID        uint       `json:"id"`
+	User      UserDetail `json:"user"`
+	ArticleID string     `json:"article_id"`
+	Comment   string     `json:"comment"`
+	CreatedAt time.Time  `json:"created_at"`
 }
 
 type ArticleResponsePagination struct {

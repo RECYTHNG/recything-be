@@ -16,6 +16,7 @@ type Article struct {
 
 	Categories []ArticleCategories
 	Sections   []ArticleSection
+	Comments   []ArticleComment
 
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"-"`
@@ -63,6 +64,17 @@ type ArticleSection struct {
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
+type ArticleComment struct {
+	ID        uint   `json:"-" gorm:"primaryKey"`
+	UserID    string `json:"-"`
+	ArticleID string `json:"-"`
+	Comment   string `json:"comment" gorm:"type:text"`
+
+	CreatedAt time.Time      `json:"-"`
+	UpdatedAt time.Time      `json:"-"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
+}
+
 type ArticleRepository interface {
 	// Article Repository
 	Create(article Article) (*Article, error)
@@ -88,9 +100,14 @@ type ArticleRepository interface {
 	CreateArticleCategory(categories ArticleCategories) error
 	UpdateArticleCategory(categories ArticleCategories) error
 	DeleteAllArticleCategory(articleID string) error
+
+	// Article Comment Repository
+	CreateArticleComment(comment ArticleComment) error
+	DeleteAllArticleComment(articleID string) error
 }
 
 type ArticleUsecase interface {
+	// Article Usecase
 	NewArticle(article ArticleInput, authorId string) (*ArticleDetail, error)
 	GetArticleByID(articleID string) (*ArticleDetail, error)
 	GetAllArticle(page, limit int, sortBy string, sortType string) (*ArticleResponsePagination, error)
@@ -101,6 +118,11 @@ type ArticleUsecase interface {
 
 	GetArticleDetail(article Article) *ArticleDetail
 	GetDetailAuthor(authorID string) (*AdminDetail, error)
+
+	// Article Comment Usecase
+	NewArticleComment(comment CommentInput) error
+	GetDetailUser(userID string) (*UserDetail, error)
+	GetDetailComments(comments []ArticleComment) (*[]CommentDetail, error)
 }
 
 type ArticleHandler interface {
@@ -111,4 +133,6 @@ type ArticleHandler interface {
 	GetArticleByKeyword(c echo.Context) error
 	GetArticleByCategory(c echo.Context) error
 	GetArticleByID(c echo.Context) error
+
+	NewArticleComment(c echo.Context) error
 }
