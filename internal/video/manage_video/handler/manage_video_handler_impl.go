@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"math"
-	"mime/multipart"
 	"net/http"
 	"strconv"
 
@@ -42,8 +41,17 @@ func (handler *ManageVideoHandlerImpl) CreateDataVideoHandler(c echo.Context) er
 		if errors.Is(err, pkg.ErrVideoTitleAlreadyExist) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoTitleAlreadyExist.Error())
 		}
-		if errors.Is(err, pkg.ErrVideoCategoryNotFound) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoCategoryNotFound.Error())
+		if errors.Is(err, pkg.ErrVideoCategory) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoCategory.Error())
+		}
+		if errors.Is(err, pkg.ErrVideoTrashCategory) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoTrashCategory.Error())
+		}
+		if errors.Is(err, pkg.ErrNameCategoryVideoNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrNameCategoryVideoNotFound.Error())
+		}
+		if errors.Is(err, pkg.ErrNameTrashCategoryNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrNameTrashCategoryNotFound.Error())
 		}
 		if errors.Is(err, pkg.ErrNoVideoIdFoundOnUrl) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrNoVideoIdFoundOnUrl.Error())
@@ -166,97 +174,97 @@ func (handler *ManageVideoHandlerImpl) GetAllDataVideoPaginationHandler(c echo.C
 	return c.JSON(http.StatusOK, data)
 }
 
-func (handler *ManageVideoHandlerImpl) GetDetailsDataVideoByIdHandler(c echo.Context) error {
-	id := c.Param("videoId")
-	idInt, errConvert := strconv.Atoi(id)
-	if errConvert != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid id parameter")
-	}
-	video, err := handler.ManageVideoUsecase.GetDetailsDataVideoByIdUseCase(idInt)
-	if err != nil {
-		if errors.Is(err, pkg.ErrVideoNotFound) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoNotFound.Error())
-		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
-	}
-	var dataVideo *dto.GetDetailsDataVideoByIdResponse
-	dataVideo = &dto.GetDetailsDataVideoByIdResponse{
-		Id:           video.ID,
-		Title:        video.Title,
-		Description:  video.Description,
-		UrlThumbnail: video.Thumbnail,
-		LinkVideo:    video.Link,
-		Viewer:       video.Viewer,
-		Category:     dto.DataCategory{Id: video.Category.ID, Name: video.Category.Name},
-	}
-	responseData := helper.ResponseData(http.StatusOK, "success", dataVideo)
-	return c.JSON(http.StatusOK, responseData)
-}
+// func (handler *ManageVideoHandlerImpl) GetDetailsDataVideoByIdHandler(c echo.Context) error {
+// 	id := c.Param("videoId")
+// 	idInt, errConvert := strconv.Atoi(id)
+// 	if errConvert != nil {
+// 		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid id parameter")
+// 	}
+// 	video, err := handler.ManageVideoUsecase.GetDetailsDataVideoByIdUseCase(idInt)
+// 	if err != nil {
+// 		if errors.Is(err, pkg.ErrVideoNotFound) {
+// 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoNotFound.Error())
+// 		}
+// 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+// 	}
+// 	var dataVideo *dto.GetDetailsDataVideoByIdResponse
+// 	dataVideo = &dto.GetDetailsDataVideoByIdResponse{
+// 		Id:           video.ID,
+// 		Title:        video.Title,
+// 		Description:  video.Description,
+// 		UrlThumbnail: video.Thumbnail,
+// 		LinkVideo:    video.Link,
+// 		Viewer:       video.Viewer,
+// 		Category:     dto.DataCategory{Id: video.Category.ID, Name: video.Category.Name},
+// 	}
+// 	responseData := helper.ResponseData(http.StatusOK, "success", dataVideo)
+// 	return c.JSON(http.StatusOK, responseData)
+// }
 
-func (handler *ManageVideoHandlerImpl) UpdateDataVideoHandler(c echo.Context) error {
-	id := c.Param("videoId")
-	idInt, errConvert := strconv.Atoi(id)
-	if errConvert != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid id parameter")
-	}
-	var request dto.UpdateDataVideoRequest
-	json_data := c.FormValue("json_data")
-	if json_data != "" {
-		if err := json.Unmarshal([]byte(json_data), &request); err != nil {
-			return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
-		}
-	}
+// func (handler *ManageVideoHandlerImpl) UpdateDataVideoHandler(c echo.Context) error {
+// 	id := c.Param("videoId")
+// 	idInt, errConvert := strconv.Atoi(id)
+// 	if errConvert != nil {
+// 		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid id parameter")
+// 	}
+// 	var request dto.UpdateDataVideoRequest
+// 	json_data := c.FormValue("json_data")
+// 	if json_data != "" {
+// 		if err := json.Unmarshal([]byte(json_data), &request); err != nil {
+// 			return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+// 		}
+// 	}
 
-	form, errForm := c.MultipartForm()
-	if errForm != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, errForm.Error())
-	}
-	var thumbnail []*multipart.FileHeader
-	if form != nil {
-		thumbnail = form.File["thumbnail"]
-	}
+// 	form, errForm := c.MultipartForm()
+// 	if errForm != nil {
+// 		return helper.ErrorHandler(c, http.StatusBadRequest, errForm.Error())
+// 	}
+// 	var thumbnail []*multipart.FileHeader
+// 	if form != nil {
+// 		thumbnail = form.File["thumbnail"]
+// 	}
 
-	if err := handler.ManageVideoUsecase.UpdateDataVideoUseCase(&request, thumbnail, idInt); err != nil {
-		if errors.Is(err, pkg.ErrVideoNotFound) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoNotFound.Error())
-		}
-		if errors.Is(err, pkg.ErrVideoCategoryNotFound) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoCategoryNotFound.Error())
-		}
-		if errors.Is(err, pkg.ErrNoVideoIdFoundOnUrl) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrNoVideoIdFoundOnUrl.Error())
-		}
-		if errors.Is(err, pkg.ErrVideoNotFound) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoNotFound.Error())
-		}
-		if errors.Is(err, pkg.ErrVideoService) {
-			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrVideoService.Error())
-		}
-		if errors.Is(err, pkg.ErrApiYouTube) {
-			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrApiYouTube.Error())
-		}
-		if errors.Is(err, pkg.ErrParsingUrl) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrParsingUrl.Error())
-		}
-		if errors.Is(err, pkg.ErrThumbnail) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrThumbnail.Error())
-		}
-		if errors.Is(err, pkg.ErrThumbnailMaximum) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrThumbnailMaximum.Error())
-		}
-		if errors.Is(err, errors.New("upload image size must less than 2MB")) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, "upload image size must less than 2MB")
-		}
-		if errors.Is(err, errors.New("only image allowed")) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, "only image allowed")
-		}
-		if errors.Is(err, pkg.ErrUploadCloudinary) {
-			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
-		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
-	}
-	return helper.ResponseHandler(c, http.StatusOK, "success update data video", nil)
-}
+// 	if err := handler.ManageVideoUsecase.UpdateDataVideoUseCase(&request, thumbnail, idInt); err != nil {
+// 		if errors.Is(err, pkg.ErrVideoNotFound) {
+// 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoNotFound.Error())
+// 		}
+// 		if errors.Is(err, pkg.ErrVideoCategoryNotFound) {
+// 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoCategoryNotFound.Error())
+// 		}
+// 		if errors.Is(err, pkg.ErrNoVideoIdFoundOnUrl) {
+// 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrNoVideoIdFoundOnUrl.Error())
+// 		}
+// 		if errors.Is(err, pkg.ErrVideoNotFound) {
+// 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoNotFound.Error())
+// 		}
+// 		if errors.Is(err, pkg.ErrVideoService) {
+// 			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrVideoService.Error())
+// 		}
+// 		if errors.Is(err, pkg.ErrApiYouTube) {
+// 			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrApiYouTube.Error())
+// 		}
+// 		if errors.Is(err, pkg.ErrParsingUrl) {
+// 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrParsingUrl.Error())
+// 		}
+// 		if errors.Is(err, pkg.ErrThumbnail) {
+// 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrThumbnail.Error())
+// 		}
+// 		if errors.Is(err, pkg.ErrThumbnailMaximum) {
+// 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrThumbnailMaximum.Error())
+// 		}
+// 		if errors.Is(err, errors.New("upload image size must less than 2MB")) {
+// 			return helper.ErrorHandler(c, http.StatusBadRequest, "upload image size must less than 2MB")
+// 		}
+// 		if errors.Is(err, errors.New("only image allowed")) {
+// 			return helper.ErrorHandler(c, http.StatusBadRequest, "only image allowed")
+// 		}
+// 		if errors.Is(err, pkg.ErrUploadCloudinary) {
+// 			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
+// 		}
+// 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+// 	}
+// 	return helper.ResponseHandler(c, http.StatusOK, "success update data video", nil)
+// }
 
 func (handler *ManageVideoHandlerImpl) DeleteDataVideoHandler(c echo.Context) error {
 	id := c.Param("videoId")

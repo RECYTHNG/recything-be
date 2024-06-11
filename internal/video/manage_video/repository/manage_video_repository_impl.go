@@ -43,6 +43,14 @@ func (repository *ManageVideoRepositoryImpl) FindNameCategoryVideo(name string) 
 	return nil
 }
 
+func (repository *ManageVideoRepositoryImpl) FindNamaTrashCategory(name string) error {
+	var category video.TrashCategory
+	if err := repository.DB.GetDB().Where("name = ?", name).First(&category).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 func (repository *ManageVideoRepositoryImpl) GetAllCategoryVideo() ([]video.VideoCategory, error) {
 	var categories []video.VideoCategory
 	if err := repository.DB.GetDB().Find(&categories).Error; err != nil {

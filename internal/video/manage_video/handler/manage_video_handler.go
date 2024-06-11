@@ -7,7 +7,7 @@ type ManageVideoHandler interface {
 	CreateCategoryVideoHandler(c echo.Context) error
 	GetAllCategoryVideoHandler(c echo.Context) error
 	GetAllDataVideoPaginationHandler(c echo.Context) error
-	GetDetailsDataVideoByIdHandler(c echo.Context) error
-	UpdateDataVideoHandler(c echo.Context) error
+	// GetDetailsDataVideoByIdHandler(c echo.Context) error
+	// UpdateDataVideoHandler(c echo.Context) error
 	DeleteDataVideoHandler(c echo.Context) error
 }

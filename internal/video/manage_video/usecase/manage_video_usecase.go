@@ -13,6 +13,6 @@ type ManageVideoUsecase interface {
 	GetAllCategoryVideoUseCase() ([]video.VideoCategory, error)
 	GetAllDataVideoPaginationUseCase(limit int, page int) ([]video.Video, int, error)
 	GetDetailsDataVideoByIdUseCase(id int) (*video.Video, error)
-	UpdateDataVideoUseCase(request *dto.UpdateDataVideoRequest, thumbnail []*multipart.FileHeader, id int) error
+	// UpdateDataVideoUseCase(request *dto.UpdateDataVideoRequest, thumbnail []*multipart.FileHeader, id int) error
 	DeleteDataVideoUseCase(id int) error
 }

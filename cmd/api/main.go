@@ -39,6 +39,9 @@ func main() {
 	// Init Video Categories
 	db.InitVideoCategories()
 
+	// Init Trash Category Video
+	db.InitTrashCategoryVideo()
+
 	// Init About us
 	db.InitAboutUs()
 

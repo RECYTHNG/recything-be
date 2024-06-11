@@ -40,6 +40,7 @@ func AutoMigrate(db Database) {
 		&article.Article{},
 		&article.ArticleSection{},
 		&article.ArticleCategories{},
+		&video.TrashCategory{},
 	); err != nil {
 		log.Fatal("Database Migration Failed!")
 	}
