@@ -94,12 +94,16 @@ func (usecase *ManageVideoUsecaseImpl) CreateDataVideoUseCase(request *dto.Creat
 	return nil
 }
 
-func (usecase *ManageVideoUsecaseImpl) GetAllCategoryVideoUseCase() ([]video.VideoCategory, error) {
-	categories, err := usecase.manageVideoRepository.GetAllCategoryVideo()
-	if err != nil {
-		return nil, err
+func (usecase *ManageVideoUsecaseImpl) GetAllCategoryVideoUseCase() ([]string, []string, error) {
+	videoCategories, errvidCategory := usecase.manageVideoRepository.GetAllCategoryVideo()
+	if errvidCategory != nil {
+		return nil, nil, errvidCategory
 	}
-	return categories, nil
+	trashCategories, errTrashCategory := usecase.manageVideoRepository.GetAllTrashCategoryVideo()
+	if errTrashCategory != nil {
+		return nil, nil, errTrashCategory
+	}
+	return videoCategories, trashCategories, nil
 }
 
 func (usecase *ManageVideoUsecaseImpl) GetAllDataVideoPaginationUseCase(limit int, page int) ([]video.Video, int, error) {

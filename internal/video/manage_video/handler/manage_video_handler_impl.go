@@ -89,28 +89,25 @@ func (handler *ManageVideoHandlerImpl) CreateDataVideoHandler(c echo.Context) er
 }
 
 func (handler *ManageVideoHandlerImpl) GetAllCategoryVideoHandler(c echo.Context) error {
-	categories, err := handler.ManageVideoUsecase.GetAllCategoryVideoUseCase()
+	videoCategories, trashCategories, err := handler.ManageVideoUsecase.GetAllCategoryVideoUseCase()
 	if err != nil {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
-	var dataVideoCategories []*dto.DataVideoCategory
-	var dataTrashCategories []*dto.DataTrashCategoryResponse
+	var dataVideoCategories []*dto.DataCategoryVideo
+	var dataTrashCategories []*dto.DataTrashCategory
 	data := &dto.GetAllCategoryVideoResponse{
 		VideoCategory: dataVideoCategories,
 		TrashCategory: dataTrashCategories,
 	}
 
-	for _, category := range categories {
-		dataVideoCategories = append(dataVideoCategories, &dto.DataVideoCategory{
-			Id:   category.ID,
-			Name: category.Name,
+	for _, category := range videoCategories {
+		dataVideoCategories = append(dataVideoCategories, &dto.DataCategoryVideo{
+			Name: category,
 		})
 	}
-
-	for _, category := range categories {
-		dataTrashCategories = append(dataTrashCategories, &dto.DataTrashCategoryResponse{
-			Id:   category.ID,
-			Name: category.Name,
+	for _, category := range trashCategories {
+		dataTrashCategories = append(dataTrashCategories, &dto.DataTrashCategory{
+			Name: category,
 		})
 	}
 

@@ -1,8 +1,8 @@
 package dto
 
 type GetAllCategoryVideoResponse struct {
-	VideoCategory []*DataVideoCategory         `json:"video_categories"`
-	TrashCategory []*DataTrashCategoryResponse `json:"trash_categories"`
+	VideoCategory []*DataCategoryVideo `json:"video_categories"`
+	TrashCategory []*DataTrashCategory `json:"trash_categories"`
 }
 
 type DataVideoCategory struct {

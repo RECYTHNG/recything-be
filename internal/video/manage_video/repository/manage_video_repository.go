@@ -9,7 +9,8 @@ type ManageVideoRepository interface {
 	FindTitleVideo(title string) error
 	FindNameCategoryVideo(name string) error
 	FindNamaTrashCategory(name string) error
-	GetAllCategoryVideo() ([]video.VideoCategory, error)
+	GetAllCategoryVideo() ([]string, error)
+	GetAllTrashCategoryVideo() ([]string, error)
 	GetCategoryVideoById(id int) (*video.VideoCategory, error)
 	GetAllDataVideoPagination(limit int, page int) ([]video.Video, int, error)
 	GetDetailsDataVideoById(id int) (*video.Video, error)

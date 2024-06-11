@@ -44,9 +44,19 @@ func (repository *ManageVideoRepositoryImpl) FindNamaTrashCategory(name string) 
 	return nil
 }
 
-func (repository *ManageVideoRepositoryImpl) GetAllCategoryVideo() ([]video.VideoCategory, error) {
-	var categories []video.VideoCategory
-	if err := repository.DB.GetDB().Find(&categories).Error; err != nil {
+func (repository *ManageVideoRepositoryImpl) GetAllCategoryVideo() ([]string, error) {
+	var categories []string
+	if err := repository.DB.GetDB().Model(&video.VideoCategory{}).Distinct("name").Pluck("name", &categories).
+		Error; err != nil {
+
+	}
+	return categories, nil
+}
+
+func (repository *ManageVideoRepositoryImpl) GetAllTrashCategoryVideo() ([]string, error) {
+	var categories []string
+	if err := repository.DB.GetDB().Model(&video.TrashCategory{}).Distinct("name").Pluck("name", &categories).
+		Error; err != nil {
 		return nil, err
 	}
 	return categories, nil
