@@ -6,8 +6,8 @@ type CreateDataVideoRequest struct {
 	Title           string                `json:"title" validate:"required"`
 	Description     string                `json:"description" validate:"required"`
 	LinkVideo       string                `json:"link_video" validate:"required"`
-	VideoCategories []DataCategoryVideo   `json:"video_categories"`
-	TrashCategories []DataTrashCategory   `json:"trash_categories"`
+	VideoCategories []DataCategoryVideo   `json:"content_categories" validate:"required"`
+	TrashCategories []DataTrashCategory   `json:"waste_categories" validate:"required"`
 	Thumbnail       *multipart.FileHeader `json:"-"`
 }
 
@@ -27,7 +27,7 @@ type UpdateDataVideoRequest struct {
 	Title           string                `json:"title"`
 	Description     string                `json:"description"`
 	LinkVideo       string                `json:"link_video"`
-	VideoCategories []DataCategoryVideo   `json:"video_categories"`
-	TrashCategories []DataTrashCategory   `json:"trash_categories"`
+	VideoCategories []DataCategoryVideo   `json:"content_categories"`
+	TrashCategories []DataTrashCategory   `json:"waste_categories"`
 	Thumbnail       *multipart.FileHeader `json:"-"`
 }

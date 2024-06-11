@@ -1,8 +1,8 @@
 package dto
 
 type GetAllCategoryVideoResponse struct {
-	VideoCategory []*DataCategoryVideo `json:"video_categories"`
-	TrashCategory []*DataTrashCategory `json:"trash_categories"`
+	VideoCategory []*DataCategoryVideo `json:"content_categories"`
+	TrashCategory []*DataTrashCategory `json:"waste_categories"`
 }
 
 type DataVideoCategory struct {
@@ -39,6 +39,6 @@ type GetDetailsDataVideoByIdResponse struct {
 	UrlThumbnail  string                       `json:"url_thumbnail"`
 	LinkVideo     string                       `json:"link_video"`
 	Viewer        int                          `json:"viewer"`
-	VideoCategory []*DataVideoCategory         `json:"video_categories"`
-	TrashCategory []*DataTrashCategoryResponse `json:"trash_categories"`
+	VideoCategory []*DataVideoCategory         `json:"content_categories"`
+	TrashCategory []*DataTrashCategoryResponse `json:"waste_categories"`
 }
