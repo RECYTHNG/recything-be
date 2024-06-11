@@ -14,8 +14,8 @@ type Video struct {
 	Thumbnail       string
 	Link            string
 	Viewer          int
-	VideoCategories []VideoCategory `gorm:"foreignKey:VideoID"`
-	TrashCategories []TrashCategory `gorm:"foreignKey:VideoID"`
+	VideoCategories []VideoCategory `gorm:"foreignKey:VideoID;references:ID"`
+	TrashCategories []TrashCategory `gorm:"foreignKey:VideoID;references:ID"`
 	CreatedAt       time.Time       `gorm:"autoCreateTime"`
 	UpdatedAt       time.Time       `gorm:"autoUpdateTime"`
 	DeletedAt       gorm.DeletedAt  `gorm:"index"`

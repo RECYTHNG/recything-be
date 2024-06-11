@@ -94,21 +94,6 @@ func (usecase *ManageVideoUsecaseImpl) CreateDataVideoUseCase(request *dto.Creat
 	return nil
 }
 
-func (usecase *ManageVideoUsecaseImpl) CreateCategoryVideoUseCase(request *dto.CreateCategoryVideoRequest) error {
-	if err := usecase.manageVideoRepository.FindNameCategoryVideo(request.Name); err == nil {
-		return pkg.ErrVideoCategoryNameAlreadyExist
-	}
-	name := strings.ToLower(request.Name)
-	category := video.VideoCategory{
-		Name:      name,
-		DeletedAt: gorm.DeletedAt{},
-	}
-	if err := usecase.manageVideoRepository.CreateCategoryVideo(&category); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (usecase *ManageVideoUsecaseImpl) GetAllCategoryVideoUseCase() ([]video.VideoCategory, error) {
 	categories, err := usecase.manageVideoRepository.GetAllCategoryVideo()
 	if err != nil {

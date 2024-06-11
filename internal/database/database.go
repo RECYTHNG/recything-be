@@ -11,10 +11,10 @@ type Database interface {
 	InitTasks()
 	InitTaskSteps()
 	InitAchievements()
-	InitTrashCategoryVideo()
-	InitVideoCategories()
 	InitAboutUs()
 	InitDataVideos()
 	InitArticleCategory()
 	InitArticle()
+	InitTrashCategoryVideo()
+	InitVideoCategories()
 }

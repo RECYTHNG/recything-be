@@ -93,19 +93,30 @@ func (handler *ManageVideoHandlerImpl) GetAllCategoryVideoHandler(c echo.Context
 	if err != nil {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
-	var dataCategories []*dto.DataCategory
+	var dataVideoCategories []*dto.DataVideoCategory
+	var dataTrashCategories []*dto.DataTrashCategoryResponse
 	data := &dto.GetAllCategoryVideoResponse{
-		Data: []*dto.DataCategory{},
+		VideoCategory: dataVideoCategories,
+		TrashCategory: dataTrashCategories,
 	}
 
 	for _, category := range categories {
-		dataCategories = append(dataCategories, &dto.DataCategory{
+		dataVideoCategories = append(dataVideoCategories, &dto.DataVideoCategory{
 			Id:   category.ID,
 			Name: category.Name,
 		})
 	}
-	data.Data = dataCategories
-	responseData := helper.ResponseData(http.StatusOK, "success", data.Data)
+
+	for _, category := range categories {
+		dataTrashCategories = append(dataTrashCategories, &dto.DataTrashCategoryResponse{
+			Id:   category.ID,
+			Name: category.Name,
+		})
+	}
+
+	data.VideoCategory = dataVideoCategories
+	data.TrashCategory = dataTrashCategories
+	responseData := helper.ResponseData(http.StatusOK, "success", data)
 	return c.JSON(http.StatusOK, responseData)
 }
 
@@ -156,32 +167,47 @@ func (handler *ManageVideoHandlerImpl) GetAllDataVideoPaginationHandler(c echo.C
 	return c.JSON(http.StatusOK, data)
 }
 
-// func (handler *ManageVideoHandlerImpl) GetDetailsDataVideoByIdHandler(c echo.Context) error {
-// 	id := c.Param("videoId")
-// 	idInt, errConvert := strconv.Atoi(id)
-// 	if errConvert != nil {
-// 		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid id parameter")
-// 	}
-// 	video, err := handler.ManageVideoUsecase.GetDetailsDataVideoByIdUseCase(idInt)
-// 	if err != nil {
-// 		if errors.Is(err, pkg.ErrVideoNotFound) {
-// 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoNotFound.Error())
-// 		}
-// 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
-// 	}
-// 	var dataVideo *dto.GetDetailsDataVideoByIdResponse
-// 	dataVideo = &dto.GetDetailsDataVideoByIdResponse{
-// 		Id:           video.ID,
-// 		Title:        video.Title,
-// 		Description:  video.Description,
-// 		UrlThumbnail: video.Thumbnail,
-// 		LinkVideo:    video.Link,
-// 		Viewer:       video.Viewer,
-// 		Category:     dto.DataCategory{Id: video.Category.ID, Name: video.Category.Name},
-// 	}
-// 	responseData := helper.ResponseData(http.StatusOK, "success", dataVideo)
-// 	return c.JSON(http.StatusOK, responseData)
-// }
+func (handler *ManageVideoHandlerImpl) GetDetailsDataVideoByIdHandler(c echo.Context) error {
+	id := c.Param("videoId")
+	idInt, errConvert := strconv.Atoi(id)
+	if errConvert != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid id parameter")
+	}
+	video, err := handler.ManageVideoUsecase.GetDetailsDataVideoByIdUseCase(idInt)
+	if err != nil {
+		if errors.Is(err, pkg.ErrVideoNotFound) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoNotFound.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+	}
+	var dataVideo *dto.GetDetailsDataVideoByIdResponse
+	var dataVideoCategories []*dto.DataVideoCategory
+	var dataTrashCategories []*dto.DataTrashCategoryResponse
+	for _, category := range video.VideoCategories {
+		dataVideoCategories = append(dataVideoCategories, &dto.DataVideoCategory{
+			Id:   category.ID,
+			Name: category.Name,
+		})
+	}
+	for _, category := range video.TrashCategories {
+		dataTrashCategories = append(dataTrashCategories, &dto.DataTrashCategoryResponse{
+			Id:   category.ID,
+			Name: category.Name,
+		})
+	}
+	dataVideo = &dto.GetDetailsDataVideoByIdResponse{
+		Id:            video.ID,
+		Title:         video.Title,
+		Description:   video.Description,
+		UrlThumbnail:  video.Thumbnail,
+		LinkVideo:     video.Link,
+		Viewer:        video.Viewer,
+		VideoCategory: dataVideoCategories,
+		TrashCategory: dataTrashCategories,
+	}
+	responseData := helper.ResponseData(http.StatusOK, "success", dataVideo)
+	return c.JSON(http.StatusOK, responseData)
+}
 
 // func (handler *ManageVideoHandlerImpl) UpdateDataVideoHandler(c echo.Context) error {
 // 	id := c.Param("videoId")
