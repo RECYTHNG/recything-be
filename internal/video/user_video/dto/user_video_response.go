@@ -11,6 +11,10 @@ type DataVideo struct {
 	Viewer       int    `json:"viewer"`
 }
 
+type SearchVideoByKeywordResponse struct {
+	DataVideo *[]DataVideoSearchByCategory `json:"data_video"`
+}
+
 type GetAllVideoResponse struct {
 	DataVideo []DataVideo `json:"data_video"`
 }
@@ -49,6 +53,6 @@ type DataVideoSearchByCategory struct {
 	UrlThumbnail  string                    `json:"url_thumbnail"`
 	LinkVideo     string                    `json:"link_video"`
 	Viewer        int                       `json:"viewer"`
-	VideoCategory []*DataCategoryVideo      `json:"video_categories"`
-	TrashCategory []*DataTrashCategoryVideo `json:"trash_categories"`
+	VideoCategory []*DataCategoryVideo      `json:"content_categories"`
+	TrashCategory []*DataTrashCategoryVideo `json:"waste_categories"`
 }

@@ -46,8 +46,8 @@ func (usecase *UserVideoUsecaseImpl) GetAllVideoUsecase() (*[]video.Video, error
 	return updatedVideos, nil
 }
 
-func (usecase *UserVideoUsecaseImpl) SearchVideoByTitleUsecase(title string) (*[]video.Video, error) {
-	videos, err := usecase.Repository.SearchVideoByTitle(title)
+func (usecase *UserVideoUsecaseImpl) SearchVideoByKeywordUsecase(keyword string) (*[]video.Video, error) {
+	videos, err := usecase.Repository.SearchVideoByKeyword(keyword)
 	if err != nil {
 		return nil, err
 	}
