@@ -39,6 +39,6 @@ type GetDetailsDataVideoByIdResponse struct {
 	UrlThumbnail  string                       `json:"url_thumbnail"`
 	LinkVideo     string                       `json:"link_video"`
 	Viewer        int                          `json:"viewer"`
-	VideoCategory []*DataVideoCategory         `json:"video_category"`
-	TrashCategory []*DataTrashCategoryResponse `json:"trash_category"`
+	VideoCategory []*DataVideoCategory         `json:"video_categories"`
+	TrashCategory []*DataTrashCategoryResponse `json:"trash_categories"`
 }

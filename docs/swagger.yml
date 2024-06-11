@@ -3042,12 +3042,22 @@ paths:
                     items:
                       type: object
                       properties:
-                        id:
-                          type: integer
-                          example: 1
-                        name:
-                          type: string
-                          example: "Category Name"
+                        video_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                example: "tips"
+                        trash_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                example: "berbahaya"
                       
         '500':
           description: Internal server error
@@ -3091,9 +3101,22 @@ paths:
                     link_video:
                       type: string
                       example: "https://example.com/video.mp4"
-                    category_id:
-                      type: integer
-                      example: 1
+                    video_categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "tips"
+                    trash_categories:
+                      type: array
+                      items:
+                        type: object      
+                        properties:
+                          name:
+                            type: string
+                            example: "berbahaya"
                 thumbnail:
                   type: string
                   format: binary
@@ -3263,15 +3286,23 @@ paths:
                       viewer:
                         type: integer
                         example: 1000
-                      category:
-                        type: object
-                        properties:
-                          id:
-                            type: integer
-                            example: 1
-                          name:
-                            type: string
-                            example: "Video Category"
+                      video_categories:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "tips"
+                      trash_categories:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "berbahaya"
+                    
         '404':
           description: Video not found
           content:
@@ -3320,9 +3351,23 @@ paths:
                     link_video:
                       type: string
                       example: "https://example.com/video.mp4"
-                    category_id:
-                      type: integer
-                      example: 1
+                    video_categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "tips"
+                    trash_categories:
+                      type: array
+                      items:
+                        type: object      
+                        properties:
+                          name:
+                            type: string
+                            example: "berbahaya"
+                        
                 thumbnail:
                   type: string
                   format: binary
