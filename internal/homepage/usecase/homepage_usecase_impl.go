@@ -60,16 +60,17 @@ func (usecase *HomepageUsecaseImpl) GetHomepageUsecase(userId string) (*dto.Home
 			return nil, erradmin
 		}
 		dataArticle = append(dataArticle, &dto.DataArtcicle{
-			Id:          article.ID,
-			Title:       article.Title,
-			Description: article.Description,
-			Thumbnail:   article.ThumbnailURL,
-			CreatedAt:   article.CreatedAt.String(),
-			AuthorName:  admin.Name,
+			Id:             article.ID,
+			Title:          article.Title,
+			Description:    article.Description,
+			Thumbnail:      article.ThumbnailURL,
+			CreatedAt:      article.CreatedAt.String(),
+			AuthorName:     admin.Name,
+			Author_Profile: admin.ImageUrl,
 		})
 	}
 	return &dto.HomepageResponse{
-		User:        &dto.DataUser{Id: user.ID, Name: user.Name, Point: int(user.Point), Badge: user.Badge},
+		User:        &dto.DataUser{Id: user.ID, Name: user.Name, Point: int(user.Point), Badge: user.Badge, PictureURL: user.PictureURL},
 		Articles:    dataArticle,
 		Videos:      dataVideo,
 		Leaderboard: dataLeaderboard,

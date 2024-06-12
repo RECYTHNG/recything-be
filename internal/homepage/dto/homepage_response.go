@@ -8,19 +8,21 @@ type HomepageResponse struct {
 }
 
 type DataUser struct {
-	Id    string `json:"id"`
-	Name  string `json:"name"`
-	Point int    `json:"point"`
-	Badge string `json:"badge"`
+	Id         string `json:"id"`
+	Name       string `json:"name"`
+	PictureURL string `json:"picture_url"`
+	Point      int    `json:"point"`
+	Badge      string `json:"badge"`
 }
 
 type DataArtcicle struct {
-	Id          string `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Thumbnail   string `json:"thumbnail"`
-	CreatedAt   string `json:"created_at"`
-	AuthorName  string `json:"author_name"`
+	Id             string `json:"id"`
+	Title          string `json:"title"`
+	Description    string `json:"description"`
+	Thumbnail      string `json:"thumbnail"`
+	AuthorName     string `json:"author_name"`
+	Author_Profile string `json:"author_profile"`
+	CreatedAt      string `json:"created_at"`
 }
 
 type DataVideo struct {
