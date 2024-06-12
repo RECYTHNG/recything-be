@@ -44,6 +44,9 @@ tags:
   - name: user achievements
     description: Endpoint for user get achievement
   - name: leaderboard
+    description: Endpoint for user get leaderboard
+  - name: homepage
+    description: Endpoint for user get homepage
 
 paths:
   /register:
@@ -4188,7 +4191,7 @@ paths:
   /leaderboard:
     get:
       tags:
-        - leaderboards
+        - leaderboard
       summary: Get leaderboard
       description: Endpoint for user or admin get leaderboard
       operationId: getLeaderboard
@@ -4226,7 +4229,131 @@ paths:
                         badge:
                           type: string
                           example: https://res.cloudinary.com/dymhvau8n/image/upload/v1717758679/achievement_badge/cq2n246e6twuksnia62t.png
-
+  /homepage:
+    get:
+      tags:
+        - homepage
+      summary: Get homepage
+      description: Endpoint for user get homepage
+      operationId: getHomepage
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: USR0001
+                            name:
+                              type: string
+                              example: John Doe
+                            picture_url:
+                              type: string
+                              example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                            point:
+                              type: integer
+                              example: 1000
+                            badge:
+                              type: string
+                        articles:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: ART0001
+                              title:
+                                type: string
+                                example: RecyThing
+                              description:
+                                type: string
+                                example: RecyThing adalah pemimpin di industri daur ulang sampah yang berkomitmen untuk menjaga lingkungan hidup yang lebih bersih dan lebih berkelanjutan.
+                              thumbnail:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                                description: Thumbnail article
+                              author_name:
+                                type: string
+                                example: John Doe
+                                description: Name of the author
+                              profile_author:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                                description: Profile picture of the author
+                              created_at:
+                                type: string
+                                format: date
+                                example: "2020-01-01"
+                                description: Date and time when the article was created
+                        videos:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              title:
+                                type: string
+                                example: RecyThing
+                              description:
+                                type: string
+                                example: RecyThing adalah pemimpin di industri daur ulang sampah yang berkomitmen untuk menjaga lingkungan hidup yang lebih bersih dan lebih berkelanjutan.
+                              url_thumbnail:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                                description: Thumbnail video
+                              link_video:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/video/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.mp4
+                                description: Link video Youtube
+                              viewer:
+                                type: integer
+                                example: 1000
+                        leaderboard:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: USR0001
+                                description: ID of the user
+                              name:
+                                type: string
+                                example: John Doe
+                              picture_url:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                                description: Profile picture of the user
+                              point:
+                                type: integer
+                                example: 1000
+                                description: Point of the user
+                              badge:
+                                type: string
+                                example: https://res.cloudinary.com/dymhvau8n/image/upload/v1717758679/achievement_badge/cq2n246e6twuksnia62t.png
+                                description: Badge of the user
+                              
 components:
   schemas:
     User:
