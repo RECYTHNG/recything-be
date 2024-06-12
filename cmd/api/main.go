@@ -36,11 +36,14 @@ func main() {
 	// Init Achievements
 	db.InitAchievements()
 
-	// Init Video Categories
-	db.InitVideoCategories()
-
 	// Init About us
 	db.InitAboutUs()
+
+	// Init Article Categories
+	db.InitArticleCategory()
+
+	// Init Article
+	db.InitArticle()
 
 	// Init Videos
 	db.InitDataVideos()
@@ -50,6 +53,12 @@ func main() {
 
 	// Init Article
 	db.InitArticle()
+
+	// Init Video Categories
+	db.InitVideoCategories()
+
+	// Init Trash Category Video
+	db.InitTrashCategoryVideo()
 
 	app := server.NewEchoServer(conf, db)
 	c := cron.New()

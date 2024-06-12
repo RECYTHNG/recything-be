@@ -64,7 +64,10 @@ var (
 	ErrVideoService                  = errors.New("video service error")
 	ErrApiYouTube                    = errors.New("api youtube error")
 	ErrParsingUrl                    = errors.New("parsing url error")
-	ErrVideoCategoryNotFound         = errors.New("video category not found")
+	ErrVideoCategory                 = errors.New("video category is required")
+	ErrVideoTrashCategory            = errors.New("video category tash is required")
+	ErrNameCategoryVideoNotFound     = errors.New("name category video not found")
+	ErrNameTrashCategoryNotFound     = errors.New("name trash category not found")
 
 	// user achievement
 	ErrUserNotHasHistoryPoint = errors.New("user not has history points")

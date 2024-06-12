@@ -46,12 +46,26 @@ func (usecase *UserVideoUsecaseImpl) GetAllVideoUsecase() (*[]video.Video, error
 	return updatedVideos, nil
 }
 
-func (usecase *UserVideoUsecaseImpl) SearchVideoByTitleUsecase(title string) (*[]video.Video, error) {
-	videos, err := usecase.Repository.SearchVideoByTitle(title)
+func (usecase *UserVideoUsecaseImpl) SearchVideoByKeywordUsecase(keyword string) (*[]video.Video, error) {
+	videos, err := usecase.Repository.SearchVideoByKeyword(keyword)
 	if err != nil {
 		return nil, err
 	}
 	if videos == nil {
+		return nil, pkg.ErrVideoNotFound
+	}
+	return videos, nil
+}
+
+func (usecase *UserVideoUsecaseImpl) SearchVideoByCategoryUsecase(categoryType string, name string) (*[]video.Video, error) {
+	videos, err := usecase.Repository.SearchVideoByCategory(categoryType, name)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, pkg.ErrVideoNotFound
+		}
+		return nil, err
+	}
+	if len(*videos) == 0 {
 		return nil, pkg.ErrVideoNotFound
 	}
 	return videos, nil

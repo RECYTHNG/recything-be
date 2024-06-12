@@ -14,16 +14,26 @@ type Video struct {
 	Thumbnail       string
 	Link            string
 	Viewer          int
-	VideoCategoryID int            `gorm:"index"`
-	Category        VideoCategory  `gorm:"foreignKey:VideoCategoryID"`
-	CreatedAt       time.Time      `gorm:"autoCreateTime"`
-	UpdatedAt       time.Time      `gorm:"autoUpdateTime"`
-	DeletedAt       gorm.DeletedAt `gorm:"index"`
+	VideoCategories []VideoCategory `gorm:"foreignKey:VideoID;references:ID"`
+	TrashCategories []TrashCategory `gorm:"foreignKey:VideoID;references:ID"`
+	CreatedAt       time.Time       `gorm:"autoCreateTime"`
+	UpdatedAt       time.Time       `gorm:"autoUpdateTime"`
+	DeletedAt       gorm.DeletedAt  `gorm:"index"`
+}
+
+type TrashCategory struct {
+	ID        int `gorm:"primaryKey"`
+	VideoID   int `gorm:"index"`
+	Name      string
+	CreatedAt time.Time      `gorm:"autoCreateTime"`
+	UpdatedAt time.Time      `gorm:"autoUpdateTime"`
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 type VideoCategory struct {
-	ID        int            `gorm:"primaryKey"`
-	Name      string         `gorm:"unique;not null"`
+	ID        int `gorm:"primaryKey"`
+	VideoID   int `gorm:"index"`
+	Name      string
 	CreatedAt time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt time.Time      `gorm:"autoUpdateTime"`
 	DeletedAt gorm.DeletedAt `gorm:"index"`

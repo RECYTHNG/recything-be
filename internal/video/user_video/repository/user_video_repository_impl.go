@@ -3,6 +3,7 @@ package repository
 import (
 	"github.com/sawalreverr/recything/internal/database"
 	video "github.com/sawalreverr/recything/internal/video/manage_video/entity"
+	"github.com/sawalreverr/recything/pkg"
 )
 
 type UserVideoRepositoryImpl struct {
@@ -17,6 +18,8 @@ func (repository *UserVideoRepositoryImpl) GetAllVideo() (*[]video.Video, error)
 	var videos []video.Video
 	if err := repository.DB.GetDB().
 		Order("created_at desc").
+		Preload("VideoCategories").
+		Preload("TrashCategories").
 		Find(&videos).
 		Error; err != nil {
 		return nil, err
@@ -24,12 +27,69 @@ func (repository *UserVideoRepositoryImpl) GetAllVideo() (*[]video.Video, error)
 	return &videos, nil
 }
 
-func (repository *UserVideoRepositoryImpl) SearchVideoByTitle(title string) (*[]video.Video, error) {
-	var video []video.Video
-	if err := repository.DB.GetDB().Where("title LIKE ?", "%"+title+"%").Find(&video).Error; err != nil {
+func (repository *UserVideoRepositoryImpl) SearchVideoByKeyword(keyword string) (*[]video.Video, error) {
+	var videos []video.Video
+	if err := repository.DB.GetDB().
+		Order("created_at desc").
+		Preload("VideoCategories").
+		Preload("TrashCategories").
+		Joins("JOIN video_categories ON video_categories.video_id = videos.id").
+		Joins("JOIN trash_categories ON trash_categories.video_id = videos.id").
+		Where("videos.title LIKE ? OR videos.description LIKE ? OR trash_categories.name LIKE ? OR video_categories.name LIKE ?", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%").
+		Find(&videos).Error; err != nil {
 		return nil, err
 	}
-	return &video, nil
+	videoMap := make(map[int]video.Video)
+	for _, v := range videos {
+		videoMap[v.ID] = v
+	}
+
+	uniqueVideos := make([]video.Video, 0, len(videoMap))
+	for _, v := range videoMap {
+		uniqueVideos = append(uniqueVideos, v)
+	}
+
+	return &uniqueVideos, nil
+}
+
+func (repository *UserVideoRepositoryImpl) SearchVideoByCategory(categoryType string, name string) (*[]video.Video, error) {
+	var videos []video.Video
+	if categoryType == "content" {
+		if err := repository.DB.GetDB().
+			Order("created_at desc").
+			Joins("JOIN video_categories ON video_categories.video_id = videos.id").
+			Where("video_categories.name LIKE ?", "%"+name+"%").
+			Preload("VideoCategories").
+			Preload("TrashCategories").
+			Find(&videos).Error; err != nil {
+			return nil, err
+		}
+
+	} else if categoryType == "waste" {
+		if err := repository.DB.GetDB().
+			Order("created_at desc").
+			Joins("JOIN trash_categories ON trash_categories.video_id = videos.id").
+			Where("trash_categories.name LIKE ?", "%"+name+"%").
+			Preload("VideoCategories").
+			Preload("TrashCategories").
+			Find(&videos).Error; err != nil {
+			return nil, err
+		}
+	} else {
+		return nil, pkg.ErrVideoNotFound
+	}
+
+	videoMap := make(map[int]video.Video)
+	for _, v := range videos {
+		videoMap[v.ID] = v
+	}
+
+	uniqueVideos := make([]video.Video, 0, len(videoMap))
+	for _, v := range videoMap {
+		uniqueVideos = append(uniqueVideos, v)
+	}
+
+	return &uniqueVideos, nil
 }
 
 func (repository *UserVideoRepositoryImpl) GetVideoDetail(id int) (*video.Video, *[]video.Comment, error) {

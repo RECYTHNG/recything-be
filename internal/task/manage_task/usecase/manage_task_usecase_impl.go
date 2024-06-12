@@ -97,63 +97,72 @@ func (usecase *ManageTaskUsecaseImpl) GetTaskByIdUsecase(id string) (*task.TaskC
 }
 
 func (usecase *ManageTaskUsecaseImpl) UpdateTaskChallengeUsecase(request *dto.UpdateTaskRequest, thumbnail []*multipart.FileHeader, id string) (*task.TaskChallenge, error) {
-	if len(thumbnail) == 0 {
-		return nil, pkg.ErrThumbnail
-	}
+
 	if len(thumbnail) > 1 {
 		return nil, pkg.ErrThumbnailMaximum
 	}
-	if len(request.TaskSteps) == 0 {
-		return nil, pkg.ErrTaskStepsNull
-	}
-	validImages, errImages := helper.ImagesValidation(thumbnail)
-	if errImages != nil {
-		return nil, errImages
-	}
-	urlThumbnail, errUpload := helper.UploadToCloudinary(validImages[0], "task_thumbnail_update")
-	if errUpload != nil {
-		return nil, pkg.ErrUploadCloudinary
-	}
 
-	findTask, _ := usecase.ManageTaskRepository.FindTask(id)
-
-	if findTask == nil {
-		return nil, pkg.ErrTaskNotFound
-	}
-
-	startDateString := request.StartDate
-	endDateString := request.EndDate
-	parsedStartDate, errParsedStartDate := time.Parse("2006-01-02", startDateString)
-	if errParsedStartDate != nil {
-		return nil, pkg.ErrParsedTime
-	}
-	parsedEndDate, errParsedEndDate := time.Parse("2006-01-02", endDateString)
-	if errParsedEndDate != nil {
-		return nil, pkg.ErrParsedTime
-	}
-
-	taskChallenge := &task.TaskChallenge{
-		ID:          id,
-		AdminId:     findTask.AdminId,
-		Title:       request.Title,
-		Description: request.Description,
-		Thumbnail:   urlThumbnail,
-		StartDate:   parsedStartDate,
-		EndDate:     parsedEndDate,
-		Point:       request.Point,
-	}
-
-	// Add new steps
-	for _, step := range request.TaskSteps {
-		taskStep := task.TaskStep{
-			TaskChallengeId: id,
-			Title:           step.Title,
-			Description:     step.Description,
+	var urlThumbnail string
+	if len(thumbnail) == 1 {
+		validImages, errImages := helper.ImagesValidation(thumbnail)
+		if errImages != nil {
+			return nil, errImages
 		}
-		taskChallenge.TaskSteps = append(taskChallenge.TaskSteps, taskStep)
+		urlThumbnailUpload, errUpload := helper.UploadToCloudinary(validImages[0], "task_thumbnail_update")
+		if errUpload != nil {
+			return nil, pkg.ErrUploadCloudinary
+		}
+		urlThumbnail = urlThumbnailUpload
 	}
 
-	updatedTaskChallenge, err := usecase.ManageTaskRepository.UpdateTaskChallenge(taskChallenge, id)
+	tasks, err := usecase.ManageTaskRepository.FindTask(id)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, pkg.ErrTaskNotFound
+		}
+		return nil, err
+	}
+
+	if request.Title != "" {
+		tasks.Title = request.Title
+	}
+	if request.Description != "" {
+		tasks.Description = request.Description
+	}
+	if request.Point != 0 {
+		tasks.Point = request.Point
+	}
+	if urlThumbnail != "" {
+		tasks.Thumbnail = urlThumbnail
+	}
+	if request.StartDate != "" {
+		parsedStartDate, errParsedStartDate := time.Parse("2006-01-02", request.StartDate)
+		if errParsedStartDate != nil {
+			return nil, pkg.ErrParsedTime
+		}
+		tasks.StartDate = parsedStartDate
+	}
+	if request.EndDate != "" {
+		parsedEndDate, errParsedEndDate := time.Parse("2006-01-02", request.EndDate)
+		if errParsedEndDate != nil {
+			return nil, pkg.ErrParsedTime
+		}
+		tasks.EndDate = parsedEndDate
+	}
+
+	if len(request.TaskSteps) != 0 {
+		tasks.TaskSteps = []task.TaskStep{}
+		for _, step := range request.TaskSteps {
+			taskStep := task.TaskStep{
+				TaskChallengeId: id,
+				Title:           step.Title,
+				Description:     step.Description,
+			}
+			tasks.TaskSteps = append(tasks.TaskSteps, taskStep)
+		}
+	}
+
+	updatedTaskChallenge, err := usecase.ManageTaskRepository.UpdateTaskChallenge(tasks, id)
 	if err != nil {
 		return nil, err
 	}
