@@ -10,5 +10,6 @@ type AboutUsResponse struct {
 
 type AboutUsImageResponse struct {
 	AboutUsID string `json:"about_us_id"`
+	Name      string `json:"name"`
 	ImageURL  string `json:"image_url"`
 }

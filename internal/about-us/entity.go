@@ -23,6 +23,7 @@ type AboutUs struct {
 type AboutUsImage struct {
 	ID        string `json:"id" gorm:"primaryKey"`
 	AboutUsID string `json:"about_us_id"`
+	Name      string `json:"name"`
 	ImageURL  string `json:"image_url"`
 
 	CreatedAt time.Time      `json:"-"`

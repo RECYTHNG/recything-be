@@ -297,16 +297,18 @@ func (m *mysqlDatabase) InitAboutUs() {
 		{ID: "ABS04", Category: "perusahaan", Title: "Pelayanan Pelanggan Unggul", Description: "Tim ahli yang berpengalaman memberikan solusi tepat dan responsif sesuai dengan kebutuhan klien."},
 		{ID: "ABS05", Category: "perusahaan", Title: "Pendidikan Masyarakat", Description: "Berperan aktif dalam mendidik masyarakat tentang pentingnya daur ulang dan pengelolaan limbah yang berkelanjutan."},
 
-		{ID: "ABS06", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
-		{ID: "ABS07", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
-		{ID: "ABS08", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
-		{ID: "ABS09", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
+		{ID: "ABS06", Category: "tim", Title: "Tim UI/UX", Description: "Tim UI/UX kami adalah kekuatan kreatif yang memastikan RecyThing intuitif dan ramah pengguna. Mereka berdedikasi untuk merancang interaksi yang mulus dan interface yang menarik secara visual untuk meningkatkan pengalaman pengguna. Komitmen mereka dalam memahami kebutuhan pengguna mendorong perbaikan berkelanjutan dari desain aplikasi kami."},
+		{ID: "ABS07", Category: "tim", Title: "Tim Mobile", Description: "Tim Mobile Development kami membawa RecyThing ke genggaman Anda. Mereka berspesialisasi dalam menciptakan aplikasi mobile yang mulus dan responsif. Keahlian mereka memastikan bahwa aplikasi kami berfungsi dengan sempurna di berbagai perangkat, memberikan pengguna alat yang andal dan efisien untuk kebutuhan daur ulang mereka."},
+		{ID: "ABS08", Category: "tim", Title: "Tim Front End", Description: "Tim Front-End Development kami bertanggung jawab untuk menerjemahkan desain kami menjadi interface yang fungsional. Mereka bekerja dengan teknologi web terbaru untuk menciptakan pengalaman pengguna yang cepat dan menarik. Perhatian mereka terhadap detail memastikan bahwa setiap aspek aplikasi konsisten secara visual dan beroperasi dengan lancar."},
+		{ID: "ABS09", Category: "tim", Title: "Tim Back End", Description: "Tim Back-End kami membangun infrastruktur kuat yang mendukung RecyThing. Mereka mengembangkan dan memelihara logika sisi server, basis data, dan integrasi yang memastikan aplikasi kami berjalan efisien dan aman. Pekerjaan mereka menjamin bahwa data pengguna ditangani dengan sangat hati-hati dan bahwa kinerja aplikasi tetap optimal."},
+		{ID: "ABS10", Category: "tim", Title: "Tim Data Engineer", Description: "Tim Data Engineer di RecyThing memanfaatkan kekuatan data untuk mendorong pengambilan keputusan yang terinformasi. Mereka mengelola pengumpulan, pemrosesan, dan analisis data untuk mengoptimalkan solusi daur ulang kami. Wawasan mereka membantu kami memahami perilaku pengguna, meningkatkan layanan kami, dan berkontribusi pada masa depan yang lebih berkelanjutan."},
+		{ID: "ABS11", Category: "tim", Title: "Tim Quality Engineer", Description: "Tim Quality Engineer kami berkomitmen untuk menjaga standar tertinggi dalam hal keandalan dan kinerja. Mereka melakukan pengujian yang ketat untuk mengidentifikasi dan menyelesaikan masalah apa pun, memastikan bahwa aplikasi kami kuat dan aman. Dedikasi mereka terhadap jaminan kualitas memastikan bahwa RecyThing memberikan pengalaman yang mulus dan bebas hambatan bagi semua pengguna."},
 
-		{ID: "ABS10", Category: "contact_us", Title: "Hubungi Kami", Description: "Jika Anda memiliki pertanyaan, masukan, atau ingin bermitra dengan kami, jangan ragu untuk menghubungi tim kami. Kami siap membantu Anda dengan segala kebutuhan terkait daur ulang dan pengelolaan limbah."},
-		{ID: "ABS11", Category: "contact_us", Title: "Alamat Kantor", Description: "Recything\nJalan Mangga Dua\nJakarta Pusat, 20012\nIndonesia"},
-		{ID: "ABS12", Category: "contact_us", Title: "Jam Operasional", Description: "Senin-Jumat: 08.00 - 17.00 WIB"},
-		{ID: "ABS13", Category: "contact_us", Title: "Telepon", Description: "+6289511223344"},
-		{ID: "ABS14", Category: "contact_us", Title: "Social Media", Description: "Facebook: https://facebook.com/recything\nTwitter: https://x.com/recything\nInstagram: https://instagram.com/recything\nLinkedin: https://linkedin.com/recything"},
+		{ID: "ABS12", Category: "contact_us", Title: "Hubungi Kami", Description: "Jika Anda memiliki pertanyaan, masukan, atau ingin bermitra dengan kami, jangan ragu untuk menghubungi tim kami. Kami siap membantu Anda dengan segala kebutuhan terkait daur ulang dan pengelolaan limbah."},
+		{ID: "ABS13", Category: "contact_us", Title: "Alamat Kantor", Description: "Recything\nJalan Mangga Dua\nJakarta Pusat, 20012\nIndonesia"},
+		{ID: "ABS14", Category: "contact_us", Title: "Jam Operasional", Description: "Senin-Jumat: 08.00 - 17.00 WIB"},
+		{ID: "ABS15", Category: "contact_us", Title: "Telepon", Description: "+6289511223344"},
+		{ID: "ABS16", Category: "contact_us", Title: "Social Media", Description: "Facebook: https://facebook.com/recything\nTwitter: https://x.com/recything\nInstagram: https://instagram.com/recything\nLinkedin: https://linkedin.com/recything"},
 	}
 
 	aboutUsImages := []aboutus.AboutUsImage{
@@ -315,23 +317,35 @@ func (m *mysqlDatabase) InitAboutUs() {
 		{ID: "ABSI02", AboutUsID: "ABS05", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758301/recything/about-us/spgrokvm9un0yq5zsycn.png"},
 		{ID: "ABSI03", AboutUsID: "ABS05", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758301/recything/about-us/tynymzulgmkwiqu4a7mb.png"},
 
-		{ID: "ABSI04", AboutUsID: "ABS06", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{ID: "ABSI05", AboutUsID: "ABS06", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{ID: "ABSI06", AboutUsID: "ABS06", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI04", AboutUsID: "ABS06", Name: "Hadyan Alhafizh", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/uiux-1.png"},
+		{ID: "ABSI05", AboutUsID: "ABS06", Name: "Leonita Puteri Kurniawan", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/uiux-2.png"},
+		{ID: "ABSI06", AboutUsID: "ABS06", Name: "Afni Kurnia Herawati", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/uiux-3.png"},
+		{ID: "ABSI07", AboutUsID: "ABS06", Name: "Adillah Bulan Suci", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/uiux-4.png"},
+		{ID: "ABSI08", AboutUsID: "ABS06", Name: "Ana Nestania", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/uiux-5.png"},
+		{ID: "ABSI09", AboutUsID: "ABS06", Name: "Addina Khairinisa", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/uiux-6.png"},
 
-		{ID: "ABSI07", AboutUsID: "ABS07", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{ID: "ABSI08", AboutUsID: "ABS07", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{ID: "ABSI09", AboutUsID: "ABS07", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI10", AboutUsID: "ABS07", Name: "Aulia Heppy Cahya S.", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/mobile-1.png"},
+		{ID: "ABSI11", AboutUsID: "ABS07", Name: "Fadhl Al-Hafizh", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/mobile-2.png"},
+		{ID: "ABSI12", AboutUsID: "ABS07", Name: "Zulfan Faizun Nazib", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/mobile-3.png"},
+		{ID: "ABSI13", AboutUsID: "ABS07", Name: "Muhammad Maulana Givari", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/mobile-4.png"},
+		{ID: "ABSI14", AboutUsID: "ABS07", Name: "Aflah Alifuna M. R.", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/mobile-5.png"},
 
-		{ID: "ABSI10", AboutUsID: "ABS08", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{ID: "ABSI11", AboutUsID: "ABS08", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{ID: "ABSI12", AboutUsID: "ABS08", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI15", AboutUsID: "ABS08", Name: "Nauval Fahreza Attamimi", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/frontend-1.png"},
+		{ID: "ABSI16", AboutUsID: "ABS08", Name: "Yohannes Rahul Rafael", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/frontend-2.png"},
+		{ID: "ABSI17", AboutUsID: "ABS08", Name: "Naufal Yusuf Fauzan", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/frontend-3.png"},
+		{ID: "ABSI18", AboutUsID: "ABS08", Name: "Novia Dwi Lestari", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/frontend-4.png"},
 
-		{ID: "ABSI13", AboutUsID: "ABS09", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{ID: "ABSI14", AboutUsID: "ABS09", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{ID: "ABSI15", AboutUsID: "ABS09", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI19", AboutUsID: "ABS09", Name: "Muhammad Shahwal R. B", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/backend-1.png"},
+		{ID: "ABSI20", AboutUsID: "ABS09", Name: "Markus Rabin Ronaldo", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/backend-2.png"},
 
-		{ID: "ABSI16", AboutUsID: "ABS10", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/mfi5xij2xssmztqwaybz.png"},
+		{ID: "ABSI21", AboutUsID: "ABS10", Name: "Yazid Ahmad Hisyam", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/data-1.png"},
+		{ID: "ABSI22", AboutUsID: "ABS10", Name: "Daffa Alfahryan Syuja Syaehu", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/data-2.png"},
+		{ID: "ABSI23", AboutUsID: "ABS10", Name: "Afril Istihawa", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/data-3.png"},
+
+		{ID: "ABSI24", AboutUsID: "ABS11", Name: "Ismy Fana Fillah", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/quality-1.png"},
+		{ID: "ABSI25", AboutUsID: "ABS11", Name: "Ardelia Syahira Yudiva", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/quality-2.png"},
+
+		{ID: "ABSI26", AboutUsID: "ABS12", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/mfi5xij2xssmztqwaybz.png"},
 	}
 
 	for _, about := range aboutUs {
