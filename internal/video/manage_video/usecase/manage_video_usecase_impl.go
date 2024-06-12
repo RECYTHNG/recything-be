@@ -107,42 +107,55 @@ func (usecase *ManageVideoUsecaseImpl) GetDetailsDataVideoByIdUseCase(id int) (*
 }
 
 func (usecase *ManageVideoUsecaseImpl) UpdateDataVideoUseCase(request *dto.UpdateDataVideoRequest, thumbnail []*multipart.FileHeader, id int) error {
-	if len(thumbnail) == 0 {
-		return pkg.ErrThumbnail
-	}
 	if len(thumbnail) > 1 {
 		return pkg.ErrThumbnailMaximum
 	}
-	validImages, errImages := helper.ImagesValidation(thumbnail)
-	if errImages != nil {
-		return errImages
+	var urlThumbnail string
+	if len(thumbnail) == 1 {
+		validImages, errImages := helper.ImagesValidation(thumbnail)
+		if errImages != nil {
+			return errImages
+		}
+		urlThumbnailUpload, errUpload := helper.UploadToCloudinary(validImages[0], "video_thumbnail_update")
+		if errUpload != nil {
+			return pkg.ErrUploadCloudinary
+		}
+		urlThumbnail = urlThumbnailUpload
 	}
 
-	if _, err := usecase.manageVideoRepository.GetDetailsDataVideoById(id); err != nil {
+	video, err := usecase.manageVideoRepository.GetDetailsDataVideoById(id)
+	if err != nil {
 		return pkg.ErrVideoNotFound
 	}
-	if _, err := usecase.manageVideoRepository.GetCategoryVideoById(request.CategoryId); err != nil {
-		return pkg.ErrVideoCategoryNotFound
+
+	if request.Title != "" {
+		video.Title = request.Title
 	}
-	view, errGetView := helper.GetVideoViewCount(request.LinkVideo)
-	if errGetView != nil {
-		return errGetView
+	if request.Description != "" {
+		video.Description = request.Description
 	}
-	urlThumbnail, errUpload := helper.UploadToCloudinary(validImages[0], "video_thumbnail_update")
-	if errUpload != nil {
-		return pkg.ErrUploadCloudinary
+	if urlThumbnail != "" {
+		video.Thumbnail = urlThumbnail
+	}
+	if request.LinkVideo != "" {
+		view, errGetView := helper.GetVideoViewCount(request.LinkVideo)
+		if errGetView != nil {
+			return errGetView
+		}
+		if view != 0 {
+			intView := int(view)
+			video.Viewer = intView
+		}
+		video.Link = request.LinkVideo
+	}
+	if request.CategoryId != 0 {
+		if _, err := usecase.manageVideoRepository.GetCategoryVideoById(request.CategoryId); err != nil {
+			return pkg.ErrVideoCategoryNotFound
+		}
+		video.VideoCategoryID = request.CategoryId
 	}
 
-	intView := int(view)
-	video := video.Video{
-		Title:           request.Title,
-		Description:     request.Description,
-		Thumbnail:       urlThumbnail,
-		Link:            request.LinkVideo,
-		VideoCategoryID: request.CategoryId,
-		Viewer:          intView,
-	}
-	if err := usecase.manageVideoRepository.UpdateDataVideo(&video, id); err != nil {
+	if err := usecase.manageVideoRepository.UpdateDataVideo(video, id); err != nil {
 		return err
 	}
 	return nil

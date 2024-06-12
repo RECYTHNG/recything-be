@@ -16,6 +16,9 @@ import (
 	"github.com/sawalreverr/recything/internal/admin/handler"
 	"github.com/sawalreverr/recything/internal/admin/repository"
 	"github.com/sawalreverr/recything/internal/admin/usecase"
+	articleHandler "github.com/sawalreverr/recything/internal/article/handler"
+	articleRepository "github.com/sawalreverr/recything/internal/article/repository"
+	articleUsecase "github.com/sawalreverr/recything/internal/article/usecase"
 	authHandler "github.com/sawalreverr/recything/internal/auth/handler"
 	authUsecase "github.com/sawalreverr/recything/internal/auth/usecase"
 	customDataHandler "github.com/sawalreverr/recything/internal/custom-data/handler"
@@ -150,8 +153,9 @@ func (s *echoServer) supAdminHttpHandler() {
 }
 
 func (s *echoServer) reportHttpHandler() {
-	repository := reportRepo.NewReportRepository(s.db)
-	usecase := reportUsecase.NewReportUsecase(repository)
+	reportRepository := reportRepo.NewReportRepository(s.db)
+	userRepository := userRepo.NewUserRepository(s.db)
+	usecase := reportUsecase.NewReportUsecase(reportRepository, userRepository)
 	handler := reportHandler.NewReportHandler(usecase)
 
 	// User create new report
@@ -267,7 +271,7 @@ func (s *echoServer) manageAchievement() {
 	s.gr.GET("/achievements/:achievementId", handler.GetAchievementByIdHandler, SuperAdminOrAdminMiddleware)
 
 	// update achievement
-	s.gr.PUT("/achievements/:achievementId", handler.UpdateAchievementHandler, SuperAdminOrAdminMiddleware)
+	s.gr.PATCH("/achievements/:achievementId", handler.UpdateAchievementHandler, SuperAdminOrAdminMiddleware)
 
 	// delete achievement
 	s.gr.DELETE("/achievements/:achievementId", handler.DeleteAchievementHandler, SuperAdminOrAdminMiddleware)
@@ -333,7 +337,7 @@ func (s *echoServer) manageVideo() {
 	s.gr.GET("/videos/data/:videoId", handler.GetDetailsDataVideoByIdHandler, SuperAdminOrAdminMiddleware)
 
 	// update data video
-	s.gr.PUT("/videos/data/:videoId", handler.UpdateDataVideoHandler, SuperAdminOrAdminMiddleware)
+	s.gr.PATCH("/videos/data/:videoId", handler.UpdateDataVideoHandler, SuperAdminOrAdminMiddleware)
 
 	// delete data video
 	s.gr.DELETE("/videos/data/:videoId", handler.DeleteDataVideoHandler, SuperAdminOrAdminMiddleware)
@@ -373,4 +377,14 @@ func (s *echoServer) leaderboardHandler() {
 
 	// Get leaderboard
 	s.gr.GET("/leaderboard", handler.GetLeaderboardHandler, AllRoleMiddleware)
+}
+
+func (s *echoServer) articleHandler() {
+	repositoryArticle := articleRepository.NewArticleRepository(s.db)
+	repositoryAdmin := repository.NewAdminRepository(s.db)
+	usecase := articleUsecase.NewArticleUsecase(repositoryArticle, repositoryAdmin)
+	handler := articleHandler.NewArticleHandler(usecase)
+
+	// Get article by id
+	s.gr.GET("/article/:articleId", handler.GetArticleByID, AllRoleMiddleware)
 }

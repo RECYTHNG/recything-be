@@ -8,6 +8,6 @@ import (
 
 type UserAchievementRepository interface {
 	GetAvhievementsByUser() (*[]archievement.Achievement, error)
-	GetHostoryUserPoint(userId string) (*[]user_task.UserTaskChallenge, error)
+	GetHistoryUserPoint(userId string) (*[]user_task.UserTaskChallenge, error)
 	GetPoinUser(userId string) (*user.User, error)
 }

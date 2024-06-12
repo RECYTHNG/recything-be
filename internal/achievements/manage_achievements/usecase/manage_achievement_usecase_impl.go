@@ -36,29 +36,42 @@ func (repository ManageAchievementUsecaseImpl) GetAchievementByIdUsecase(id int)
 	return achievement, nil
 }
 
-func (repository ManageAchievementUsecaseImpl) UpdateAchievementUsecase(request *dto.UpdateAchievementRequest, badge []*multipart.FileHeader, id int) error {
-	if len(badge) == 0 {
-		return pkg.ErrBadge
-	}
-	if len(badge) > 1 {
-		return pkg.ErrBadgeMaximum
-	}
-	validImages, errImages := helper.ImagesValidation(badge)
-	if errImages != nil {
-		return errImages
-	}
-	urlBadge, errUpload := helper.UploadToCloudinary(validImages[0], "achievements_badge")
-	if errUpload != nil {
-		return pkg.ErrUploadCloudinary
-	}
-
+func (repository ManageAchievementUsecaseImpl) UpdateAchievementUsecase(request *dto.UpdateAchievementRequest, badge *multipart.FileHeader, id int) error {
 	achievement, err := repository.repository.GetAchievementById(id)
 	if err != nil {
 		return pkg.ErrAchievementNotFound
 	}
-	achievement.Level = strings.ToLower(request.Level)
-	achievement.TargetPoint = request.TargetPoint
-	achievement.BadgeUrl = urlBadge
+	var urlBadge string
+	if badge != nil {
+		if badge.Size > 2*1024*1024 {
+			return pkg.ErrFileTooLarge
+		}
+		if !strings.HasPrefix(badge.Header.Get("Content-Type"), "image") {
+			return pkg.ErrInvalidFileType
+		}
+		src, errOpen := badge.Open()
+		if errOpen != nil {
+			return pkg.ErrOpenFile
+		}
+
+		urlBadgeUpload, errUpload := helper.UploadToCloudinary(src, "achievement_badge")
+		if errUpload != nil {
+			return errUpload
+		}
+		urlBadge = urlBadgeUpload
+		defer src.Close()
+	}
+
+	if request.Level != "" {
+		achievement.Level = request.Level
+	}
+	if request.TargetPoint != 0 {
+		achievement.TargetPoint = request.TargetPoint
+	}
+	if urlBadge != "" {
+		achievement.BadgeUrl = urlBadge
+	}
+
 	if err := repository.repository.UpdateAchievement(achievement, id); err != nil {
 		return err
 	}

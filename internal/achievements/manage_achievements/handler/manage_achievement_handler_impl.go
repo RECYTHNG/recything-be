@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 	"strconv"
@@ -73,34 +72,24 @@ func (handler ManageAchievementHandlerImpl) UpdateAchievementHandler(c echo.Cont
 	}
 
 	request := dto.UpdateAchievementRequest{}
-	json_data := c.FormValue("json_data")
-	if err := json.Unmarshal([]byte(json_data), &request); err != nil {
+
+	if err := c.Bind(&request); err != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
-	if err := c.Validate(&request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
-	}
-	form, errForm := c.MultipartForm()
-	if errForm != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, errForm.Error())
-	}
-	badge := form.File["badge"]
+	badge, _ := c.FormFile("badge")
 	err := handler.usecae.UpdateAchievementUsecase(&request, badge, achievementIdInt)
 	if err != nil {
 		if errors.Is(err, pkg.ErrAchievementNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrAchievementNotFound.Error())
 		}
-		if errors.Is(err, pkg.ErrBadge) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrBadge.Error())
+		if errors.Is(err, pkg.ErrFileTooLarge) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrFileTooLarge.Error())
 		}
-		if errors.Is(err, pkg.ErrBadgeMaximum) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrBadgeMaximum.Error())
+		if errors.Is(err, pkg.ErrInvalidFileType) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrInvalidFileType.Error())
 		}
-		if errors.Is(err, errors.New("upload image size must less than 2MB")) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, "upload image size must less than 2MB")
-		}
-		if errors.Is(err, errors.New("only image allowed")) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, "only image allowed")
+		if errors.Is(err, pkg.ErrOpenFile) {
+			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrOpenFile.Error())
 		}
 		if errors.Is(err, pkg.ErrUploadCloudinary) {
 			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
