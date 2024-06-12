@@ -220,24 +220,28 @@ func (m *mysqlDatabase) InitTaskSteps() {
 func (m *mysqlDatabase) InitAchievements() {
 	dumyData := []achievement.Achievement{
 		{
-			Level:       "classic",
-			TargetPoint: 0,
-			BadgeUrl:    "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758679/achievement_badge/cq2n246e6twuksnia62t.png",
+			Level:        "classic",
+			TargetPoint:  0,
+			BadgeUrl:     "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758679/achievement_badge/cq2n246e6twuksnia62t.png",
+			BadgeUrlUser: "https://res.cloudinary.com/dymhvau8n/image/upload/v1718189121/user_badge/htaemsjtlhfof7ww01ss.png",
 		},
 		{
-			Level:       "silver",
-			TargetPoint: 50000,
-			BadgeUrl:    "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758731/achievement_badge/b8igluyain8bwyjusfpk.png",
+			Level:        "silver",
+			TargetPoint:  50000,
+			BadgeUrl:     "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758731/achievement_badge/b8igluyain8bwyjusfpk.png",
+			BadgeUrlUser: "https://res.cloudinary.com/dymhvau8n/image/upload/v1718189221/user_badge/oespnjdgoynkairlutbk.png",
 		},
 		{
-			Level:       "gold",
-			TargetPoint: 150000,
-			BadgeUrl:    "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758761/achievement_badge/lazzyh9tytvb4rophbc3.png",
+			Level:        "gold",
+			TargetPoint:  150000,
+			BadgeUrl:     "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758761/achievement_badge/lazzyh9tytvb4rophbc3.png",
+			BadgeUrlUser: "https://res.cloudinary.com/dymhvau8n/image/upload/v1718189184/user_badge/jshs1s2fwevahgtvjkgj.png",
 		},
 		{
-			Level:       "platinum",
-			TargetPoint: 300000,
-			BadgeUrl:    "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758798/achievement_badge/xc8msr6agowzhfq8ss8a.png",
+			Level:        "platinum",
+			TargetPoint:  300000,
+			BadgeUrl:     "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758798/achievement_badge/xc8msr6agowzhfq8ss8a.png",
+			BadgeUrlUser: "https://res.cloudinary.com/dymhvau8n/image/upload/v1718188250/user_badge/icureiapdvtzyu5b99zu.png",
 		},
 	}
 

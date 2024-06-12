@@ -22,7 +22,7 @@ func (usecase *UserAchievementUsecaseImpl) GetAvhievementsByUser(userId string) 
 		return nil, err
 	}
 
-	historyUserPoint, err := usecase.userAchievementRepository.GetHostoryUserPoint(userId)
+	historyUserPoint, err := usecase.userAchievementRepository.GetHistoryUserPoint(userId)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, pkg.ErrUserNotHasHistoryPoint
