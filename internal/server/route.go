@@ -27,6 +27,9 @@ import (
 	faqHandler "github.com/sawalreverr/recything/internal/faq/handler"
 	faqRepo "github.com/sawalreverr/recything/internal/faq/repository"
 	faqUsecase "github.com/sawalreverr/recything/internal/faq/usecase"
+	homepageHandler "github.com/sawalreverr/recything/internal/homepage/handler"
+	homepageRepo "github.com/sawalreverr/recything/internal/homepage/repository"
+	homepageUsecase "github.com/sawalreverr/recything/internal/homepage/usecase"
 	leaderboardHandler "github.com/sawalreverr/recything/internal/leaderboard/handler"
 	leaderboardRepo "github.com/sawalreverr/recything/internal/leaderboard/repository"
 	leaderboardUsecase "github.com/sawalreverr/recything/internal/leaderboard/usecase"
@@ -387,4 +390,13 @@ func (s *echoServer) articleHandler() {
 
 	// Get article by id
 	s.gr.GET("/article/:articleId", handler.GetArticleByID, AllRoleMiddleware)
+}
+
+func (s *echoServer) homepageHandler() {
+	repository := homepageRepo.NewHomepageRepository(s.db)
+	usecase := homepageUsecase.NewHomepageUsecase(repository)
+	handler := homepageHandler.NewHomePageHandler(usecase)
+
+	// Get homepage
+	s.gr.GET("/homepage", handler.GetHomepageHandler, UserMiddleware)
 }

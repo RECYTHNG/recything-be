@@ -22,8 +22,8 @@ type Video struct {
 }
 
 type VideoCategory struct {
-	ID        int            `gorm:"primaryKey"`
-	Name      string         `gorm:"unique;not null"`
+	ID        int `gorm:"primaryKey"`
+	Name      string
 	CreatedAt time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt time.Time      `gorm:"autoUpdateTime"`
 	DeletedAt gorm.DeletedAt `gorm:"index"`

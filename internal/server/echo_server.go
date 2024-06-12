@@ -100,6 +100,9 @@ func (s *echoServer) Start() {
 	// Article Handler
 	s.articleHandler()
 
+	// homepage handler
+	s.homepageHandler()
+
 	serverPORT := fmt.Sprintf(":%d", s.conf.Server.Port)
 	s.app.Logger.Fatal(s.app.Start(serverPORT))
 }
