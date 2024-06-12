@@ -135,4 +135,5 @@ type ArticleHandler interface {
 	GetArticleByID(c echo.Context) error
 
 	NewArticleComment(c echo.Context) error
+	ArticleUploadImage(c echo.Context) error
 }

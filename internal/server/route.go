@@ -412,6 +412,9 @@ func (s *echoServer) articleHandler() {
 
 	// Add new comment by user
 	s.gr.POST("/article/:articleId/comment", handler.NewArticleComment, UserMiddleware)
+
+	// Upload image
+	s.gr.POST("/article/upload", handler.ArticleUploadImage, SuperAdminOrAdminMiddleware)
 }
 
 func (s *echoServer) homepageHandler() {

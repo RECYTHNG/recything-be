@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	art "github.com/sawalreverr/recything/internal/article"
@@ -174,4 +175,32 @@ func (h *articleHandler) NewArticleComment(c echo.Context) error {
 	}
 
 	return helper.ResponseHandler(c, http.StatusCreated, "comment added!", nil)
+}
+
+func (h *articleHandler) ArticleUploadImage(c echo.Context) error {
+	file, err := c.FormFile("image")
+	if err != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "please upload your image!")
+	}
+
+	if file.Size > 2*1024*1024 {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "upload image size must less than 2MB!")
+	}
+
+	fileType := file.Header.Get("Content-Type")
+	if !strings.HasPrefix(fileType, "image/") {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "only image allowed!")
+	}
+
+	src, _ := file.Open()
+	defer src.Close()
+
+	resp, err := helper.UploadToCloudinary(src, "recything/article/")
+	if err != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "upload failed, cloudinary server error!")
+	}
+
+	return helper.ResponseHandler(c, http.StatusOK, "upload successfully!", echo.Map{
+		"image_url": resp,
+	})
 }
