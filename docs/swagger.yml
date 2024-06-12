@@ -1803,7 +1803,6 @@ paths:
                     type: string
                     example: task not found
     patch:
-    patch:
       tags:
         - manage tasks
       summary: Update task
@@ -1820,7 +1819,6 @@ paths:
           description: ID of the task to be updated
           example: TM0001
       requestBody:
-        required: false
         required: false
         content:
           multipart/form-data::
@@ -3051,22 +3049,6 @@ paths:
                               name:
                                 type: string
                                 example: "berbahaya"
-                        content_categories:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              name:
-                                type: string
-                                example: "tips"
-                        waste_categories:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              name:
-                                type: string
-                                example: "berbahaya"
                       
         '500':
           description: Internal server error
@@ -3110,22 +3092,6 @@ paths:
                     link_video:
                       type: string
                       example: "https://example.com/video.mp4"
-                    content_categories:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            example: "tips"
-                    waste_categories:
-                      type: array
-                      items:
-                        type: object      
-                        properties:
-                          name:
-                            type: string
-                            example: "berbahaya"
                     content_categories:
                       type: array
                       items:
@@ -3319,24 +3285,7 @@ paths:
                             name:
                               type: string
                               example: "tips"
-                      waste_categories::
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            name:
-                              type: string
-                              example: "berbahaya"
-                    
-                      content_categories:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            name:
-                              type: string
-                              example: "tips"
-                      waste_categories::
+                      waste_categories:
                         type: array
                         items:
                           type: object
@@ -3359,7 +3308,6 @@ paths:
                     type: string
                     example: video not found
     patch:
-    patch:
       tags:
         - manage videos
       summary: Update Data Video
@@ -3376,7 +3324,6 @@ paths:
             example: 1
           description: ID of video
       requestBody:
-        required: false
         required: false
         content:
           multipart/form-data:
@@ -3395,23 +3342,6 @@ paths:
                     link_video:
                       type: string
                       example: "https://example.com/video.mp4"
-                    content_categories:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                            example: "tips"
-                    waste_categories:
-                      type: array
-                      items:
-                        type: object      
-                        properties:
-                          name:
-                            type: string
-                            example: "berbahaya"
-                        
                     content_categories:
                       type: array
                       items:
@@ -3573,28 +3503,6 @@ paths:
                               name:
                                 type: string
                                 example: "berbahaya"
-                        content_categories:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              id:
-                                type: integer
-                                example: 1
-                              name:
-                                type: string
-                                example: "tips"
-                        waste_categories:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              id:
-                                type: integer
-                                example: 1
-                              name:
-                                type: string
-                                example: "berbahaya"
         '500':
           description: Status internal error'
           content:
@@ -3618,16 +3526,13 @@ paths:
       parameters:
         - in: query
           name: keyword
-          name: keyword
           required: true
           schema:
             type: string
             example: plastik
           description: The keyword to search for videos.
-          description: The keyword to search for videos.
       responses:
         '200':
-          description: Get all data by keyword
           description: Get all data by keyword
           content:
             application/json:
@@ -3678,30 +3583,6 @@ paths:
                             example: "plastik"
         '404':
           description: Video not found
-                    content_categories:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          id:
-                            type: integer
-                            example: 1
-                          name:
-                            type: string
-                            example: "tips"
-                    waste_categories:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          id:
-                            type: integer
-                            example: 1
-                          name:
-                            type: string
-                            example: "plastik"
-        '404':
-          description: Video not found
           content:
             application/json:
               schema:
@@ -3710,16 +3591,10 @@ paths:
                   code:
                     type: integer
                     example: 404
-                    example: 404
                   message:
                     type: string
                     example: video not found
 
-        
-  /video/{videoId}:
-                    example: video not found
-
-        
   /video/{videoId}:
     get:
       tags:
