@@ -37,6 +37,7 @@ func AutoMigrate(db Database) {
 		&aboutus.AboutUs{},
 		&aboutus.AboutUsImage{},
 		&article.WasteCategory{},
+		&article.ContentCategory{},
 		&article.Article{},
 		&article.ArticleSection{},
 		&article.ArticleCategories{},

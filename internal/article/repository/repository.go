@@ -76,8 +76,8 @@ func (r *articleRepository) FindByKeyword(keyword string) (*[]art.Article, error
 		Preload("Categories").
 		Joins("LEFT JOIN article_categories ON articles.id = article_categories.article_id").
 		Joins("LEFT JOIN waste_categories ON article_categories.waste_category_id = waste_categories.id").
-		Joins("LEFT JOIN video_categories ON article_categories.content_category_id = video_categories.id").
-		Where("articles.title LIKE ? OR articles.description LIKE ? OR waste_categories.name LIKE ? OR video_categories.name LIKE ?", query, query, query, query).
+		Joins("LEFT JOIN content_categories ON article_categories.content_category_id = content_categories.id").
+		Where("articles.title LIKE ? OR articles.description LIKE ? OR waste_categories.name LIKE ? OR content_categories.name LIKE ?", query, query, query, query).
 		Find(&articles).Error; err != nil {
 		return nil, err
 	}
@@ -99,8 +99,8 @@ func (r *articleRepository) FindByCategory(categoryName string, categoryType str
 	} else if categoryType == "content" {
 		if err := r.DB.GetDB().Preload("Categories").
 			Joins("JOIN article_categories ON articles.id = article_categories.article_id").
-			Joins("JOIN video_categories ON article_categories.content_category_id = video_categories.id").
-			Where("video_categories.name = ?", categoryName).
+			Joins("JOIN content_categories ON article_categories.content_category_id = content_categories.id").
+			Where("content_categories.name = ?", categoryName).
 			Find(&articles).Error; err != nil {
 			return nil, err
 		}
@@ -126,10 +126,10 @@ func (r *articleRepository) Delete(articleID string) error {
 	return nil
 }
 
-func (r *articleRepository) FindCategories(articleID string) (*[]art.WasteCategory, *[]art.VideoCategory, error) {
+func (r *articleRepository) FindCategories(articleID string) (*[]art.WasteCategory, *[]art.ContentCategory, error) {
 	var articleCategories []art.ArticleCategories
 	var wasteCategories []art.WasteCategory
-	var contentCategories []art.VideoCategory
+	var contentCategories []art.ContentCategory
 
 	if err := r.DB.GetDB().Where("article_id = ?", articleID).Find(&articleCategories).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -225,12 +225,12 @@ func (r *articleRepository) FindCategoryByName(categoryName, categoryType string
 	}
 
 	if categoryType == "content" {
-		var videoCategory art.VideoCategory
-		if err := r.DB.GetDB().Where("name = ?", categoryName).First(&videoCategory).Error; err != nil {
+		var contentCategory art.ContentCategory
+		if err := r.DB.GetDB().Where("name = ?", categoryName).First(&contentCategory).Error; err != nil {
 			return 0, err
 		}
 
-		return videoCategory.ID, nil
+		return contentCategory.ID, nil
 	}
 
 	return 0, pkg.ErrCategoryArticleNotFound

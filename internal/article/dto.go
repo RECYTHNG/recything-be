@@ -40,10 +40,10 @@ type ArticleDetail struct {
 	ThumbnailURL string      `json:"thumbnail_url"`
 	CreatedAt    time.Time   `json:"created_at"`
 
-	WasteCategories   []WasteCategory  `json:"waste_categories"`
-	ContentCategories []VideoCategory  `json:"content_categories"`
-	Sections          []ArticleSection `json:"sections"`
-	Comments          []CommentDetail  `json:"comments"`
+	WasteCategories   []WasteCategory   `json:"waste_categories"`
+	ContentCategories []ContentCategory `json:"content_categories"`
+	Sections          []ArticleSection  `json:"sections"`
+	Comments          []CommentDetail   `json:"comments"`
 }
 
 type CommentInput struct {

@@ -345,7 +345,7 @@ func (m *mysqlDatabase) InitAboutUs() {
 	log.Println("About-us data added!")
 }
 
-func (m *mysqlDatabase) InitArticleCategory() {
+func (m *mysqlDatabase) InitWasteCategories() {
 	categories := []article.WasteCategory{
 		{ID: 1, Name: "plastik"},
 		{ID: 2, Name: "besi"},
@@ -365,7 +365,22 @@ func (m *mysqlDatabase) InitArticleCategory() {
 	for _, category := range categories {
 		m.GetDB().FirstOrCreate(&category, category)
 	}
-	log.Println("Article categories data added!")
+	log.Println("Waste categories data added!")
+}
+
+func (m *mysqlDatabase) InitContentCategories() {
+	categories := []article.ContentCategory{
+		{ID: 1, Name: "tips"},
+		{ID: 2, Name: "daur ulang"},
+		{ID: 3, Name: "tutorial"},
+		{ID: 4, Name: "edukasi"},
+		{ID: 5, Name: "kampanye"},
+	}
+
+	for _, category := range categories {
+		m.GetDB().FirstOrCreate(&category, category)
+	}
+	log.Println("Content categories data added!")
 }
 
 func (m *mysqlDatabase) InitTrashCategoryVideo() {

@@ -32,7 +32,7 @@ type WasteCategory struct {
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
-type VideoCategory struct {
+type ContentCategory struct {
 	ID   uint   `json:"id" gorm:"primaryKey"`
 	Name string `json:"name" gorm:"type:varchar(50);unique;not null"`
 
@@ -40,6 +40,15 @@ type VideoCategory struct {
 	UpdatedAt time.Time      `json:"-"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
+
+// type VideoCategory struct {
+// 	ID   uint   `json:"id" gorm:"primaryKey"`
+// 	Name string `json:"name" gorm:"type:varchar(50);unique;not null"`
+
+// 	CreatedAt time.Time      `json:"-"`
+// 	UpdatedAt time.Time      `json:"-"`
+// 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
+// }
 
 type ArticleCategories struct {
 	ID                uint   `gorm:"primaryKey"`
@@ -87,7 +96,7 @@ type ArticleRepository interface {
 	Delete(articleID string) error
 
 	// Category Repository
-	FindCategories(articleID string) (*[]WasteCategory, *[]VideoCategory, error)
+	FindCategories(articleID string) (*[]WasteCategory, *[]ContentCategory, error)
 	FindCategoryByName(categoryName, categoryType string) (uint, error)
 
 	// Article Section Repository

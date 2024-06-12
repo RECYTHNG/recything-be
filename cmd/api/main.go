@@ -39,17 +39,17 @@ func main() {
 	// Init About us
 	db.InitAboutUs()
 
-	// Init Article Categories
-	db.InitArticleCategory()
+	// Init Waste Categories
+	db.InitWasteCategories()
+
+	// Init Content Categories
+	db.InitContentCategories()
 
 	// Init Article
 	db.InitArticle()
 
 	// Init Videos
 	db.InitDataVideos()
-
-	// Init Article Categories
-	db.InitArticleCategory()
 
 	// Init Article
 	db.InitArticle()
