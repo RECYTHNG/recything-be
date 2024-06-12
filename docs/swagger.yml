@@ -4295,7 +4295,7 @@ paths:
                                 type: string
                                 example: John Doe
                                 description: Name of the author
-                              profile_author:
+                              author_profile:
                                 type: string
                                 example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
                                 description: Profile picture of the author
