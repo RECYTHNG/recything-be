@@ -50,6 +50,9 @@ tags:
 
   - name: leaderboards
     description: Endpoint for leaderboards 
+  - name: categories
+    description: Endpoint for categories 
+  
     
 paths:
   /register:
@@ -4607,6 +4610,50 @@ paths:
         '404':
           description: Article not found
 
+  /categories:
+    get:
+      tags:
+        - categories
+      summary: Get all categories for content
+      description: Endpoint user/admin to get data categories 
+      operationId: getCategories
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      waste_categories:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            name:
+                              type: string
+                              example: plastik
+                      content_categories:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            name:
+                              type: string
+                              example: tips
 components:
   schemas:
     User:

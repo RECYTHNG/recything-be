@@ -113,6 +113,9 @@ type ArticleRepository interface {
 	// Article Comment Repository
 	CreateArticleComment(comment ArticleComment) error
 	DeleteAllArticleComment(articleID string) error
+
+	// Waste Category & Content Category
+	FindAllCategories() (*[]WasteCategory, *[]ContentCategory, error)
 }
 
 type ArticleUsecase interface {
@@ -132,6 +135,9 @@ type ArticleUsecase interface {
 	NewArticleComment(comment CommentInput) error
 	GetDetailUser(userID string) (*UserDetail, error)
 	GetDetailComments(comments []ArticleComment) (*[]CommentDetail, error)
+
+	// Waste Category & Content Category
+	GetAllCategories() (*CategoriesResponse, error)
 }
 
 type ArticleHandler interface {
@@ -145,4 +151,6 @@ type ArticleHandler interface {
 
 	NewArticleComment(c echo.Context) error
 	ArticleUploadImage(c echo.Context) error
+
+	GetAllCategories(c echo.Context) error
 }

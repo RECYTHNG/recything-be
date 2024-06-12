@@ -66,3 +66,8 @@ type ArticleResponsePagination struct {
 	Limit    uint            `json:"limit"`
 	Articles []ArticleDetail `json:"articles"`
 }
+
+type CategoriesResponse struct {
+	WasteCategories   []WasteCategory   `json:"waste_categories"`
+	ContentCategories []ContentCategory `json:"content_categories"`
+}

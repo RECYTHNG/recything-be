@@ -251,3 +251,18 @@ func (r *articleRepository) DeleteAllArticleComment(articleID string) error {
 
 	return nil
 }
+
+func (r *articleRepository) FindAllCategories() (*[]art.WasteCategory, *[]art.ContentCategory, error) {
+	var wasteCategories []art.WasteCategory
+	var contentCategories []art.ContentCategory
+
+	if err := r.DB.GetDB().Model(&art.WasteCategory{}).Find(&wasteCategories).Error; err != nil {
+		return nil, nil, err
+	}
+
+	if err := r.DB.GetDB().Model(&art.ContentCategory{}).Find(&contentCategories).Error; err != nil {
+		return nil, nil, err
+	}
+
+	return &wasteCategories, &contentCategories, nil
+}

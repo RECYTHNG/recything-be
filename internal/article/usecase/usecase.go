@@ -320,3 +320,15 @@ func (uc *articleUsecase) GetDetailComments(comments []art.ArticleComment) (*[]a
 
 	return &commentDetails, nil
 }
+
+func (uc *articleUsecase) GetAllCategories() (*art.CategoriesResponse, error) {
+	wasteCategories, contentCategories, err := uc.articleRepo.FindAllCategories()
+	if err != nil {
+		return nil, err
+	}
+
+	return &art.CategoriesResponse{
+		WasteCategories:   *wasteCategories,
+		ContentCategories: *contentCategories,
+	}, nil
+}

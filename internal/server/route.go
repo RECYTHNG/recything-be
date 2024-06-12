@@ -415,6 +415,9 @@ func (s *echoServer) articleHandler() {
 
 	// Upload image
 	s.gr.POST("/article/upload", handler.ArticleUploadImage, SuperAdminOrAdminMiddleware)
+
+	// Get all categories
+	s.gr.GET("/categories", handler.GetAllCategories)
 }
 
 func (s *echoServer) homepageHandler() {

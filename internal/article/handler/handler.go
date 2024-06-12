@@ -103,7 +103,7 @@ func (h *articleHandler) GetAllArticle(c echo.Context) error {
 
 	response, err := h.usecase.GetAllArticle(page, limit, sortBy, sortType)
 	if err != nil {
-		helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
 	}
 
 	return helper.ResponseHandler(c, http.StatusOK, "ok", response)
@@ -114,7 +114,7 @@ func (h *articleHandler) GetArticleByKeyword(c echo.Context) error {
 
 	response, err := h.usecase.GetArticleByKeyword(keyword)
 	if err != nil {
-		helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
 	}
 
 	return helper.ResponseHandler(c, http.StatusOK, "ok", response)
@@ -126,7 +126,7 @@ func (h *articleHandler) GetArticleByCategory(c echo.Context) error {
 
 	response, err := h.usecase.GetArticleByCategory(categoryName, categoryType)
 	if err != nil {
-		helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
 	}
 
 	return helper.ResponseHandler(c, http.StatusOK, "ok", response)
@@ -203,4 +203,13 @@ func (h *articleHandler) ArticleUploadImage(c echo.Context) error {
 	return helper.ResponseHandler(c, http.StatusOK, "upload successfully!", echo.Map{
 		"image_url": resp,
 	})
+}
+
+func (h *articleHandler) GetAllCategories(c echo.Context) error {
+	response, err := h.usecase.GetAllCategories()
+	if err != nil {
+		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
+	}
+
+	return helper.ResponseHandler(c, http.StatusOK, "ok", response)
 }
