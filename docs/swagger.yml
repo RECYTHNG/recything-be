@@ -3042,12 +3042,22 @@ paths:
                     items:
                       type: object
                       properties:
-                        id:
-                          type: integer
-                          example: 1
-                        name:
-                          type: string
-                          example: "Category Name"
+                        content_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                example: "tips"
+                        waste_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                example: "berbahaya"
                       
         '500':
           description: Internal server error
@@ -3091,9 +3101,22 @@ paths:
                     link_video:
                       type: string
                       example: "https://example.com/video.mp4"
-                    category_id:
-                      type: integer
-                      example: 1
+                    content_categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "tips"
+                    waste_categories:
+                      type: array
+                      items:
+                        type: object      
+                        properties:
+                          name:
+                            type: string
+                            example: "berbahaya"
                 thumbnail:
                   type: string
                   format: binary
@@ -3263,15 +3286,23 @@ paths:
                       viewer:
                         type: integer
                         example: 1000
-                      category:
-                        type: object
-                        properties:
-                          id:
-                            type: integer
-                            example: 1
-                          name:
-                            type: string
-                            example: "Video Category"
+                      content_categories:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "tips"
+                      waste_categories::
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "berbahaya"
+                    
         '404':
           description: Video not found
           content:
@@ -3320,9 +3351,23 @@ paths:
                     link_video:
                       type: string
                       example: "https://example.com/video.mp4"
-                    category_id:
-                      type: integer
-                      example: 1
+                    content_categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "tips"
+                    waste_categories:
+                      type: array
+                      items:
+                        type: object      
+                        properties:
+                          name:
+                            type: string
+                            example: "berbahaya"
+                        
                 thumbnail:
                   type: string
                   format: binary
@@ -3445,6 +3490,28 @@ paths:
                         viewer:
                           type: integer
                           example: 1000
+                        content_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              name:
+                                type: string
+                                example: "tips"
+                        waste_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              name:
+                                type: string
+                                example: "berbahaya"
         '500':
           description: Status internal error'
           content:
@@ -3462,20 +3529,20 @@ paths:
     get:
       tags:
         - user videos
-      summary: Search Videos by title
-      description: Searches for videos that match a specific title
-      operationId: getVideosBytitle
+      summary: Search Videos by keyword
+      description: Searches for videos that match a specific keyword
+      operationId: getVideosBykeyword
       parameters:
         - in: query
-          name: title
+          name: keyword
           required: true
           schema:
             type: string
             example: plastik
-          description: The title to search for videos.
+          description: The keyword to search for videos.
       responses:
         '200':
-          description: Get all data by title
+          description: Get all data by keyword
           content:
             application/json:
               schema:
@@ -3501,8 +3568,30 @@ paths:
                     viewer:
                       type: integer
                       example: 1000
-        '500':
-          description: Status internal error'
+                    content_categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          name:
+                            type: string
+                            example: "tips"
+                    waste_categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          name:
+                            type: string
+                            example: "plastik"
+        '404':
+          description: Video not found
           content:
             application/json:
               schema:
@@ -3510,11 +3599,13 @@ paths:
                 properties:
                   code:
                     type: integer
-                    example: 500
+                    example: 404
                   message:
                     type: string
-                    example: internal server error
-  /videos/{videoId}:
+                    example: video not found
+
+        
+  /video/{videoId}:
     get:
       tags:
         - user videos
@@ -3636,6 +3727,107 @@ paths:
                   message:
                     type: string
                     example: video not found
+  /videos/category:
+    get:
+      tags:
+        - user videos
+      summary: Get all video by content category or waste category
+      description: Enpoint for user get all video by content category or waste category
+      operationId: getContentCategories
+      security:
+        - Bearer: []
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "content"
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "tips"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        data_video:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              title:
+                                type: string
+                                example: "Video Title"
+                              description:
+                                type: string
+                                example: "Video Description"
+                              url_thumbnail:
+                                type: string
+                                example: "https://example.com/thumbnail.jpg"
+                              link_video:
+                                type: string
+                                example: "https://example.com/video.mp4"
+                              viewer:
+                                type: integer
+                                example: 1000
+                              content_categories:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: integer
+                                      example: 1
+                                    name:
+                                      type: string
+                                      example: "tips"
+                              waste_categories:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: integer
+                                      example: 1
+                                    name:
+                                      type: string
+                                      example: "berbahaya"
+        '404':
+          description: video not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: video not found
+                  
+
   /approval-tasks:
     get:
       tags:
