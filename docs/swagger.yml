@@ -6,6 +6,8 @@ info:
 servers:
   - url: http://localhost:8080/api/v1
 tags:
+  - name: homepage
+    description: Endpoint for user get homepage
   - name: authentication
     description: Endpoint for user register/login
   - name: user
@@ -20,9 +22,9 @@ tags:
     description: Endpoint for user asking question to chatbot
   - name: about us
     description: Endpoint for user to get data about us by category
-  - name: user achievements
+  - name: achievements
     description: Endpoint for user get achievement
-  - name: user videos
+  - name: videos
     description: Endpoint for user get video
   - name: articles
     description: Endpoint for user get data article
@@ -45,9 +47,10 @@ tags:
     description: Endpoint for admin manage videos
   - name: approval tasks
     description: Endpoint for admin approval task
+
   - name: leaderboards
     description: Endpoint for leaderboards 
-
+    
 paths:
   /register:
     post:
@@ -1799,7 +1802,7 @@ paths:
                   message:
                     type: string
                     example: task not found
-    put:
+    patch:
       tags:
         - manage tasks
       summary: Update task
@@ -1816,7 +1819,7 @@ paths:
           description: ID of the task to be updated
           example: TM0001
       requestBody:
-        required: true
+        required: false
         content:
           multipart/form-data::
             schema:
@@ -3030,12 +3033,22 @@ paths:
                     items:
                       type: object
                       properties:
-                        id:
-                          type: integer
-                          example: 1
-                        name:
-                          type: string
-                          example: "Category Name"
+                        content_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                example: "tips"
+                        waste_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                example: "berbahaya"
                       
         '500':
           description: Internal server error
@@ -3079,9 +3092,22 @@ paths:
                     link_video:
                       type: string
                       example: "https://example.com/video.mp4"
-                    category_id:
-                      type: integer
-                      example: 1
+                    content_categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "tips"
+                    waste_categories:
+                      type: array
+                      items:
+                        type: object      
+                        properties:
+                          name:
+                            type: string
+                            example: "berbahaya"
                 thumbnail:
                   type: string
                   format: binary
@@ -3251,15 +3277,23 @@ paths:
                       viewer:
                         type: integer
                         example: 1000
-                      category:
-                        type: object
-                        properties:
-                          id:
-                            type: integer
-                            example: 1
-                          name:
-                            type: string
-                            example: "Video Category"
+                      content_categories:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "tips"
+                      waste_categories::
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "berbahaya"
+                    
         '404':
           description: Video not found
           content:
@@ -3273,7 +3307,7 @@ paths:
                   message:
                     type: string
                     example: video not found
-    put:
+    patch:
       tags:
         - manage videos
       summary: Update Data Video
@@ -3290,7 +3324,7 @@ paths:
             example: 1
           description: ID of video
       requestBody:
-        required: true
+        required: false
         content:
           multipart/form-data:
             schema:
@@ -3308,9 +3342,23 @@ paths:
                     link_video:
                       type: string
                       example: "https://example.com/video.mp4"
-                    category_id:
-                      type: integer
-                      example: 1
+                    content_categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "tips"
+                    waste_categories:
+                      type: array
+                      items:
+                        type: object      
+                        properties:
+                          name:
+                            type: string
+                            example: "berbahaya"
+                        
                 thumbnail:
                   type: string
                   format: binary
@@ -3390,7 +3438,7 @@ paths:
   /videos:
     get:
       tags:
-        - user videos
+        - videos
       summary: Get All Data Video
       description: Endpoint user for get all data video
       operationId: getAllDataVideo
@@ -3433,6 +3481,28 @@ paths:
                         viewer:
                           type: integer
                           example: 1000
+                        content_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              name:
+                                type: string
+                                example: "tips"
+                        waste_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              name:
+                                type: string
+                                example: "berbahaya"
         '500':
           description: Status internal error'
           content:
@@ -3449,21 +3519,21 @@ paths:
   /videos/search:
     get:
       tags:
-        - user videos
-      summary: Search Videos by title
-      description: Searches for videos that match a specific title
-      operationId: getVideosBytitle
+        - videos
+      summary: Search Videos by keyword
+      description: Searches for videos that match a specific keyword
+      operationId: getVideosBykeyword
       parameters:
         - in: query
-          name: title
+          name: keyword
           required: true
           schema:
             type: string
             example: plastik
-          description: The title to search for videos.
+          description: The keyword to search for videos.
       responses:
         '200':
-          description: Get all data by title
+          description: Get all data by keyword
           content:
             application/json:
               schema:
@@ -3489,8 +3559,30 @@ paths:
                     viewer:
                       type: integer
                       example: 1000
-        '500':
-          description: Status internal error'
+                    content_categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          name:
+                            type: string
+                            example: "tips"
+                    waste_categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          name:
+                            type: string
+                            example: "plastik"
+        '404':
+          description: Video not found
           content:
             application/json:
               schema:
@@ -3498,14 +3590,16 @@ paths:
                 properties:
                   code:
                     type: integer
-                    example: 500
+                    example: 404
                   message:
                     type: string
-                    example: internal server error
-  /videos/{videoId}:
+                    example: video not found
+
+        
+  /video/{videoId}:
     get:
       tags:
-        - user videos
+        - videos
       summary: Get Data Video by id
       description: Get Data Video details by id
       operationId: getDataVideo
@@ -3578,7 +3672,7 @@ paths:
   /videos/comment:
     post:
       tags:
-        - user videos
+        - videos
       summary: Create Comment
       description: Endpoint user for create comment
       operationId: createComment
@@ -3624,6 +3718,107 @@ paths:
                   message:
                     type: string
                     example: video not found
+  /videos/category:
+    get:
+      tags:
+        - videos
+      summary: Get all video by content category or waste category
+      description: Enpoint for user get all video by content category or waste category
+      operationId: getContentCategories
+      security:
+        - Bearer: []
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "content"
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "tips"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        data_video:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              title:
+                                type: string
+                                example: "Video Title"
+                              description:
+                                type: string
+                                example: "Video Description"
+                              url_thumbnail:
+                                type: string
+                                example: "https://example.com/thumbnail.jpg"
+                              link_video:
+                                type: string
+                                example: "https://example.com/video.mp4"
+                              viewer:
+                                type: integer
+                                example: 1000
+                              content_categories:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: integer
+                                      example: 1
+                                    name:
+                                      type: string
+                                      example: "tips"
+                              waste_categories:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: integer
+                                      example: 1
+                                    name:
+                                      type: string
+                                      example: "berbahaya"
+        '404':
+          description: video not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: video not found
+                  
+
   /approval-tasks:
     get:
       tags:
@@ -3908,7 +4103,7 @@ paths:
   /user/achievements:
     get:
       tags: 
-        - user achievements
+        - achievements
       summary: Get user achievements
       description: Endpoint for user get list achievements
       operationId: getUserAchievements
@@ -4022,6 +4217,131 @@ paths:
                         badge:
                           type: string
                           example: https://res.cloudinary.com/dymhvau8n/image/upload/v1717758679/achievement_badge/cq2n246e6twuksnia62t.png
+  /homepage:
+    get:
+      tags:
+        - homepage
+      summary: Get homepage
+      description: Endpoint for user get homepage
+      operationId: getHomepage
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: USR0001
+                            name:
+                              type: string
+                              example: John Doe
+                            picture_url:
+                              type: string
+                              example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                            point:
+                              type: integer
+                              example: 1000
+                            badge:
+                              type: string
+                        articles:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: ART0001
+                              title:
+                                type: string
+                                example: RecyThing
+                              description:
+                                type: string
+                                example: RecyThing adalah pemimpin di industri daur ulang sampah yang berkomitmen untuk menjaga lingkungan hidup yang lebih bersih dan lebih berkelanjutan.
+                              thumbnail:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                                description: Thumbnail article
+                              author_name:
+                                type: string
+                                example: John Doe
+                                description: Name of the author
+                              author_profile:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                                description: Profile picture of the author
+                              created_at:
+                                type: string
+                                format: date
+                                example: "2020-01-01"
+                                description: Date and time when the article was created
+                        videos:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              title:
+                                type: string
+                                example: RecyThing
+                              description:
+                                type: string
+                                example: RecyThing adalah pemimpin di industri daur ulang sampah yang berkomitmen untuk menjaga lingkungan hidup yang lebih bersih dan lebih berkelanjutan.
+                              url_thumbnail:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                                description: Thumbnail video
+                              link_video:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/video/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.mp4
+                                description: Link video Youtube
+                              viewer:
+                                type: integer
+                                example: 1000
+                        leaderboard:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: USR0001
+                                description: ID of the user
+                              name:
+                                type: string
+                                example: John Doe
+                              picture_url:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                                description: Profile picture of the user
+                              point:
+                                type: integer
+                                example: 1000
+                                description: Point of the user
+                              badge:
+                                type: string
+                                example: https://res.cloudinary.com/dymhvau8n/image/upload/v1717758679/achievement_badge/cq2n246e6twuksnia62t.png
+                                description: Badge of the user
+
   /articles:
     get:
       tags:
