@@ -11,3 +11,8 @@ type UpdateUserTaskRequest struct {
 	Description string                  `json:"description" validate:"required"`
 	Images      []*multipart.FileHeader `json:"-"`
 }
+
+type UpdateTaskStepRequest struct {
+	StepId   int    `json:"step_id" validate:"required"`
+	UserTask string `json:"user_task" validate:"required"`
+}

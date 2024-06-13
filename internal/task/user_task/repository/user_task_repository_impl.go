@@ -243,3 +243,24 @@ func (repository *UserTaskRepositoryImpl) GetHistoryPointByUserId(userId string)
 	}
 	return userTask, nil
 }
+
+func (repository *UserTaskRepositoryImpl) FindTaskStep(stepId int, taskId string) error {
+	var taskStep task.TaskStep
+	if err := repository.DB.GetDB().
+		Where("id = ?", stepId).
+		Where("task_challenge_id = ?", taskId).
+		First(&taskStep).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repository *UserTaskRepositoryImpl) UpdateTaskStep(stepId int, taskId string) error {
+	if err := repository.DB.GetDB().Model(&task.TaskStep{}).
+		Where("id = ?", stepId).
+		Where("task_challenge_id = ?", taskId).
+		Update("status", true).Error; err != nil {
+		return err
+	}
+	return nil
+}

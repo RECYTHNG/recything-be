@@ -234,3 +234,27 @@ func (usecase *UserTaskUsecaseImpl) GetHistoryPointByUserIdUsecase(userId string
 	}
 	return userTask, totalPoint, nil
 }
+
+func (usecase *UserTaskUsecaseImpl) UpdateTaskStepUsecase(request *dto.UpdateTaskStepRequest, userId string) (*user_task.UserTaskChallenge, error) {
+	userTask, errUserTask := usecase.ManageTaskRepository.FindUserTask(userId, request.UserTask)
+
+	if errUserTask != nil {
+		return nil, pkg.ErrUserTaskNotFound
+	}
+	if userTask.StatusAccept != "in-progress" {
+		return nil, pkg.ErrUserTaskDone
+	}
+	errStatus := usecase.ManageTaskRepository.FindTaskStep(request.StepId, userTask.TaskChallengeId)
+
+	if errStatus != nil {
+		return nil, pkg.ErrTaskStepNotFound
+	}
+
+	errTaskStep := usecase.ManageTaskRepository.UpdateTaskStep(request.StepId, userTask.TaskChallengeId)
+	if errTaskStep != nil {
+		return nil, errTaskStep
+	}
+
+	return userTask, nil
+
+}

@@ -46,6 +46,7 @@ var (
 	ErrUserTaskNotReject      = errors.New("user task not reject")
 	ErrUserTaskAlreadyReject  = errors.New("user task already reject")
 	ErrUserTaskAlreadyApprove = errors.New("user task already approve")
+	ErrTaskStepNotFound       = errors.New("task step not found")
 
 	// manage achievement
 	ErrAchievementLevelAlreadyExist = errors.New("archievement level already exist")

@@ -29,6 +29,7 @@ type TaskStep struct {
 	TaskChallengeId string `gorm:"index"`
 	Title           string
 	Description     string
+	Status          bool           `gorm:"default:false"`
 	CreatedAt       time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt       time.Time      `gorm:"autoUpdateTime"`
 	DeletedAt       gorm.DeletedAt `gorm:"index"`

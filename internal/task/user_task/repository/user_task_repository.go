@@ -19,4 +19,6 @@ type UserTaskRepository interface {
 	UpdateUserTask(userTask *user_task.UserTaskChallenge, userTaskId string) (*user_task.UserTaskChallenge, error)
 	GetUserTaskDetails(userTaskId string, userId string) (*user_task.UserTaskChallenge, []*user_task.UserTaskImage, error)
 	GetHistoryPointByUserId(userId string) ([]user_task.UserTaskChallenge, error)
+	FindTaskStep(stepId int, taskId string) error
+	UpdateTaskStep(stepId int, taskId string) error
 }
