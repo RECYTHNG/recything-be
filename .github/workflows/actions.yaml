@@ -70,7 +70,7 @@ jobs:
             mysql:latest
 
             docker run -itd --name recything-be \
-            -p 8080:8080 \
+            -p 80:8080 \
             --network api-network \
             --restart on-failure \
             sawalrever23/recything-be:latest
