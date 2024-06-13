@@ -71,19 +71,19 @@ func (usecase *UserVideoUsecaseImpl) SearchVideoByCategoryUsecase(categoryType s
 	return videos, nil
 }
 
-func (usecase *UserVideoUsecaseImpl) GetVideoDetailUsecase(id int) (*video.Video, *[]video.Comment, error) {
-	video, comments, err := usecase.Repository.GetVideoDetail(id)
+func (usecase *UserVideoUsecaseImpl) GetVideoDetailUsecase(id int) (*video.Video, *[]video.Comment, int, error) {
+	video, comments, totalComment, err := usecase.Repository.GetVideoDetail(id)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return nil, nil, pkg.ErrVideoNotFound
+			return nil, nil, 0, pkg.ErrVideoNotFound
 		}
-		return nil, nil, err
+		return nil, nil, 0, err
 	}
-	return video, comments, nil
+	return video, comments, totalComment, nil
 }
 
 func (usecase *UserVideoUsecaseImpl) AddCommentUsecase(request *dto.AddCommentRequest, userId string) error {
-	if _, _, err := usecase.Repository.GetVideoDetail(request.VideoID); err != nil {
+	if _, _, _, err := usecase.Repository.GetVideoDetail(request.VideoID); err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return pkg.ErrVideoNotFound
 		}

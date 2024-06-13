@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"net/http"
+	"sort"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -195,12 +196,23 @@ func (handler *UserVideoHandlerImpl) GetVideoDetailHandler(c echo.Context) error
 		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid id parameter")
 	}
 
-	video, comments, err := handler.Usecase.GetVideoDetailUsecase(intId)
+	video, comments, totalComment, err := handler.Usecase.GetVideoDetailUsecase(intId)
 	if err != nil {
 		if errors.Is(err, pkg.ErrVideoNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrVideoNotFound.Error())
 		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+	}
+
+	sortComments := c.QueryParam("sort-comments")
+
+	if sortComments == "" {
+		sortComments = "false"
+	}
+	if sortComments == "true" {
+		sort.SliceStable(*comments, func(i, j int) bool {
+			return (*comments)[i].CreatedAt.After((*comments)[j].CreatedAt)
+		})
 	}
 
 	var dataComments []dto.DataComment
@@ -213,16 +225,18 @@ func (handler *UserVideoHandlerImpl) GetVideoDetailHandler(c echo.Context) error
 			LinkVideo:    video.Link,
 			Viewer:       video.Viewer,
 		},
-		Comments: &dataComments,
+		TotalComment: totalComment,
+		Comments:     &dataComments,
 	}
 
 	for _, comment := range *comments {
 		dataComments = append(dataComments, dto.DataComment{
-			Id:        comment.ID,
-			Comment:   comment.Comment,
-			UserID:    comment.UserID,
-			UserName:  comment.User.Name,
-			CreatedAt: comment.CreatedAt,
+			Id:          comment.ID,
+			Comment:     comment.Comment,
+			UserID:      comment.UserID,
+			UserName:    comment.User.Name,
+			UserProfile: comment.User.PictureURL,
+			CreatedAt:   comment.CreatedAt,
 		})
 	}
 	data.Comments = &dataComments
