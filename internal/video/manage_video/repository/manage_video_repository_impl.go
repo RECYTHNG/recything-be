@@ -117,7 +117,6 @@ func (repository *ManageVideoRepositoryImpl) UpdateDataVideo(videos *video.Video
 		}
 	}()
 
-	// Delete existing categories if any new ones are provided
 	if len(videos.Categories) > 0 {
 		if err := tx.Where("video_id = ?", id).Delete(&video.VideoCategory{}).Error; err != nil {
 			tx.Rollback()

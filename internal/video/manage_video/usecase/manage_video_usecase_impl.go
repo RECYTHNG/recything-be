@@ -45,11 +45,9 @@ func (usecase *ManageVideoUsecaseImpl) CreateDataVideoUseCase(request *dto.Creat
 		return pkg.ErrVideoTitleAlreadyExist
 	}
 
-	// Memperoleh kategori konten dan limbah dari request
 	var contentCategories []*art.ContentCategory
 	var wasteCategories []*art.WasteCategory
 
-	// Menambahkan kategori konten
 	for _, category := range request.ContentCategory {
 		name := strings.ToLower(category.Name)
 		content, err := usecase.manageVideoRepository.FindNameCategoryVideo(name)
@@ -59,7 +57,6 @@ func (usecase *ManageVideoUsecaseImpl) CreateDataVideoUseCase(request *dto.Creat
 		contentCategories = append(contentCategories, content)
 	}
 
-	// Menambahkan kategori limbah
 	for _, category := range request.WasteCategory {
 		name := strings.ToLower(category.Name)
 		waste, err := usecase.manageVideoRepository.FindNamaTrashCategory(name)
@@ -69,7 +66,6 @@ func (usecase *ManageVideoUsecaseImpl) CreateDataVideoUseCase(request *dto.Creat
 		wasteCategories = append(wasteCategories, waste)
 	}
 
-	// Membuat slice VideoCategory yang akan disimpan
 	var videoCategories []video.VideoCategory
 	for _, content := range contentCategories {
 		for _, waste := range wasteCategories {
@@ -147,41 +143,43 @@ func (usecase *ManageVideoUsecaseImpl) UpdateDataVideoUseCase(request *dto.Updat
 		return pkg.ErrVideoNotFound
 	}
 
-	var videoCategories []video.VideoCategory
+	var contentCategories []*art.ContentCategory
+	var wasteCategories []*art.WasteCategory
 
 	if request.ContentCategories != nil {
 		for _, category := range request.ContentCategories {
 			name := strings.ToLower(category.Name)
-			contentCategory, err := usecase.manageVideoRepository.FindNameCategoryVideo(name)
-			if err == gorm.ErrRecordNotFound {
-				return pkg.ErrNameCategoryVideoNotFound
+			content, err := usecase.manageVideoRepository.FindNameCategoryVideo(name)
+			if err != nil {
+				return pkg.ErrVideoCategory
 			}
-			videoCategory := video.VideoCategory{
-				VideoID:           id,
-				ContentCategoryID: contentCategory.ID,
-			}
-			videoCategories = append(videoCategories, videoCategory)
+			contentCategories = append(contentCategories, content)
 		}
-		dataVideo.Categories = videoCategories
 	}
-
-	var wasteCategories []video.VideoCategory
 
 	if request.WasteCategories != nil {
 		for _, category := range request.WasteCategories {
 			name := strings.ToLower(category.Name)
-			wasteCategory, err := usecase.manageVideoRepository.FindNamaTrashCategory(name)
-			if err == gorm.ErrRecordNotFound {
-				return pkg.ErrNameTrashCategoryNotFound
+			waste, err := usecase.manageVideoRepository.FindNamaTrashCategory(name)
+			if err != nil {
+				return pkg.ErrVideoTrashCategory
 			}
-			videoCategory := video.VideoCategory{
-				VideoID:         id,
-				WasteCategoryID: wasteCategory.ID,
-			}
-			wasteCategories = append(wasteCategories, videoCategory)
+			wasteCategories = append(wasteCategories, waste)
 		}
-		dataVideo.Categories = append(dataVideo.Categories, wasteCategories...)
+
 	}
+
+	var videoCategories []video.VideoCategory
+	for _, content := range contentCategories {
+		for _, waste := range wasteCategories {
+			videoCategories = append(videoCategories, video.VideoCategory{
+				ContentCategoryID: content.ID,
+				WasteCategoryID:   waste.ID,
+			})
+		}
+	}
+
+	dataVideo.Categories = videoCategories
 
 	var urlThumbnail string
 	if len(thumbnail) == 1 {
