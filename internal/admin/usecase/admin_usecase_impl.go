@@ -88,34 +88,55 @@ func (usecase *AdminUsecaseImpl) GetDataAdminByEmailUsecase(email string) (*enti
 	return admin, nil
 }
 
-func (usecase *AdminUsecaseImpl) UpdateAdminUsecase(request dto.AdminUpdateRequest, id string, file io.Reader) (*entity.Admin, error) {
-	findAdmin, _ := usecase.Repository.FindAdminByID(id)
-	if findAdmin == nil {
+func (usecase *AdminUsecaseImpl) UpdateAdminUsecase(request *dto.AdminUpdateRequest, id string, file io.Reader) (*entity.Admin, error) {
+	findAdmin, err := usecase.Repository.FindAdminByID(id)
+	if err != nil || findAdmin == nil {
 		return nil, pkg.ErrAdminNotFound
 	}
 
-	if matchPassword := helper.ComparePassword(findAdmin.Password, request.OldPassword); !matchPassword {
-		return nil, pkg.ErrPasswordInvalid
+	if request.Name != "" {
+		findAdmin.Name = request.Name
 	}
 
-	hashPassword, _ := helper.GenerateHash(request.NewPassword)
-
-	imageUrl, errUpload := helper.UploadToCloudinary(file, "profile_admin_update")
-	if errUpload != nil {
-		return nil, pkg.ErrUploadCloudinary
+	if request.Email != "" {
+		findAdmin.Email = request.Email
 	}
 
-	admin, error := usecase.Repository.UpdateDataAdmin(&entity.Admin{
-		Name:      request.Name,
-		Email:     request.Email,
-		Password:  hashPassword,
-		Role:      request.Role,
-		ImageUrl:  imageUrl,
-		DeletedAt: gorm.DeletedAt{},
-	}, id)
-	if error != nil {
-		return nil, error
+	if request.Role != "" {
+		if request.Role != "admin" && request.Role != "user" {
+			return nil, pkg.ErrRole
+		}
+		findAdmin.Role = request.Role
 	}
+
+	if request.OldPassword != "" && request.NewPassword != "" {
+		if matchPassword := helper.ComparePassword(findAdmin.Password, request.OldPassword); !matchPassword {
+			return nil, pkg.ErrPasswordInvalid
+		}
+		hashPassword, err := helper.GenerateHash(request.NewPassword)
+		if err != nil {
+			return nil, err
+		}
+		findAdmin.Password = hashPassword
+	}
+
+	var imageUrl string
+	if file != nil {
+		imageUrlUpload, errUpload := helper.UploadToCloudinary(file, "profile_admin_update")
+		if errUpload != nil {
+			return nil, pkg.ErrUploadCloudinary
+		}
+		imageUrl = imageUrlUpload
+	} else {
+		imageUrl = findAdmin.ImageUrl
+	}
+
+	findAdmin.ImageUrl = imageUrl
+	admin, err := usecase.Repository.UpdateDataAdmin(findAdmin, id)
+	if err != nil {
+		return nil, err
+	}
+
 	return admin, nil
 }
 

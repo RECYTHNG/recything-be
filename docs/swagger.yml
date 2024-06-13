@@ -1451,7 +1451,7 @@ paths:
                   data:
                     type: object
                     $ref: '#/components/schemas/Admin'
-    put:
+    patch:
       tags:
         - manage admins
       summary: Update an admin
@@ -1468,7 +1468,7 @@ paths:
           description: ID of the admin to be updated
           example: AD0001
       requestBody:
-        required: true
+        required: false
         content:
           multipart/form-data:
             schema:

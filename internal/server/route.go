@@ -146,7 +146,7 @@ func (s *echoServer) supAdminHttpHandler() {
 	s.gr.GET("/admin/:adminId", handler.GetDataAdminByIdHandler, SuperAdminMiddleware)
 
 	// update admin by super admin
-	s.gr.PUT("/admin/:adminId", handler.UpdateAdminHandler, SuperAdminMiddleware)
+	s.gr.PATCH("/admin/:adminId", handler.UpdateAdminHandler, SuperAdminMiddleware)
 
 	// delete admin by super admin
 	s.gr.DELETE("/admin/:adminId", handler.DeleteAdminHandler, SuperAdminMiddleware)
