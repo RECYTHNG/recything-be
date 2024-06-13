@@ -125,6 +125,7 @@ func (repository *ManageVideoRepositoryImpl) UpdateDataVideo(videos *video.Video
 		}
 	}
 
+	// Update video details along with associations
 	if err := tx.Session(&gorm.Session{FullSaveAssociations: true}).Save(&videos).Error; err != nil {
 		tx.Rollback()
 		return err
