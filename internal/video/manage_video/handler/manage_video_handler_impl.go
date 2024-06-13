@@ -179,23 +179,36 @@ func (handler *ManageVideoHandlerImpl) GetDetailsDataVideoByIdHandler(c echo.Con
 		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
-
-	var dataContentCategories []*dto.DataCategoryVideoResponse
-	var dataWasteCategories []*dto.DataTrashCategoryResponse
+	uniqueContentCategories := make(map[uint]*dto.DataCategoryVideoResponse)
+	uniqueWasteCategories := make(map[uint]*dto.DataTrashCategoryResponse)
 
 	for _, category := range video.Categories {
 		if category.ContentCategoryID != 0 {
-			dataContentCategories = append(dataContentCategories, &dto.DataCategoryVideoResponse{
-				Id:   int(category.ContentCategory.ID),
-				Name: category.ContentCategory.Name,
-			})
+			if _, exists := uniqueContentCategories[category.ContentCategoryID]; !exists {
+				uniqueContentCategories[category.ContentCategoryID] = &dto.DataCategoryVideoResponse{
+					Id:   int(category.ContentCategory.ID),
+					Name: category.ContentCategory.Name,
+				}
+			}
 		}
 		if category.WasteCategoryID != 0 {
-			dataWasteCategories = append(dataWasteCategories, &dto.DataTrashCategoryResponse{
-				Id:   int(category.WasteCategory.ID),
-				Name: category.WasteCategory.Name,
-			})
+			if _, exists := uniqueWasteCategories[category.WasteCategoryID]; !exists {
+				uniqueWasteCategories[category.WasteCategoryID] = &dto.DataTrashCategoryResponse{
+					Id:   int(category.WasteCategory.ID),
+					Name: category.WasteCategory.Name,
+				}
+			}
 		}
+	}
+
+	// Convert maps back to slices
+	var dataContentCategories []*dto.DataCategoryVideoResponse
+	for _, vc := range uniqueContentCategories {
+		dataContentCategories = append(dataContentCategories, vc)
+	}
+	var dataWasteCategories []*dto.DataTrashCategoryResponse
+	for _, wc := range uniqueWasteCategories {
+		dataWasteCategories = append(dataWasteCategories, wc)
 	}
 
 	dataVideo := &dto.GetDetailsDataVideoByIdResponse{

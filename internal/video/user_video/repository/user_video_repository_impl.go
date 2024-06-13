@@ -1,7 +1,6 @@
 package repository
 
 import (
-	art "github.com/sawalreverr/recything/internal/article"
 	"github.com/sawalreverr/recything/internal/database"
 	video "github.com/sawalreverr/recything/internal/video/manage_video/entity"
 	"github.com/sawalreverr/recything/pkg"
@@ -24,29 +23,6 @@ func (repository *UserVideoRepositoryImpl) GetAllVideo() (*[]video.Video, error)
 		Find(&videos).
 		Error; err != nil {
 		return nil, err
-	}
-
-	for i := range videos {
-		contentCategorySet := make(map[uint]struct{})
-		wasteCategorySet := make(map[uint]struct{})
-
-		var uniqueContentCategories []art.ContentCategory
-		var uniqueWasteCategories []art.WasteCategory
-
-		for _, category := range videos[i].Categories {
-			if _, exists := contentCategorySet[category.ContentCategoryID]; !exists {
-				contentCategorySet[category.ContentCategoryID] = struct{}{}
-				uniqueContentCategories = append(uniqueContentCategories, category.ContentCategory)
-			}
-			if _, exists := wasteCategorySet[category.WasteCategoryID]; !exists {
-				wasteCategorySet[category.WasteCategoryID] = struct{}{}
-				uniqueWasteCategories = append(uniqueWasteCategories, category.WasteCategory)
-			}
-		}
-
-		// Assign unique categories back to the video
-		videos[i].ContentCategories = uniqueContentCategories
-		videos[i].WasteCategories = uniqueWasteCategories
 	}
 
 	return &videos, nil
