@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"mime/multipart"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 	user_task "github.com/sawalreverr/recything/internal/task/user_task/entity"
 	"github.com/sawalreverr/recything/internal/task/user_task/repository"
 	"github.com/sawalreverr/recything/pkg"
+	"gorm.io/gorm"
 )
 
 type UserTaskUsecaseImpl struct {
@@ -44,7 +46,7 @@ func (usecase *UserTaskUsecaseImpl) CreateUserTaskUsecase(taskChallengeId string
 		return nil, pkg.ErrTaskNotFound
 	}
 
-	if findtask.Status == false {
+	if !findtask.Status {
 		return nil, pkg.ErrTaskCannotBeFollowed
 	}
 
@@ -64,14 +66,18 @@ func (usecase *UserTaskUsecaseImpl) CreateUserTaskUsecase(taskChallengeId string
 		TaskChallengeId: taskChallengeId,
 		AcceptedAt:      time.Now(),
 		ImageTask:       []user_task.UserTaskImage{},
+		StatusProgress:  "in_progress",
+		UserTaskSteps:   []user_task.UserTaskStep{}, // Initialize the UserTaskSteps
 	}
+
+	// Attach TaskSteps to the UserTaskChallenge
+	userTask.TaskChallenge = *findtask
 
 	userTaskData, err := usecase.ManageTaskRepository.CreateUserTask(userTask)
 	if err != nil {
 		return nil, err
 	}
 	return userTaskData, nil
-
 }
 
 func (usecase *UserTaskUsecaseImpl) UploadImageTaskUsecase(request *dto.UploadImageTask, fileImage []*multipart.FileHeader, userId string, userTaskId string) (*user_task.UserTaskChallenge, error) {
@@ -237,24 +243,54 @@ func (usecase *UserTaskUsecaseImpl) GetHistoryPointByUserIdUsecase(userId string
 
 func (usecase *UserTaskUsecaseImpl) UpdateTaskStepUsecase(request *dto.UpdateTaskStepRequest, userId string) (*user_task.UserTaskChallenge, error) {
 	userTask, errUserTask := usecase.ManageTaskRepository.FindUserTask(userId, request.UserTask)
-
 	if errUserTask != nil {
 		return nil, pkg.ErrUserTaskNotFound
 	}
-	if userTask.StatusAccept != "in-progress" {
+
+	if userTask.StatusAccept != "in_progress" {
 		return nil, pkg.ErrUserTaskDone
 	}
-	errStatus := usecase.ManageTaskRepository.FindTaskStep(request.StepId, userTask.TaskChallengeId)
 
-	if errStatus != nil {
-		return nil, pkg.ErrTaskStepNotFound
+	taskStep, errStep := usecase.ManageTaskRepository.FindTaskStep(request.StepId, userTask.TaskChallengeId)
+	if errStep != nil {
+		if errStep == gorm.ErrRecordNotFound {
+			return nil, pkg.ErrTaskStepNotFound
+		}
+		return nil, errStep
 	}
 
-	errTaskStep := usecase.ManageTaskRepository.UpdateTaskStep(request.StepId, userTask.TaskChallengeId)
-	if errTaskStep != nil {
-		return nil, errTaskStep
+	userTaskStep, errUserTaskStep := usecase.ManageTaskRepository.FindUserTaskStep(userTask.ID, taskStep.ID)
+	if errUserTaskStep != nil {
+		return nil, pkg.ErrUserTaskStepNotFound
 	}
 
+	userTaskStep.Completed = true
+
+	if err := usecase.ManageTaskRepository.UpdateUserTaskStep(userTaskStep); err != nil {
+		return nil, err
+	}
+
+	// Re-fetch updated user task with its relations
+	updatedUserTask, err := usecase.ManageTaskRepository.FindUserTask(userId, request.UserTask)
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedUserTask, nil
+}
+
+func (usecase *UserTaskUsecaseImpl) GetUserTaskByUserTaskId(userId string, userTaskId string) (*user_task.UserTaskChallenge, error) {
+
+	userTask, err := usecase.ManageTaskRepository.FindUserTask(userId, userTaskId)
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, pkg.ErrUserTaskNotFound
+		}
+		return nil, err
+	}
+	if (userTask.StatusProgress != "in_progress" && userTask.StatusAccept != "need_rivew") || userTask.StatusAccept == "reject" {
+		return nil, pkg.ErrUserTaskDone
+	}
 	return userTask, nil
-
 }

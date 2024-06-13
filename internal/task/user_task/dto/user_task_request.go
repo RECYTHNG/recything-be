@@ -13,6 +13,6 @@ type UpdateUserTaskRequest struct {
 }
 
 type UpdateTaskStepRequest struct {
-	StepId   int    `json:"step_id" validate:"required"`
-	UserTask string `json:"user_task" validate:"required"`
+	UserTask string `json:"user_task"`
+	StepId   int    `json:"step_id"`
 }

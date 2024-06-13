@@ -20,6 +20,7 @@ type UserTaskChallenge struct {
 	DescriptionImage string
 	Point            int
 	Reason           string
+	UserTaskSteps    []UserTaskStep `gorm:"foreignKey:UserTaskChallengeID"`
 	AcceptedAt       time.Time      `gorm:"column:accepted_at;type:datetime"`
 	CreatedAt        time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt        time.Time      `gorm:"autoUpdateTime"`
@@ -30,6 +31,16 @@ type UserTaskImage struct {
 	ID                  int    `gorm:"primaryKey"`
 	UserTaskChallengeID string `gorm:"index"`
 	ImageUrl            string
+	CreatedAt           time.Time      `gorm:"autoCreateTime"`
+	UpdatedAt           time.Time      `gorm:"autoUpdateTime"`
+	DeletedAt           gorm.DeletedAt `gorm:"index"`
+}
+
+type UserTaskStep struct {
+	ID                  int            `gorm:"primaryKey"`
+	UserTaskChallengeID string         `gorm:"index"`
+	TaskStepID          int            `gorm:"index"`
+	Completed           bool           `gorm:"default:false"`
 	CreatedAt           time.Time      `gorm:"autoCreateTime"`
 	UpdatedAt           time.Time      `gorm:"autoUpdateTime"`
 	DeletedAt           gorm.DeletedAt `gorm:"index"`

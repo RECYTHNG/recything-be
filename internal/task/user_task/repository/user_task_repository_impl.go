@@ -50,10 +50,25 @@ func (repository *UserTaskRepositoryImpl) FindLastIdTaskChallenge() (string, err
 func (repository *UserTaskRepositoryImpl) CreateUserTask(userTask *user_task.UserTaskChallenge) (*user_task.UserTaskChallenge, error) {
 	var result user_task.UserTaskChallenge
 	err := repository.DB.GetDB().Transaction(func(tx *gorm.DB) error {
+		// Create the UserTaskChallenge
 		if err := tx.Create(userTask).Error; err != nil {
 			return err
 		}
+
+		// Create UserTaskSteps for each TaskStep in the TaskChallenge
+		for _, taskStep := range userTask.TaskChallenge.TaskSteps {
+			userTaskStep := user_task.UserTaskStep{
+				UserTaskChallengeID: userTask.ID,
+				TaskStepID:          taskStep.ID,
+				Completed:           false,
+			}
+			if err := tx.Create(&userTaskStep).Error; err != nil {
+				return err
+			}
+		}
+
 		if err := tx.Preload("TaskChallenge.TaskSteps").
+			Preload("UserTaskSteps").
 			Where("user_task_challenges.id = ?", userTask.ID).
 			First(&result).Error; err != nil {
 			return err
@@ -71,7 +86,11 @@ func (repository *UserTaskRepositoryImpl) CreateUserTask(userTask *user_task.Use
 
 func (repository *UserTaskRepositoryImpl) FindUserTask(userId string, userTaskId string) (*user_task.UserTaskChallenge, error) {
 	var userTask user_task.UserTaskChallenge
-	if err := repository.DB.GetDB().Where("user_id = ? and id = ?", userId, userTaskId).First(&userTask).Error; err != nil {
+	if err := repository.DB.GetDB().
+		Preload("TaskChallenge.TaskSteps").
+		Preload("UserTaskSteps").
+		Where("user_id = ? and id = ?", userId, userTaskId).
+		First(&userTask).Error; err != nil {
 		return nil, err
 	}
 	return &userTask, nil
@@ -121,6 +140,7 @@ func (repository *UserTaskRepositoryImpl) UploadImageTask(userTask *user_task.Us
 
 	tx.Preload("UserTaskImage").
 		Preload("TaskChallenge.TaskSteps").
+		Preload("UserTaskSteps").
 		Where("id = ?", userTaskId).
 		First(&userTask)
 
@@ -136,6 +156,7 @@ func (repository *UserTaskRepositoryImpl) GetUserTaskByUserId(userId string) ([]
 	var userTask []user_task.UserTaskChallenge
 	if err := repository.DB.GetDB().
 		Preload("TaskChallenge.TaskSteps").
+		Preload("UserTaskSteps").
 		Where("user_id = ? and status_progress = ?", userId, "in_progress").
 		Order("id desc").
 		Find(&userTask).Error; err != nil {
@@ -148,6 +169,7 @@ func (repository *UserTaskRepositoryImpl) GetUserTaskDoneByUserId(userId string)
 	var userTask []user_task.UserTaskChallenge
 	if err := repository.DB.GetDB().
 		Preload("TaskChallenge.TaskSteps").
+		Preload("UserTaskSteps").
 		Where("user_id = ? and status_progress = ?", userId, "done").
 		Order("id desc").
 		Find(&userTask).Error; err != nil {
@@ -200,6 +222,7 @@ func (repository *UserTaskRepositoryImpl) UpdateUserTask(userTask *user_task.Use
 
 	tx.Preload("UserTaskImage").
 		Preload("TaskChallenge.TaskSteps").
+		Preload("UserTaskSteps").
 		Where("id = ?", userTaskId).
 		First(&userTask)
 
@@ -216,6 +239,7 @@ func (repository *UserTaskRepositoryImpl) GetUserTaskDetails(userTaskId string, 
 	if err := repository.DB.GetDB().
 		Preload("User").
 		Preload("TaskChallenge").
+		Preload("UserTaskSteps").
 		Where("id = ? ", userTaskId).
 		Where("user_id = ?", userId).
 		First(&userTask).Error; err != nil {
@@ -244,23 +268,23 @@ func (repository *UserTaskRepositoryImpl) GetHistoryPointByUserId(userId string)
 	return userTask, nil
 }
 
-func (repository *UserTaskRepositoryImpl) FindTaskStep(stepId int, taskId string) error {
+func (repository *UserTaskRepositoryImpl) FindTaskStep(stepId int, taskId string) (*task.TaskStep, error) {
 	var taskStep task.TaskStep
 	if err := repository.DB.GetDB().
 		Where("id = ?", stepId).
 		Where("task_challenge_id = ?", taskId).
 		First(&taskStep).Error; err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return &taskStep, nil
 }
 
-func (repository *UserTaskRepositoryImpl) UpdateTaskStep(stepId int, taskId string) error {
-	if err := repository.DB.GetDB().Model(&task.TaskStep{}).
-		Where("id = ?", stepId).
-		Where("task_challenge_id = ?", taskId).
-		Update("status", true).Error; err != nil {
-		return err
-	}
-	return nil
+func (repository *UserTaskRepositoryImpl) UpdateUserTaskStep(userTaskStep *user_task.UserTaskStep) error {
+	return repository.DB.GetDB().Save(userTaskStep).Error
+}
+
+func (repository *UserTaskRepositoryImpl) FindUserTaskStep(userTaskChallengeID string, taskStepID int) (*user_task.UserTaskStep, error) {
+	var userTaskStep user_task.UserTaskStep
+	err := repository.DB.GetDB().Where("user_task_challenge_id = ? AND task_step_id = ?", userTaskChallengeID, taskStepID).First(&userTaskStep).Error
+	return &userTaskStep, err
 }

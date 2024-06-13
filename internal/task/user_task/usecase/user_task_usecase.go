@@ -19,4 +19,5 @@ type UserTaskUsecase interface {
 	GetUserTaskDetailsUsecase(userTaskId string, userId string) (*user_task.UserTaskChallenge, []*user_task.UserTaskImage, error)
 	GetHistoryPointByUserIdUsecase(userId string) ([]user_task.UserTaskChallenge, int, error)
 	UpdateTaskStepUsecase(request *dto.UpdateTaskStepRequest, userId string) (*user_task.UserTaskChallenge, error)
+	GetUserTaskByUserTaskId(userId string, userTaskId string) (*user_task.UserTaskChallenge, error)
 }
