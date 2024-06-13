@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"errors"
 	"net/http"
 	"strings"
 
@@ -30,6 +31,9 @@ func RoleBasedMiddleware(allowedRoles ...string) echo.MiddlewareFunc {
 			})
 
 			if err != nil {
+				if errors.Is(err, jwt.ErrTokenExpired) {
+					return helper.ErrorHandler(c, http.StatusUnauthorized, "token has expired")
+				}
 				return helper.ErrorHandler(c, http.StatusUnauthorized, "invalid token signature")
 			}
 

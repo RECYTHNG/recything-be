@@ -6,15 +6,17 @@ import (
 	"github.com/google/uuid"
 	"github.com/sawalreverr/recything/internal/helper"
 	rpt "github.com/sawalreverr/recything/internal/report"
+	user "github.com/sawalreverr/recything/internal/user"
 	"github.com/sawalreverr/recything/pkg"
 )
 
 type reportUsecase struct {
 	reportRepository rpt.ReportRepository
+	userRepository   user.UserRepository
 }
 
-func NewReportUsecase(repo rpt.ReportRepository) rpt.ReportUsecase {
-	return &reportUsecase{reportRepository: repo}
+func NewReportUsecase(reportRepo rpt.ReportRepository, userRepo user.UserRepository) rpt.ReportUsecase {
+	return &reportUsecase{reportRepository: reportRepo, userRepository: userRepo}
 }
 
 func (uc *reportUsecase) CreateReport(report rpt.ReportInput, authorID string, imageURLs []string) (*rpt.ReportDetail, error) {
@@ -83,9 +85,16 @@ func (uc *reportUsecase) CreateReport(report rpt.ReportInput, authorID string, i
 		return nil, pkg.ErrStatusInternalError
 	}
 
+	userFound, _ := uc.userRepository.FindByID(authorID)
+	author := rpt.UserDetail{
+		ID:       userFound.ID,
+		Name:     userFound.Name,
+		ImageURL: userFound.PictureURL,
+	}
+
 	reportDetail := rpt.ReportDetail{
 		ID:             createdReport.ID,
-		AuthorID:       createdReport.AuthorID,
+		Author:         author,
 		ReportType:     createdReport.ReportType,
 		Title:          createdReport.Title,
 		Description:    createdReport.Description,
@@ -123,9 +132,16 @@ func (uc *reportUsecase) FindHistoryUserReports(authorID string) (*[]rpt.ReportD
 			return nil, pkg.ErrStatusInternalError
 		}
 
+		userFound, _ := uc.userRepository.FindByID(authorID)
+		author := rpt.UserDetail{
+			ID:       userFound.ID,
+			Name:     userFound.Name,
+			ImageURL: userFound.PictureURL,
+		}
+
 		reportDetail := rpt.ReportDetail{
 			ID:             report.ID,
-			AuthorID:       report.AuthorID,
+			Author:         author,
 			ReportType:     report.ReportType,
 			Title:          report.Title,
 			Description:    report.Description,
@@ -185,9 +201,16 @@ func (uc *reportUsecase) FindAllReports(page, limit int, reportType, status stri
 			return nil, 0, pkg.ErrStatusInternalError
 		}
 
+		userFound, _ := uc.userRepository.FindByID(report.AuthorID)
+		author := rpt.UserDetail{
+			ID:       userFound.ID,
+			Name:     userFound.Name,
+			ImageURL: userFound.PictureURL,
+		}
+
 		reportDetail := rpt.ReportDetail{
 			ID:             report.ID,
-			AuthorID:       report.AuthorID,
+			Author:         author,
 			ReportType:     report.ReportType,
 			Title:          report.Title,
 			Description:    report.Description,

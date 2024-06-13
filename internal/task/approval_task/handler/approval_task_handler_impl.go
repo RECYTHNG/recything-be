@@ -114,6 +114,9 @@ func (handler *ApprovalTaskHandlerImpl) RejectUserTaskHandler(c echo.Context) er
 		if errors.Is(err, pkg.ErrUserTaskNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserTaskNotFound.Error())
 		}
+		if errors.Is(err, pkg.ErrUserTaskAlreadyAccepted) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrUserTaskAlreadyAccepted.Error())
+		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
 

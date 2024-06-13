@@ -3,6 +3,7 @@ package handler
 import (
 	"errors"
 	"net/http"
+	"sort"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -25,51 +26,167 @@ func (handler *UserVideoHandlerImpl) GetAllVideoHandler(c echo.Context) error {
 	if err != nil {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
-	var dataVideo []dto.DataVideo
-	data := dto.GetAllVideoResponse{
-		DataVideo: dataVideo,
-	}
 
+	var dataVideo []*dto.DataVideoSearchByCategory
 	for _, video := range *videos {
-		dataVideo = append(dataVideo, dto.DataVideo{
-			Id:           video.ID,
-			Title:        video.Title,
-			Description:  video.Description,
-			UrlThumbnail: video.Thumbnail,
-			LinkVideo:    video.Link,
-			Viewer:       video.Viewer,
+		uniqueContentCategories := make(map[uint]*dto.DataCategoryVideo)
+		uniqueTrashCategories := make(map[uint]*dto.DataTrashCategoryVideo)
+
+		for _, vc := range video.Categories {
+			if _, exists := uniqueContentCategories[vc.ContentCategoryID]; !exists {
+				uniqueContentCategories[vc.ContentCategoryID] = &dto.DataCategoryVideo{
+					Id:   int(vc.ContentCategory.ID),
+					Name: vc.ContentCategory.Name,
+				}
+			}
+			if _, exists := uniqueTrashCategories[vc.WasteCategoryID]; !exists {
+				uniqueTrashCategories[vc.WasteCategoryID] = &dto.DataTrashCategoryVideo{
+					Id:   int(vc.WasteCategory.ID),
+					Name: vc.WasteCategory.Name,
+				}
+			}
+		}
+
+		// Convert maps back to slices
+		var videoCategories []*dto.DataCategoryVideo
+		for _, vc := range uniqueContentCategories {
+			videoCategories = append(videoCategories, vc)
+		}
+		var trashCategories []*dto.DataTrashCategoryVideo
+		for _, tc := range uniqueTrashCategories {
+			trashCategories = append(trashCategories, tc)
+		}
+
+		dataVideo = append(dataVideo, &dto.DataVideoSearchByCategory{
+			Id:            video.ID,
+			Title:         video.Title,
+			Description:   video.Description,
+			UrlThumbnail:  video.Thumbnail,
+			LinkVideo:     video.Link,
+			Viewer:        video.Viewer,
+			VideoCategory: videoCategories,
+			TrashCategory: trashCategories,
 		})
 	}
-	data.DataVideo = dataVideo
-	responseData := helper.ResponseData(http.StatusOK, "success get all video", data.DataVideo)
 
-	return c.JSON(http.StatusOK, responseData)
+	responseData := dto.SearchVideoByCategoryVideoResponse{
+		DataVideo: dataVideo,
+	}
+	return c.JSON(http.StatusOK, helper.ResponseData(http.StatusOK, "success", responseData.DataVideo))
 }
 
-func (handler *UserVideoHandlerImpl) SearchVideoByTitleHandler(c echo.Context) error {
-	title := c.QueryParam("title")
-	videos, err := handler.Usecase.SearchVideoByTitleUsecase(title)
+func (handler *UserVideoHandlerImpl) SearchVideoByKeywordHandler(c echo.Context) error {
+	keyword := c.QueryParam("keyword")
+	videos, err := handler.Usecase.SearchVideoByKeywordUsecase(keyword)
 	if err != nil {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
-	var dataVideo []dto.DataVideo
-	data := dto.GetAllVideoResponse{
-		DataVideo: dataVideo,
-	}
+
+	var dataVideo []*dto.DataVideoSearchByCategory
 	for _, video := range *videos {
-		dataVideo = append(dataVideo, dto.DataVideo{
-			Id:           video.ID,
-			Title:        video.Title,
-			Description:  video.Description,
-			UrlThumbnail: video.Thumbnail,
-			LinkVideo:    video.Link,
-			Viewer:       video.Viewer,
+		uniqueContentCategories := make(map[uint]*dto.DataCategoryVideo)
+		uniqueTrashCategories := make(map[uint]*dto.DataTrashCategoryVideo)
+
+		for _, vc := range video.Categories {
+			if _, exists := uniqueContentCategories[vc.ContentCategoryID]; !exists {
+				uniqueContentCategories[vc.ContentCategoryID] = &dto.DataCategoryVideo{
+					Id:   int(vc.ContentCategory.ID),
+					Name: vc.ContentCategory.Name,
+				}
+			}
+			if _, exists := uniqueTrashCategories[vc.WasteCategoryID]; !exists {
+				uniqueTrashCategories[vc.WasteCategoryID] = &dto.DataTrashCategoryVideo{
+					Id:   int(vc.WasteCategory.ID),
+					Name: vc.WasteCategory.Name,
+				}
+			}
+		}
+
+		// Convert maps back to slices
+		var videoCategories []*dto.DataCategoryVideo
+		for _, vc := range uniqueContentCategories {
+			videoCategories = append(videoCategories, vc)
+		}
+		var trashCategories []*dto.DataTrashCategoryVideo
+		for _, tc := range uniqueTrashCategories {
+			trashCategories = append(trashCategories, tc)
+		}
+
+		dataVideo = append(dataVideo, &dto.DataVideoSearchByCategory{
+			Id:            video.ID,
+			Title:         video.Title,
+			Description:   video.Description,
+			UrlThumbnail:  video.Thumbnail,
+			LinkVideo:     video.Link,
+			Viewer:        video.Viewer,
+			VideoCategory: videoCategories,
+			TrashCategory: trashCategories,
 		})
 	}
-	data.DataVideo = dataVideo
-	responseData := helper.ResponseData(http.StatusOK, "success get all video", data.DataVideo)
 
-	return c.JSON(http.StatusOK, responseData)
+	responseData := dto.SearchVideoByCategoryVideoResponse{
+		DataVideo: dataVideo,
+	}
+	return c.JSON(http.StatusOK, helper.ResponseData(http.StatusOK, "success", responseData.DataVideo))
+}
+
+func (handler *UserVideoHandlerImpl) SearchVideoByCategoryHandler(c echo.Context) error {
+	categoryType := c.QueryParam("type")
+	categoryName := c.QueryParam("name")
+	videos, err := handler.Usecase.SearchVideoByCategoryUsecase(categoryType, categoryName)
+	if err != nil {
+		if errors.Is(err, pkg.ErrVideoNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrVideoNotFound.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+	}
+
+	var dataVideo []*dto.DataVideoSearchByCategory
+	for _, video := range *videos {
+		uniqueContentCategories := make(map[uint]*dto.DataCategoryVideo)
+		uniqueTrashCategories := make(map[uint]*dto.DataTrashCategoryVideo)
+
+		for _, vc := range video.Categories {
+			if _, exists := uniqueContentCategories[vc.ContentCategoryID]; !exists {
+				uniqueContentCategories[vc.ContentCategoryID] = &dto.DataCategoryVideo{
+					Id:   int(vc.ContentCategory.ID),
+					Name: vc.ContentCategory.Name,
+				}
+			}
+			if _, exists := uniqueTrashCategories[vc.WasteCategoryID]; !exists {
+				uniqueTrashCategories[vc.WasteCategoryID] = &dto.DataTrashCategoryVideo{
+					Id:   int(vc.WasteCategory.ID),
+					Name: vc.WasteCategory.Name,
+				}
+			}
+		}
+
+		// Convert maps back to slices
+		var videoCategories []*dto.DataCategoryVideo
+		for _, vc := range uniqueContentCategories {
+			videoCategories = append(videoCategories, vc)
+		}
+		var trashCategories []*dto.DataTrashCategoryVideo
+		for _, tc := range uniqueTrashCategories {
+			trashCategories = append(trashCategories, tc)
+		}
+
+		dataVideo = append(dataVideo, &dto.DataVideoSearchByCategory{
+			Id:            video.ID,
+			Title:         video.Title,
+			Description:   video.Description,
+			UrlThumbnail:  video.Thumbnail,
+			LinkVideo:     video.Link,
+			Viewer:        video.Viewer,
+			VideoCategory: videoCategories,
+			TrashCategory: trashCategories,
+		})
+	}
+
+	responseData := dto.SearchVideoByCategoryVideoResponse{
+		DataVideo: dataVideo,
+	}
+	return c.JSON(http.StatusOK, helper.ResponseData(http.StatusOK, "success", responseData.DataVideo))
 }
 
 func (handler *UserVideoHandlerImpl) GetVideoDetailHandler(c echo.Context) error {
@@ -79,12 +196,23 @@ func (handler *UserVideoHandlerImpl) GetVideoDetailHandler(c echo.Context) error
 		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid id parameter")
 	}
 
-	video, comments, err := handler.Usecase.GetVideoDetailUsecase(intId)
+	video, comments, totalComment, err := handler.Usecase.GetVideoDetailUsecase(intId)
 	if err != nil {
 		if errors.Is(err, pkg.ErrVideoNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrVideoNotFound.Error())
 		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+	}
+
+	sortComments := c.QueryParam("sort-comments")
+
+	if sortComments == "" {
+		sortComments = "false"
+	}
+	if sortComments == "true" {
+		sort.SliceStable(*comments, func(i, j int) bool {
+			return (*comments)[i].CreatedAt.After((*comments)[j].CreatedAt)
+		})
 	}
 
 	var dataComments []dto.DataComment
@@ -97,16 +225,18 @@ func (handler *UserVideoHandlerImpl) GetVideoDetailHandler(c echo.Context) error
 			LinkVideo:    video.Link,
 			Viewer:       video.Viewer,
 		},
-		Comments: &dataComments,
+		TotalComment: totalComment,
+		Comments:     &dataComments,
 	}
 
 	for _, comment := range *comments {
 		dataComments = append(dataComments, dto.DataComment{
-			Id:        comment.ID,
-			Comment:   comment.Comment,
-			UserID:    comment.UserID,
-			UserName:  comment.User.Name,
-			CreatedAt: comment.CreatedAt,
+			Id:          comment.ID,
+			Comment:     comment.Comment,
+			UserID:      comment.UserID,
+			UserName:    comment.User.Name,
+			UserProfile: comment.User.PictureURL,
+			CreatedAt:   comment.CreatedAt,
 		})
 	}
 	data.Comments = &dataComments

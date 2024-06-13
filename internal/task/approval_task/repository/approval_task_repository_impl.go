@@ -52,7 +52,6 @@ func (repository *ApprovalTaskRepositoryImpl) ApproveUserTask(userTaskId string)
 	var userTask user_task.UserTaskChallenge
 	tx := repository.DB.GetDB().Begin()
 
-	// Load the user task first to ensure we have all its fields
 	if err := tx.Where("id = ?", userTaskId).First(&userTask).Error; err != nil {
 		tx.Rollback()
 		return err
@@ -93,7 +92,7 @@ func (repository *ApprovalTaskRepositoryImpl) ApproveUserTask(userTaskId string)
 	var badge string
 	for _, ach := range achievements {
 		if pointUpdate >= ach.TargetPoint {
-			badge = ach.BadgeUrl
+			badge = ach.BadgeUrlUser
 			break
 		}
 	}

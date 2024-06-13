@@ -36,11 +36,17 @@ func main() {
 	// Init Achievements
 	db.InitAchievements()
 
-	// Init Video Categories
-	db.InitVideoCategories()
-
 	// Init About us
 	db.InitAboutUs()
+
+	// Init Waste Categories
+	db.InitWasteCategories()
+
+	// Init Content Categories
+	db.InitContentCategories()
+
+	// Init Article
+	db.InitArticle()
 
 	// Init Videos
 	db.InitDataVideos()

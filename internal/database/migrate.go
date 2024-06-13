@@ -6,6 +6,7 @@ import (
 	aboutus "github.com/sawalreverr/recything/internal/about-us"
 	achievement "github.com/sawalreverr/recything/internal/achievements/manage_achievements/entity"
 	"github.com/sawalreverr/recything/internal/admin/entity"
+	"github.com/sawalreverr/recything/internal/article"
 	customdata "github.com/sawalreverr/recything/internal/custom-data"
 	"github.com/sawalreverr/recything/internal/faq"
 	"github.com/sawalreverr/recything/internal/report"
@@ -35,6 +36,13 @@ func AutoMigrate(db Database) {
 		&video.Comment{},
 		&aboutus.AboutUs{},
 		&aboutus.AboutUsImage{},
+		&article.WasteCategory{},
+		&article.ContentCategory{},
+		&article.Article{},
+		&article.ArticleSection{},
+		&article.ArticleCategories{},
+		&article.ArticleComment{},
+		&user_task.UserTaskStep{},
 	); err != nil {
 		log.Fatal("Database Migration Failed!")
 	}

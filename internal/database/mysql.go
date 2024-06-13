@@ -9,6 +9,7 @@ import (
 	aboutus "github.com/sawalreverr/recything/internal/about-us"
 	achievement "github.com/sawalreverr/recything/internal/achievements/manage_achievements/entity"
 	adminEntity "github.com/sawalreverr/recything/internal/admin/entity"
+	"github.com/sawalreverr/recything/internal/article"
 	customDataEntity "github.com/sawalreverr/recything/internal/custom-data"
 	faqEntity "github.com/sawalreverr/recything/internal/faq"
 	"github.com/sawalreverr/recything/internal/helper"
@@ -219,24 +220,28 @@ func (m *mysqlDatabase) InitTaskSteps() {
 func (m *mysqlDatabase) InitAchievements() {
 	dumyData := []achievement.Achievement{
 		{
-			Level:       "classic",
-			TargetPoint: 0,
-			BadgeUrl:    "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758679/achievement_badge/cq2n246e6twuksnia62t.png",
+			Level:        "classic",
+			TargetPoint:  0,
+			BadgeUrl:     "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758679/achievement_badge/cq2n246e6twuksnia62t.png",
+			BadgeUrlUser: "https://res.cloudinary.com/dymhvau8n/image/upload/v1718189121/user_badge/htaemsjtlhfof7ww01ss.png",
 		},
 		{
-			Level:       "silver",
-			TargetPoint: 50000,
-			BadgeUrl:    "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758731/achievement_badge/b8igluyain8bwyjusfpk.png",
+			Level:        "silver",
+			TargetPoint:  50000,
+			BadgeUrl:     "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758731/achievement_badge/b8igluyain8bwyjusfpk.png",
+			BadgeUrlUser: "https://res.cloudinary.com/dymhvau8n/image/upload/v1718189221/user_badge/oespnjdgoynkairlutbk.png",
 		},
 		{
-			Level:       "gold",
-			TargetPoint: 150000,
-			BadgeUrl:    "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758761/achievement_badge/lazzyh9tytvb4rophbc3.png",
+			Level:        "gold",
+			TargetPoint:  150000,
+			BadgeUrl:     "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758761/achievement_badge/lazzyh9tytvb4rophbc3.png",
+			BadgeUrlUser: "https://res.cloudinary.com/dymhvau8n/image/upload/v1718189184/user_badge/jshs1s2fwevahgtvjkgj.png",
 		},
 		{
-			Level:       "platinum",
-			TargetPoint: 300000,
-			BadgeUrl:    "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758798/achievement_badge/xc8msr6agowzhfq8ss8a.png",
+			Level:        "platinum",
+			TargetPoint:  300000,
+			BadgeUrl:     "https://res.cloudinary.com/dymhvau8n/image/upload/v1717758798/achievement_badge/xc8msr6agowzhfq8ss8a.png",
+			BadgeUrlUser: "https://res.cloudinary.com/dymhvau8n/image/upload/v1718188250/user_badge/icureiapdvtzyu5b99zu.png",
 		},
 	}
 
@@ -247,21 +252,6 @@ func (m *mysqlDatabase) InitAchievements() {
 	log.Println("Dummy Achievements added!")
 }
 
-func (m *mysqlDatabase) InitVideoCategories() {
-	videoCategories := []video.VideoCategory{
-		{Name: "Tips"},
-		{Name: "Daur Ulang"},
-		{Name: "Tutorial"},
-		{Name: "Edukasi"},
-		{Name: "Kampanye"},
-		{Name: "Lainnya"},
-	}
-	for _, videoCategory := range videoCategories {
-		m.GetDB().FirstOrCreate(&videoCategory, videoCategory)
-	}
-	log.Println("Video categories data added!")
-}
-
 func (m *mysqlDatabase) InitAboutUs() {
 	aboutUs := []aboutus.AboutUs{
 		{ID: "ABS01", Category: "perusahaan", Title: "Tentang siapa kami", Description: "RecyThing adalah pemimpin di industri daur ulang sampah yang berkomitmen untuk menjaga lingkungan hidup yang lebih bersih dan lebih berkelanjutan."},
@@ -270,16 +260,18 @@ func (m *mysqlDatabase) InitAboutUs() {
 		{ID: "ABS04", Category: "perusahaan", Title: "Pelayanan Pelanggan Unggul", Description: "Tim ahli yang berpengalaman memberikan solusi tepat dan responsif sesuai dengan kebutuhan klien."},
 		{ID: "ABS05", Category: "perusahaan", Title: "Pendidikan Masyarakat", Description: "Berperan aktif dalam mendidik masyarakat tentang pentingnya daur ulang dan pengelolaan limbah yang berkelanjutan."},
 
-		{ID: "ABS06", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
-		{ID: "ABS07", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
-		{ID: "ABS08", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
-		{ID: "ABS09", Category: "tim", Title: "Tim Manajemen", Description: "Lorem ipsum dolor sit amet consectetur. Faucibus ultricies neque pellentesque tempus eros nulla ultrices laoreet. Posuere placerat cras fames egestas. Turpis odio molestie nec viverra nam justo risus. Suspendisse eget id hac diam faucibus adipiscing."},
+		{ID: "ABS06", Category: "tim", Title: "Tim UI/UX", Description: "Tim UI/UX kami adalah kekuatan kreatif yang memastikan RecyThing intuitif dan ramah pengguna. Mereka berdedikasi untuk merancang interaksi yang mulus dan interface yang menarik secara visual untuk meningkatkan pengalaman pengguna. Komitmen mereka dalam memahami kebutuhan pengguna mendorong perbaikan berkelanjutan dari desain aplikasi kami."},
+		{ID: "ABS07", Category: "tim", Title: "Tim Mobile", Description: "Tim Mobile Development kami membawa RecyThing ke genggaman Anda. Mereka berspesialisasi dalam menciptakan aplikasi mobile yang mulus dan responsif. Keahlian mereka memastikan bahwa aplikasi kami berfungsi dengan sempurna di berbagai perangkat, memberikan pengguna alat yang andal dan efisien untuk kebutuhan daur ulang mereka."},
+		{ID: "ABS08", Category: "tim", Title: "Tim Front End", Description: "Tim Front-End Development kami bertanggung jawab untuk menerjemahkan desain kami menjadi interface yang fungsional. Mereka bekerja dengan teknologi web terbaru untuk menciptakan pengalaman pengguna yang cepat dan menarik. Perhatian mereka terhadap detail memastikan bahwa setiap aspek aplikasi konsisten secara visual dan beroperasi dengan lancar."},
+		{ID: "ABS09", Category: "tim", Title: "Tim Back End", Description: "Tim Back-End kami membangun infrastruktur kuat yang mendukung RecyThing. Mereka mengembangkan dan memelihara logika sisi server, basis data, dan integrasi yang memastikan aplikasi kami berjalan efisien dan aman. Pekerjaan mereka menjamin bahwa data pengguna ditangani dengan sangat hati-hati dan bahwa kinerja aplikasi tetap optimal."},
+		{ID: "ABS10", Category: "tim", Title: "Tim Data Engineer", Description: "Tim Data Engineer di RecyThing memanfaatkan kekuatan data untuk mendorong pengambilan keputusan yang terinformasi. Mereka mengelola pengumpulan, pemrosesan, dan analisis data untuk mengoptimalkan solusi daur ulang kami. Wawasan mereka membantu kami memahami perilaku pengguna, meningkatkan layanan kami, dan berkontribusi pada masa depan yang lebih berkelanjutan."},
+		{ID: "ABS11", Category: "tim", Title: "Tim Quality Engineer", Description: "Tim Quality Engineer kami berkomitmen untuk menjaga standar tertinggi dalam hal keandalan dan kinerja. Mereka melakukan pengujian yang ketat untuk mengidentifikasi dan menyelesaikan masalah apa pun, memastikan bahwa aplikasi kami kuat dan aman. Dedikasi mereka terhadap jaminan kualitas memastikan bahwa RecyThing memberikan pengalaman yang mulus dan bebas hambatan bagi semua pengguna."},
 
-		{ID: "ABS10", Category: "contact_us", Title: "Hubungi Kami", Description: "Jika Anda memiliki pertanyaan, masukan, atau ingin bermitra dengan kami, jangan ragu untuk menghubungi tim kami. Kami siap membantu Anda dengan segala kebutuhan terkait daur ulang dan pengelolaan limbah."},
-		{ID: "ABS11", Category: "contact_us", Title: "Alamat Kantor", Description: "Recything\nJalan Mangga Dua\nJakarta Pusat, 20012\nIndonesia"},
-		{ID: "ABS12", Category: "contact_us", Title: "Jam Operasional", Description: "Senin-Jumat: 08.00 - 17.00 WIB"},
-		{ID: "ABS13", Category: "contact_us", Title: "Telepon", Description: "+6289511223344"},
-		{ID: "ABS14", Category: "contact_us", Title: "Social Media", Description: "Facebook: https://facebook.com/recything\nTwitter: https://x.com/recything\nInstagram: https://instagram.com/recything\nLinkedin: https://linkedin.com/recything"},
+		{ID: "ABS12", Category: "contact_us", Title: "Hubungi Kami", Description: "Jika Anda memiliki pertanyaan, masukan, atau ingin bermitra dengan kami, jangan ragu untuk menghubungi tim kami. Kami siap membantu Anda dengan segala kebutuhan terkait daur ulang dan pengelolaan limbah."},
+		{ID: "ABS13", Category: "contact_us", Title: "Alamat Kantor", Description: "Recything\nJalan Mangga Dua\nJakarta Pusat, 20012\nIndonesia"},
+		{ID: "ABS14", Category: "contact_us", Title: "Jam Operasional", Description: "Senin-Jumat: 08.00 - 17.00 WIB"},
+		{ID: "ABS15", Category: "contact_us", Title: "Telepon", Description: "+6289511223344"},
+		{ID: "ABS16", Category: "contact_us", Title: "Social Media", Description: "Facebook: https://facebook.com/recything\nTwitter: https://x.com/recything\nInstagram: https://instagram.com/recything\nLinkedin: https://linkedin.com/recything"},
 	}
 
 	aboutUsImages := []aboutus.AboutUsImage{
@@ -288,23 +280,35 @@ func (m *mysqlDatabase) InitAboutUs() {
 		{ID: "ABSI02", AboutUsID: "ABS05", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758301/recything/about-us/spgrokvm9un0yq5zsycn.png"},
 		{ID: "ABSI03", AboutUsID: "ABS05", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758301/recything/about-us/tynymzulgmkwiqu4a7mb.png"},
 
-		{ID: "ABSI04", AboutUsID: "ABS06", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{ID: "ABSI05", AboutUsID: "ABS06", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{ID: "ABSI06", AboutUsID: "ABS06", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI04", AboutUsID: "ABS06", Name: "Hadyan Alhafizh", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/uiux-1.png"},
+		{ID: "ABSI05", AboutUsID: "ABS06", Name: "Leonita Puteri Kurniawan", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/uiux-2.png"},
+		{ID: "ABSI06", AboutUsID: "ABS06", Name: "Afni Kurnia Herawati", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/uiux-3.png"},
+		{ID: "ABSI07", AboutUsID: "ABS06", Name: "Adillah Bulan Suci", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/uiux-4.png"},
+		{ID: "ABSI08", AboutUsID: "ABS06", Name: "Ana Nestania", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/uiux-5.png"},
+		{ID: "ABSI09", AboutUsID: "ABS06", Name: "Addina Khairinisa", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/uiux-6.png"},
 
-		{ID: "ABSI07", AboutUsID: "ABS07", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{ID: "ABSI08", AboutUsID: "ABS07", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{ID: "ABSI09", AboutUsID: "ABS07", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI10", AboutUsID: "ABS07", Name: "Aulia Heppy Cahya S.", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/mobile-1.png"},
+		{ID: "ABSI11", AboutUsID: "ABS07", Name: "Fadhl Al-Hafizh", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/mobile-2.png"},
+		{ID: "ABSI12", AboutUsID: "ABS07", Name: "Zulfan Faizun Nazib", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/mobile-3.png"},
+		{ID: "ABSI13", AboutUsID: "ABS07", Name: "Muhammad Maulana Givari", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/mobile-4.png"},
+		{ID: "ABSI14", AboutUsID: "ABS07", Name: "Aflah Alifuna M. R.", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/mobile-5.png"},
 
-		{ID: "ABSI10", AboutUsID: "ABS08", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{ID: "ABSI11", AboutUsID: "ABS08", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{ID: "ABSI12", AboutUsID: "ABS08", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI15", AboutUsID: "ABS08", Name: "Nauval Fahreza Attamimi", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/frontend-1.png"},
+		{ID: "ABSI16", AboutUsID: "ABS08", Name: "Yohannes Rahul Rafael", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/frontend-2.png"},
+		{ID: "ABSI17", AboutUsID: "ABS08", Name: "Naufal Yusuf Fauzan", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/frontend-3.png"},
+		{ID: "ABSI18", AboutUsID: "ABS08", Name: "Novia Dwi Lestari", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/frontend-4.png"},
 
-		{ID: "ABSI13", AboutUsID: "ABS09", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{ID: "ABSI14", AboutUsID: "ABS09", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
-		{ID: "ABSI15", AboutUsID: "ABS09", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/qwck5a9jwqht6rdjmxwd.png"},
+		{ID: "ABSI19", AboutUsID: "ABS09", Name: "Muhammad Shahwal R. B", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/backend-1.png"},
+		{ID: "ABSI20", AboutUsID: "ABS09", Name: "Markus Rabin Ronaldo", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/backend-2.png"},
 
-		{ID: "ABSI16", AboutUsID: "ABS10", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/mfi5xij2xssmztqwaybz.png"},
+		{ID: "ABSI21", AboutUsID: "ABS10", Name: "Yazid Ahmad Hisyam", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/data-1.png"},
+		{ID: "ABSI22", AboutUsID: "ABS10", Name: "Daffa Alfahryan Syuja Syaehu", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/data-2.png"},
+		{ID: "ABSI23", AboutUsID: "ABS10", Name: "Afril Istihawa", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/data-3.png"},
+
+		{ID: "ABSI24", AboutUsID: "ABS11", Name: "Ismy Fana Fillah", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/quality-1.png"},
+		{ID: "ABSI25", AboutUsID: "ABS11", Name: "Ardelia Syahira Yudiva", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1718207346/recything/about-us/tim/quality-2.png"},
+
+		{ID: "ABSI26", AboutUsID: "ABS12", ImageURL: "https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/mfi5xij2xssmztqwaybz.png"},
 	}
 
 	for _, about := range aboutUs {
@@ -318,27 +322,118 @@ func (m *mysqlDatabase) InitAboutUs() {
 	log.Println("About-us data added!")
 }
 
+func (m *mysqlDatabase) InitWasteCategories() {
+	categories := []article.WasteCategory{
+		{ID: 1, Name: "plastik"},
+		{ID: 2, Name: "besi"},
+		{ID: 3, Name: "kaca"},
+		{ID: 4, Name: "organik"},
+		{ID: 5, Name: "kayu"},
+		{ID: 6, Name: "kertas"},
+		{ID: 7, Name: "baterai"},
+		{ID: 8, Name: "kaleng"},
+		{ID: 9, Name: "elektronik"},
+		{ID: 10, Name: "tekstil"},
+		{ID: 11, Name: "minyak"},
+		{ID: 12, Name: "bola lampu"},
+		{ID: 13, Name: "berbahaya"},
+	}
+
+	for _, category := range categories {
+		m.GetDB().FirstOrCreate(&category, category)
+	}
+	log.Println("Waste categories data added!")
+}
+
+func (m *mysqlDatabase) InitContentCategories() {
+	categories := []article.ContentCategory{
+		{ID: 1, Name: "tips"},
+		{ID: 2, Name: "daur ulang"},
+		{ID: 3, Name: "tutorial"},
+		{ID: 4, Name: "edukasi"},
+		{ID: 5, Name: "kampanye"},
+	}
+
+	for _, category := range categories {
+		m.GetDB().FirstOrCreate(&category, category)
+	}
+	log.Println("Content categories data added!")
+}
+
+func (m *mysqlDatabase) InitArticle() {
+	articles := []article.Article{
+		{ID: "ART0001", Title: "Cara Mendaur Ulang Botol Plastik", Description: "Panduan langkah demi langkah tentang cara mendaur ulang botol plastik di rumah.", ThumbnailURL: "https://example.com/daur-ulang-plastik.jpg", AuthorID: "AD0001"},
+		{ID: "ART0002", Title: "Bahaya Limbah Elektronik dan Cara Pembuangan yang Bertanggung Jawab", Description: "Pelajari tentang bahaya lingkungan dan kesehatan dari limbah elektronik dan temukan metode pembuangan yang aman.", ThumbnailURL: "https://example.com/limbah-elektronik.jpg", AuthorID: "AD0001"},
+	}
+
+	articleSections := []article.ArticleSection{
+		{ID: 1, ArticleID: "ART0001", Title: "Membersihkan dan Menyortir", Description: "Bilas botol, lepaskan label, dan pisahkan berdasarkan jenisnya (PET, HDPE, dll.).", ImageURL: "https://example.com/membersihkan-botol.jpg"},
+		{ID: 2, ArticleID: "ART0001", Title: "Meremukkan dan Menyimpan", Description: "Remukkan botol untuk menghemat ruang dan simpan dalam tempat khusus.", ImageURL: "https://example.com/meremukkan-botol.jpg"},
+		{ID: 3, ArticleID: "ART0001", Title: "Mengantar atau Dijemput", Description: "Temukan pusat daur ulang terdekat atau jadwalkan layanan penjemputan.", ImageURL: "https://example.com/pusat-daur-ulang.jpg"},
+
+		{ID: 4, ArticleID: "ART0002", Title: "Apa itu Limbah Elektronik?", Description: "Limbah elektronik mencakup barang elektronik bekas seperti ponsel, komputer, peralatan rumah tangga, dll.", ImageURL: "https://example.com/tumpukan-limbah-elektronik.jpg"},
+		{ID: 5, ArticleID: "ART0002", Title: "Komponen Beracun", Description: "Limbah elektronik mengandung zat berbahaya seperti timbal, merkuri, dan kadmium.", ImageURL: "https://example.com/simbol-beracun.jpg"},
+		{ID: 6, ArticleID: "ART0002", Title: "Pembuangan yang Benar", Description: "Cari pendaur ulang limbah elektronik bersertifikat atau program pengembalian yang ditawarkan oleh produsen.", ImageURL: "https://example.com/daur-ulang-limbah-elektronik.jpg"},
+	}
+
+	articleCategories := []article.ArticleCategories{
+		{ID: 1, ArticleID: "ART0001", WasteCategoryID: 1, ContentCategoryID: 3},
+		{ID: 2, ArticleID: "ART0002", WasteCategoryID: 9, ContentCategoryID: 4},
+		{ID: 3, ArticleID: "ART0002", WasteCategoryID: 13, ContentCategoryID: 5},
+	}
+
+	for _, article := range articles {
+		m.GetDB().FirstOrCreate(&article, article)
+	}
+
+	for _, articleSection := range articleSections {
+		m.GetDB().FirstOrCreate(&articleSection, articleSection)
+	}
+
+	for _, articleCategory := range articleCategories {
+		m.GetDB().FirstOrCreate(&articleCategory, articleCategory)
+	}
+
+	log.Println("Article data added!")
+}
+
 func (m *mysqlDatabase) InitDataVideos() {
 	videos := []video.Video{
 		{
-			ID:              1,
-			Title:           "Daur Ulang",
-			Description:     "Tips Daur Ulang",
-			Link:            "https://www.youtube.com/watch?v=MJd3bo_XRaU",
-			VideoCategoryID: 1,
+			ID:          1,
+			Title:       "Daur Ulang",
+			Description: "Tips Daur Ulang",
+			Link:        "https://www.youtube.com/watch?v=MJd3bo_XRaU",
 		},
 		{
-			ID:              2,
-			Title:           "Tutorial Bernapas",
-			Description:     "Tutorial Bernapas Bagi Pemula",
-			Link:            "https://www.youtube.com/watch?v=jp5uhrdhsKI",
-			VideoCategoryID: 3,
+			ID:          2,
+			Title:       "Tutorial Bernapas",
+			Description: "Tutorial Bernapas Bagi Pemula",
+			Link:        "https://www.youtube.com/watch?v=jp5uhrdhsKI",
 		},
+	}
+
+	videoCategory := []video.VideoCategory{
+		{
+			VideoID:           1,
+			ContentCategoryID: 1,
+			WasteCategoryID:   1,
+		},
+		{
+			VideoID:           2,
+			ContentCategoryID: 2,
+			WasteCategoryID:   2,
+		},
+	}
+
+	for _, video := range videoCategory {
+		m.GetDB().FirstOrCreate(&video, video)
 	}
 
 	for _, video := range videos {
 		m.GetDB().FirstOrCreate(&video, video)
 	}
+
 	log.Println("Video data added!")
 }
 

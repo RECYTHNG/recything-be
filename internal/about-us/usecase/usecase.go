@@ -28,6 +28,7 @@ func (uc *aboutUsUsecase) GetAboutUsByCategory(categoryName string) (*[]au.About
 			for _, image := range *images {
 				respImage := au.AboutUsImageResponse{
 					AboutUsID: image.AboutUsID,
+					Name:      image.Name,
 					ImageURL:  image.ImageURL,
 				}
 
