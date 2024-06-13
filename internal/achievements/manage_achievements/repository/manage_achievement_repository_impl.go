@@ -13,13 +13,6 @@ func NewManageAchievementRepository(db database.Database) *ManageAchievementRepo
 	return &ManageAchievementRepositoryImpl{DB: db}
 }
 
-func (repository ManageAchievementRepositoryImpl) CreateAchievement(achievement *archievement.Achievement) (*archievement.Achievement, error) {
-	if err := repository.DB.GetDB().Create(achievement).Error; err != nil {
-		return nil, err
-	}
-	return achievement, nil
-}
-
 func (repository ManageAchievementRepositoryImpl) FindArchievementByLevel(level string) (*archievement.Achievement, error) {
 	var achievement archievement.Achievement
 	if err := repository.DB.GetDB().Where("level = ?", level).First(&achievement).Error; err != nil {

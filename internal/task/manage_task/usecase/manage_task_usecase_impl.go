@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"mime/multipart"
 	"time"
 
 	"github.com/sawalreverr/recything/internal/helper"
@@ -19,11 +20,25 @@ func NewManageTaskUsecase(repository repository.ManageTaskRepository) *ManageTas
 	return &ManageTaskUsecaseImpl{ManageTaskRepository: repository}
 }
 
-func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskResquest, adminId string) (*task.TaskChallenge, error) {
+func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskResquest, thumbnail []*multipart.FileHeader, adminId string) (*task.TaskChallenge, error) {
+	if len(thumbnail) == 0 {
+		return nil, pkg.ErrThumbnail
+	}
+	if len(thumbnail) > 1 {
+		return nil, pkg.ErrThumbnailMaximum
+	}
 	if len(request.TaskSteps) == 0 {
 		return nil, pkg.ErrTaskStepsNull
-
 	}
+	validImages, errImages := helper.ImagesValidation(thumbnail)
+	if errImages != nil {
+		return nil, errImages
+	}
+	urlThumbnail, errUpload := helper.UploadToCloudinary(validImages[0], "task_thumbnail")
+	if errUpload != nil {
+		return nil, pkg.ErrUploadCloudinary
+	}
+
 	findLastId, _ := usecase.ManageTaskRepository.FindLastIdTaskChallenge()
 	id := helper.GenerateCustomID(findLastId, "TM")
 	startDateString := request.StartDate
@@ -42,7 +57,7 @@ func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskR
 		AdminId:     adminId,
 		Title:       request.Title,
 		Description: request.Description,
-		Thumbnail:   request.ThumbnailUrl,
+		Thumbnail:   urlThumbnail,
 		StartDate:   parsedStartDate,
 		EndDate:     parsedEndDate,
 		Point:       request.Point,
@@ -81,15 +96,31 @@ func (usecase *ManageTaskUsecaseImpl) GetTaskByIdUsecase(id string) (*task.TaskC
 	return task, nil
 }
 
-func (usecase *ManageTaskUsecaseImpl) UpdateTaskChallengeUsecase(request *dto.UpdateTaskRequest, id string) (*task.TaskChallenge, error) {
+func (usecase *ManageTaskUsecaseImpl) UpdateTaskChallengeUsecase(request *dto.UpdateTaskRequest, thumbnail []*multipart.FileHeader, id string) (*task.TaskChallenge, error) {
+	if len(thumbnail) == 0 {
+		return nil, pkg.ErrThumbnail
+	}
+	if len(thumbnail) > 1 {
+		return nil, pkg.ErrThumbnailMaximum
+	}
+	if len(request.TaskSteps) == 0 {
+		return nil, pkg.ErrTaskStepsNull
+	}
+	validImages, errImages := helper.ImagesValidation(thumbnail)
+	if errImages != nil {
+		return nil, errImages
+	}
+	urlThumbnail, errUpload := helper.UploadToCloudinary(validImages[0], "task_thumbnail_update")
+	if errUpload != nil {
+		return nil, pkg.ErrUploadCloudinary
+	}
+
 	findTask, _ := usecase.ManageTaskRepository.FindTask(id)
 
 	if findTask == nil {
 		return nil, pkg.ErrTaskNotFound
 	}
-	if len(request.TaskSteps) == 0 {
-		return nil, pkg.ErrTaskStepsNull
-	}
+
 	startDateString := request.StartDate
 	endDateString := request.EndDate
 	parsedStartDate, errParsedStartDate := time.Parse("2006-01-02", startDateString)
@@ -106,7 +137,7 @@ func (usecase *ManageTaskUsecaseImpl) UpdateTaskChallengeUsecase(request *dto.Up
 		AdminId:     findTask.AdminId,
 		Title:       request.Title,
 		Description: request.Description,
-		Thumbnail:   request.ThumbnailUrl,
+		Thumbnail:   urlThumbnail,
 		StartDate:   parsedStartDate,
 		EndDate:     parsedEndDate,
 		Point:       request.Point,

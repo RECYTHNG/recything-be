@@ -24,6 +24,9 @@ import (
 	faqHandler "github.com/sawalreverr/recything/internal/faq/handler"
 	faqRepo "github.com/sawalreverr/recything/internal/faq/repository"
 	faqUsecase "github.com/sawalreverr/recything/internal/faq/usecase"
+	leaderboardHandler "github.com/sawalreverr/recything/internal/leaderboard/handler"
+	leaderboardRepo "github.com/sawalreverr/recything/internal/leaderboard/repository"
+	leaderboardUsecase "github.com/sawalreverr/recything/internal/leaderboard/usecase"
 	"github.com/sawalreverr/recything/internal/middleware"
 	reminaiHandler "github.com/sawalreverr/recything/internal/remin-ai/handler"
 	reminaiUsecase "github.com/sawalreverr/recything/internal/remin-ai/usecase"
@@ -189,9 +192,6 @@ func (s *echoServer) manageTask() {
 	usecase := taskUsecase.NewManageTaskUsecase(repository)
 	handler := taskHandler.NewManageTaskHandler(usecase)
 
-	// upload thumbnail task
-	s.gr.POST("/tasks/thumbnail", handler.UploadThumbnailHandler, SuperAdminOrAdminMiddleware)
-
 	// create task by admin or super admin
 	s.gr.POST("/tasks", handler.CreateTaskHandler, SuperAdminOrAdminMiddleware)
 
@@ -265,20 +265,11 @@ func (s *echoServer) manageAchievement() {
 	usecase := achievementUsecase.NewManageAchievementUsecase(repository)
 	handler := achievementHandler.NewManageAchievementHandler(usecase)
 
-	// upload badge achievement
-	s.gr.POST("/achievements/badge", handler.UploadBadgeHandler, SuperAdminOrAdminMiddleware)
-
-	// create achievement
-	s.gr.POST("/achievements", handler.CreateAchievementHandler, SuperAdminOrAdminMiddleware)
-
 	// get all achievement
 	s.gr.GET("/achievements", handler.GetAllAchievementHandler, SuperAdminOrAdminMiddleware)
 
 	// get achievement by id
 	s.gr.GET("/achievements/:achievementId", handler.GetAchievementByIdHandler, SuperAdminOrAdminMiddleware)
-
-	// update badge achievement
-	s.gr.PUT("/achievements/badge", handler.UpdateBadgeHandler, SuperAdminOrAdminMiddleware)
 
 	// update achievement
 	s.gr.PUT("/achievements/:achievementId", handler.UpdateAchievementHandler, SuperAdminOrAdminMiddleware)
@@ -331,9 +322,6 @@ func (s *echoServer) manageVideo() {
 	usecase := videoUsecase.NewManageVideoUsecaseImpl(repository)
 	handler := videoHandler.NewManageVideoHandlerImpl(usecase)
 
-	// upload thumbnail video
-	s.gr.POST("/videos/thumbnail", handler.UploadThumbnailVideoHandler, SuperAdminOrAdminMiddleware)
-
 	// create data video
 	s.gr.POST("/videos/data", handler.CreateDataVideoHandler, SuperAdminOrAdminMiddleware)
 
@@ -381,4 +369,13 @@ func (s *echoServer) aboutUsHandler() {
 
 	// Get about us by category
 	s.gr.GET("/about-us/category", handler.GetAboutUsByCategory, UserMiddleware)
+}
+
+func (s *echoServer) leaderboardHandler() {
+	repository := leaderboardRepo.NewLeaderboardRepository(s.db)
+	usecase := leaderboardUsecase.NewLeaderboardUsecase(repository)
+	handler := leaderboardHandler.NewLeaderboardHandler(usecase)
+
+	// Get leaderboard
+	s.gr.GET("/leaderboard", handler.GetLeaderboardHandler, AllRoleMiddleware)
 }

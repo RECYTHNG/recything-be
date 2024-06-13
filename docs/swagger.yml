@@ -43,6 +43,7 @@ tags:
     description: Endpoint for admin approval task
   - name: user achievements
     description: Endpoint for user get achievement
+  - name: leaderboard
 
 paths:
   /register:
@@ -1079,116 +1080,8 @@ paths:
                     example: article successfully deleted!
         '404':
           description: Article not found
-  /achievements/badge:
-    post:
-      tags:
-        - manage achievements
-      summary: Upload image badge
-      description: Endpoint admin to upload image badge before adding or updating data achievement.
-      operationId: uploadImageBadge
-      security:
-        - Bearer: []
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                badge:
-                  type: string
-                  format: image
-                  description: Image badge
-      responses:
-        '200':
-          description: Upload Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: ok
-                  data:
-                    type: object
-                    properties:
-                      badge_url:
-                        type: string
-                        example: https://example.com/image.png
-        '400':
-          description: Invalid request data
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Invalid data type
+
   /achievements:
-    # post:
-    #   tags:
-    #     - manage achievements
-    #   summary: Add new achievement
-    #   description: Endpoint admin to add a new achievement
-    #   operationId: addAchievement
-    #   security:
-    #     - Bearer: []
-    #   requestBody:
-    #     required: true
-    #     content:
-    #       application/json:
-    #         schema:
-    #           type: object
-    #           properties:
-    #             level:
-    #               type: string
-    #               description: Level of the achievement
-    #               example: gold
-    #             targetPoint:
-    #               type: integer
-    #               description: Target point of the achievement
-    #               example: 1200
-    #             badge_url:
-    #               type: string
-    #               description: Badge url of the achievement
-    #               example: https://example.com/image.png
-    #   responses:
-    #     '201':
-    #       description: Achievement successfully created!
-    #       content:
-    #         application/json:
-    #           schema:
-    #             type: object
-    #             properties:
-    #               code:
-    #                 type: integer
-    #                 example: 201
-    #               message:
-    #                 type: string
-    #                 example: achievement successfully created!
-    #               data:
-    #                 type: object
-    #                 properties:
-    #                   id:
-    #                     type: string
-    #                     example: ACH0001
-    #                   level:
-    #                     type: string
-    #                     example: gold
-    #                   targetPoint:
-    #                     type: integer
-    #                     example: 1200
-    #                   badge_url:
-    #                     type: string
-    #                     example: https://example.com/image.png
     get:
       tags:
         - manage achievements
@@ -1218,7 +1111,7 @@ paths:
     get:
       tags:
         - manage achievements
-      summary: Get an achievement by id
+      summary: Get achievement by id
       description: Endpoint admin to get an existing achievement's data by id
       operationId: getAchievementById
       parameters:
@@ -1280,22 +1173,26 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data::
             schema:
               type: object
               properties:
-                level:
+                json_data:
+                  type: object
+                  properties:
+                    level:
+                      type: string
+                      description: New level for the achievement
+                      example: platinum
+                    target_point:
+                      type: integer
+                      description: New target point for the badge
+                      example: 1200
+                badge:
                   type: string
-                  description: New level for the achievement
-                  example: platinum
-                target_point:
-                  type: integer
-                  description: New target point for the badge
-                  example: 1200
-                badge_url:
-                  type: string
-                  description: New badge url for the achievement
-                  example: https://example.com/image.png
+                  format: binary
+                  description: Image of the badge
+                  example: image
       responses:
         '200':
           description: Achievement successfully updated
@@ -1589,59 +1486,6 @@ paths:
                     example: data successfully deleted!
         '404':
           description: Admin not found
-  /tasks/thumbnail:
-    post:
-      tags:
-        - manage tasks
-      summary: Upload Thumbnail Task
-      description: Upload Thumbnail before create task
-      operationId: uploadThumbnailTask
-      security:
-        - Bearer: []
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                thumbnail:
-                  type: string
-                  format: image
-                  example: "https://example.com/thumbnail.jpg"
-      responses:
-        '201':
-          description: Upload Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 201
-                  message:
-                    type: string
-                    example: thumbnail uploaded!
-                  data:
-                    type: object
-                    properties:
-                      thumbnail:
-                        type: string
-                        example: "https://example.com/thumbnail.jpg"
-        '400':
-          description: Invalid request data
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: invalid request data
   /tasks:
     post:
       tags:
@@ -1654,41 +1498,45 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data::
             schema:
               type: object
               properties:
-                title:
+                json_data:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      example: "Task 1"
+                    description:
+                      type: string
+                      example: "Task 1 description"
+                    start_date:
+                      type: string
+                      format: date
+                      example: "2020-01-01"
+                    end_date:
+                      type: string
+                      format: date
+                      example: "2020-01-01"
+                    point:
+                      type: integer
+                      example: 100
+                    task_steps:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          title:
+                            type: string
+                            example: "Step 1"
+                          description:
+                            type: string
+                            example: "Step 1 description"
+                thumbnail:
                   type: string
-                  example: "Task 1"
-                description:
-                  type: string
-                  example: "Task 1 description"
-                thumbnail_url:
-                  type: string
-                  example: "https://example.com/thumbnail.jpg"
-                start_date:
-                  type: string
-                  format: date
-                  example: "2020-01-01"
-                end_date:
-                  type: string
-                  format: date
-                  example: "2020-01-01"
-                point:
-                  type: integer
-                  example: 100
-                task_steps:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      title:
-                        type: string
-                        example: "Step 1"
-                      description:
-                        type: string
-                        example: "Step 1 description"
+                  format: binary
+                  example: "thumbnail.jpg"
                     
       responses:
         '201':
@@ -1985,44 +1833,45 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data::
             schema:
               type: object
               properties:
-                title:
+                json_data:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      example: "Task 1"
+                    description:
+                      type: string
+                      example: "Task 1 description"
+                    start_date:
+                      type: string
+                      format: date
+                      example: "2020-01-01"
+                    end_date:
+                      type: string
+                      format: date
+                      example: "2020-01-01"
+                    point:
+                      type: integer
+                      example: 100
+                    task_steps:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          title:
+                            type: string
+                            example: "Step 1"
+                          description:
+                            type: string
+                            example: "Step 1 description"
+                thumbnail:
                   type: string
-                  example: "Task 1"
-                description:
-                  type: string
-                  example: "Task 1 description"
-                thumbnail_url:
-                  type: string
-                  example: "https://example.com/thumbnail.jpg"
-                start_date:
-                  type: string
-                  format: date
-                  example: "2020-01-01"
-                end_date:
-                  type: string
-                  format: date 
-                  example: "2020-01-01"
-                point:
-                  type: integer
-                  example: 100
-                task_steps:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      title:
-                        type: string
-                        example: "Step 1"
-                      description:
-                        type: string
-                        example: "Step 1 description"
-                    example:
-                      - title: "Step 1"
-                        description: "Step 1 description"
+                  format: binary
+                  example: "thumbnail.jpg"
       responses:
         '200':
           description: Task updated
@@ -2509,7 +2358,7 @@ paths:
                   type: array
                   items:
                     type: string
-                    format: image
+                    format: binary
                   example: ["image1.jpg", "image2.jpg"]
       responses:
         '200':
@@ -2626,7 +2475,7 @@ paths:
                   type: array
                   items:
                     type: string
-                    format: image
+                    format: binary
                   example: ["image1.jpg", "image2.jpg"]
       responses:
         '200':
@@ -3168,59 +3017,6 @@ paths:
                         example: Untuk mengelola sampah anorganik seperti kaca, logam, dan beberapa jenis plastik, Anda dapat memulai dengan melakukan pemisahan sampah berdasarkan jenis bahan. Pastikan untuk membersihkan sampah tersebut sebelum membuangnya. Selanjutnya, Anda bisa mengirimkan sampah anorganik tersebut ke fasilitas daur ulang yang sesuai agar dapat didaur ulang menjadi produk baru. Proses daur ulang sampah anorganik ini melibatkan langkah-langkah seperti penghancuran, pemurnian, dan transformasi menjadi produk daur ulang. Dengan mengelola sampah anorganik secara benar, Anda turut berkontribusi dalam melestarikan lingkungan dan mengurangi jumlah sampah yang berakhir di tempat pembuangan akhir.\n\nSaya tidak tahu jawabannya karena pertanyaan Anda tidak terkait dengan aplikasi kami.
         '500':
           description: Internal server error
-  /videos/thumbnail:
-    post:
-      tags:
-        - manage videos
-      summary: Upload Thumbnail Video
-      description: Upload Thumbnail before create data video
-      operationId: uploadThumbnailVideo
-      security:
-        - Bearer: []
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                thumbnail:
-                  type: string
-                  format: image
-                  example: "thumbnail.jpg"
-      responses:
-        '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: success
-                  data:
-                    type: object
-                    properties:
-                      thumbnail:
-                        type: string
-                        example: "https://example.com/thumbnail.jpg"
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 500
-                  message:
-                    type: string
-                    example: error upload thumbnail
   /videos/categories:
     get:
       tags:
@@ -3282,25 +3078,30 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
-                title:
+                json_data:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      example: "Video Title"
+                    description:
+                      type: string
+                      example: "Video Description"
+                    link_video:
+                      type: string
+                      example: "https://example.com/video.mp4"
+                    category_id:
+                      type: integer
+                      example: 1
+                thumbnail:
                   type: string
-                  example: "Video Title"
-                description:
-                  type: string
-                  example: "Video Description"
-                url_thumbnail:
-                  type: string
-                  example: "https://example.com/thumbnail.jpg"
-                link_video:
-                  type: string
-                  example: "https://example.com/video.mp4"
-                category_id:
-                  type: integer
-                  example: 1
+                  format: binary
+                  example: "thumbnail.jpg"
+
       responses:
         '201':
           description: Success
@@ -3506,25 +3307,30 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
-                title:
+                json_data:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      example: "Video Title"
+                    description:
+                      type: string
+                      example: "Video Description"
+                    link_video:
+                      type: string
+                      example: "https://example.com/video.mp4"
+                    category_id:
+                      type: integer
+                      example: 1
+                thumbnail:
                   type: string
-                  example: "Video Title"
-                description:
-                  type: string
-                  example: "Video Description"
-                url_thumbnail:
-                  type: string
-                  example: "https://example.com/thumbnail.jpg"
-                link_video:
-                  type: string
-                  example: "https://example.com/video.mp4"
-                category_id:
-                  type: integer
-                  example: 1
+                  format: binary
+                  example: "thumbnail.jpg"
+                  
       responses:
         '200':
           description: Success
@@ -4190,6 +3996,47 @@ paths:
                                 example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
         '404':
           description: Category name not found
+  /leaderboard:
+    get:
+      tags:
+        - leaderboards
+      summary: Get leaderboard
+      description: Endpoint for user or admin get leaderboard
+      operationId: getLeaderboard
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      properties:
+                        id:
+                          type: string
+                          example: USR0001
+                        name:
+                          type: string
+                          example: John Doe
+                        picture_url:
+                          type: string
+                          example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                        point:
+                          type: integer
+                          example: 1000
+                        badge:
+                          type: string
+                          example: https://res.cloudinary.com/dymhvau8n/image/upload/v1717758679/achievement_badge/cq2n246e6twuksnia62t.png
 
 components:
   schemas:
@@ -4436,7 +4283,7 @@ components:
           example: admin
         profile_photo:
           type: string
-          format: image
+          format: binary
           example: "profile.jpg"
     EditAdmin:
       type: object
@@ -4459,7 +4306,7 @@ components:
           example: admin
         profile_photo:
           type: string
-          format: image
+          format: binary
           example: "profile.jpg"
     AdminResponse:
       type: object

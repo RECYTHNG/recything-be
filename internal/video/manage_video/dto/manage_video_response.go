@@ -9,10 +9,6 @@ type DataCategory struct {
 	Name string `json:"name"`
 }
 
-type UploadThumbnailResponse struct {
-	UrlThumbnail string `json:"url_thumbnail"`
-}
-
 type DataVideo struct {
 	Id           int    `json:"id"`
 	Title        string `json:"title"`

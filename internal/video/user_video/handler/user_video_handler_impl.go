@@ -16,7 +16,7 @@ type UserVideoHandlerImpl struct {
 	Usecase usecase.UserVideoUsecase
 }
 
-func NewUserVideoHandler(usecase usecase.UserVideoUsecase) *UserVideoHandlerImpl {
+func NewUserVideoHandler(usecase usecase.UserVideoUsecase) UserVideoHandler {
 	return &UserVideoHandlerImpl{Usecase: usecase}
 }
 

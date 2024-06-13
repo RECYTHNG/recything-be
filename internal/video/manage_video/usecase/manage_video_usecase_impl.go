@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"mime/multipart"
 	"strings"
 
 	"github.com/sawalreverr/recything/internal/helper"
@@ -21,7 +22,18 @@ func NewManageVideoUsecaseImpl(manageVideoRepository repository.ManageVideoRepos
 	}
 }
 
-func (usecase *ManageVideoUsecaseImpl) CreateDataVideoUseCase(request *dto.CreateDataVideoRequest) error {
+func (usecase *ManageVideoUsecaseImpl) CreateDataVideoUseCase(request *dto.CreateDataVideoRequest, thumbnail []*multipart.FileHeader) error {
+	if len(thumbnail) == 0 {
+		return pkg.ErrThumbnail
+	}
+	if len(thumbnail) > 1 {
+		return pkg.ErrThumbnailMaximum
+	}
+	validImages, errImages := helper.ImagesValidation(thumbnail)
+	if errImages != nil {
+		return errImages
+	}
+
 	if err := usecase.manageVideoRepository.FindTitleVideo(request.Title); err == nil {
 		return pkg.ErrVideoTitleAlreadyExist
 	}
@@ -32,11 +44,15 @@ func (usecase *ManageVideoUsecaseImpl) CreateDataVideoUseCase(request *dto.Creat
 	if errGetView != nil {
 		return errGetView
 	}
+	urlThumbnail, errUpload := helper.UploadToCloudinary(validImages[0], "video_thumbnail_update")
+	if errUpload != nil {
+		return pkg.ErrUploadCloudinary
+	}
 	intView := int(view)
 	video := video.Video{
 		Title:           request.Title,
 		Description:     request.Description,
-		Thumbnail:       request.UrlThumbnail,
+		Thumbnail:       urlThumbnail,
 		Link:            request.LinkVideo,
 		VideoCategoryID: request.CategoryId,
 		Viewer:          intView,
@@ -90,7 +106,18 @@ func (usecase *ManageVideoUsecaseImpl) GetDetailsDataVideoByIdUseCase(id int) (*
 	return video, nil
 }
 
-func (usecase *ManageVideoUsecaseImpl) UpdateDataVideoUseCase(request *dto.UpdateDataVideoRequest, id int) error {
+func (usecase *ManageVideoUsecaseImpl) UpdateDataVideoUseCase(request *dto.UpdateDataVideoRequest, thumbnail []*multipart.FileHeader, id int) error {
+	if len(thumbnail) == 0 {
+		return pkg.ErrThumbnail
+	}
+	if len(thumbnail) > 1 {
+		return pkg.ErrThumbnailMaximum
+	}
+	validImages, errImages := helper.ImagesValidation(thumbnail)
+	if errImages != nil {
+		return errImages
+	}
+
 	if _, err := usecase.manageVideoRepository.GetDetailsDataVideoById(id); err != nil {
 		return pkg.ErrVideoNotFound
 	}
@@ -101,11 +128,16 @@ func (usecase *ManageVideoUsecaseImpl) UpdateDataVideoUseCase(request *dto.Updat
 	if errGetView != nil {
 		return errGetView
 	}
+	urlThumbnail, errUpload := helper.UploadToCloudinary(validImages[0], "video_thumbnail_update")
+	if errUpload != nil {
+		return pkg.ErrUploadCloudinary
+	}
+
 	intView := int(view)
 	video := video.Video{
 		Title:           request.Title,
 		Description:     request.Description,
-		Thumbnail:       request.UrlThumbnail,
+		Thumbnail:       urlThumbnail,
 		Link:            request.LinkVideo,
 		VideoCategoryID: request.CategoryId,
 		Viewer:          intView,
