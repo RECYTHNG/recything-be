@@ -92,6 +92,10 @@ func (usecase *UserTaskUsecaseImpl) UploadImageTaskUsecase(request *dto.UploadIm
 	if errFindTask != nil {
 		return nil, pkg.ErrTaskNotFound
 	}
+
+	if !findTask.Status {
+		return nil, pkg.ErrTaskCannotBeFollowed
+	}
 	countImage := len(fileImage)
 	countTaskSteps := len(findTask.TaskSteps) * 3
 	if countImage > countTaskSteps {
@@ -100,6 +104,18 @@ func (usecase *UserTaskUsecaseImpl) UploadImageTaskUsecase(request *dto.UploadIm
 
 	if findUserTask.StatusProgress == "done" {
 		return nil, pkg.ErrUserTaskDone
+	}
+
+	findUserSteps, errFindUserSteps := usecase.ManageTaskRepository.FindUserSteps(userTaskId)
+
+	if errFindUserSteps != nil {
+		return nil, errFindUserSteps
+	}
+
+	for _, userStep := range findUserSteps {
+		if !userStep.Completed {
+			return nil, pkg.ErrUserTaskNotCompleted
+		}
 	}
 
 	validImages, errImages := helper.ImagesValidation(fileImage)
@@ -242,16 +258,20 @@ func (usecase *UserTaskUsecaseImpl) GetHistoryPointByUserIdUsecase(userId string
 }
 
 func (usecase *UserTaskUsecaseImpl) UpdateTaskStepUsecase(request *dto.UpdateTaskStepRequest, userId string) (*user_task.UserTaskChallenge, error) {
-	userTask, errUserTask := usecase.ManageTaskRepository.FindUserTask(userId, request.UserTask)
+	userTask, errUserTask := usecase.ManageTaskRepository.FindUserTask(userId, request.UserTaskId)
 	if errUserTask != nil {
 		return nil, pkg.ErrUserTaskNotFound
 	}
 
-	if userTask.StatusAccept != "in_progress" {
+	if userTask.StatusProgress != "in_progress" {
 		return nil, pkg.ErrUserTaskDone
 	}
 
-	taskStep, errStep := usecase.ManageTaskRepository.FindTaskStep(request.StepId, userTask.TaskChallengeId)
+	if userTask.StatusAccept != "need_rivew" {
+		return nil, pkg.ErrUserTaskAlreadyApprove
+	}
+
+	taskStep, errStep := usecase.ManageTaskRepository.FindTaskStep(request.TaskStepId, userTask.TaskChallengeId)
 	if errStep != nil {
 		if errStep == gorm.ErrRecordNotFound {
 			return nil, pkg.ErrTaskStepNotFound
@@ -264,14 +284,37 @@ func (usecase *UserTaskUsecaseImpl) UpdateTaskStepUsecase(request *dto.UpdateTas
 		return nil, pkg.ErrUserTaskStepNotFound
 	}
 
-	userTaskStep.Completed = true
+	// Check if the step is already completed
+	if userTaskStep.Completed {
+		return nil, pkg.ErrUserTaskStepAlreadyCompleted
+	}
 
+	// Find completed user task steps
+	completedSteps, err := usecase.ManageTaskRepository.FindCompletedUserSteps(userTask.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check if the step to be updated is the next in sequence
+	if len(completedSteps) > 0 {
+		nextStepID := completedSteps[len(completedSteps)-1].TaskStepID + 1
+		if request.TaskStepId != nextStepID {
+			return nil, pkg.ErrStepNotInOrder
+		}
+	} else {
+		// If no steps are completed, only allow the first step to be completed
+		firstStep := userTask.TaskChallenge.TaskSteps[0]
+		if request.TaskStepId != firstStep.ID {
+			return nil, pkg.ErrStepNotInOrder
+		}
+	}
+
+	userTaskStep.Completed = true
 	if err := usecase.ManageTaskRepository.UpdateUserTaskStep(userTaskStep); err != nil {
 		return nil, err
 	}
 
-	// Re-fetch updated user task with its relations
-	updatedUserTask, err := usecase.ManageTaskRepository.FindUserTask(userId, request.UserTask)
+	updatedUserTask, err := usecase.ManageTaskRepository.FindUserTask(userId, request.UserTaskId)
 	if err != nil {
 		return nil, err
 	}

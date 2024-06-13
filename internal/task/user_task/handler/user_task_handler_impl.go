@@ -189,6 +189,9 @@ func (handler *UserTaskHandlerImpl) UploadImageTaskHandler(c echo.Context) error
 		if errors.Is(err, pkg.ErrImagesExceed) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrImagesExceed.Error())
 		}
+		if errors.Is(err, pkg.ErrUserTaskNotCompleted) {
+			return helper.ErrorHandler(c, http.StatusConflict, pkg.ErrUserTaskNotCompleted.Error())
+		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
 	}
 	var taskStep []dto.TaskSteps
@@ -528,10 +531,21 @@ func (handler *UserTaskHandlerImpl) UpdateTaskStepHandler(c echo.Context) error 
 		if errors.Is(err, pkg.ErrTaskStepNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrTaskStepNotFound.Error())
 		}
+		if errors.Is(err, pkg.ErrStepNotInOrder) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrStepNotInOrder.Error())
+		}
+		if errors.Is(err, pkg.ErrUserTaskAlreadyApprove) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrUserTaskAlreadyApprove.Error())
+		}
+		if errors.Is(err, pkg.ErrUserTaskStepAlreadyCompleted) {
+			return helper.ErrorHandler(c, http.StatusConflict, pkg.ErrUserTaskStepAlreadyCompleted.Error())
+		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
 	}
 
 	var taskStep []dto.TaskSteps
+	var userSteps []dto.DataUserSteps
+
 	for _, step := range userTask.TaskChallenge.TaskSteps {
 		taskStep = append(taskStep, dto.TaskSteps{
 			Id:          step.ID,
@@ -540,6 +554,14 @@ func (handler *UserTaskHandlerImpl) UpdateTaskStepHandler(c echo.Context) error 
 		})
 	}
 
+	for _, step := range userTask.UserTaskSteps {
+		userSteps = append(userSteps, dto.DataUserSteps{
+			Id:                  step.ID,
+			UserTaskChallengeID: step.UserTaskChallengeID,
+			TaskStepID:          step.TaskStepID,
+			Completed:           step.Completed,
+		})
+	}
 	data := dto.TaskChallengeResponseCreate{
 		Id:          userTask.TaskChallenge.ID,
 		Title:       userTask.TaskChallenge.Title,
@@ -550,16 +572,15 @@ func (handler *UserTaskHandlerImpl) UpdateTaskStepHandler(c echo.Context) error 
 		Point:       userTask.TaskChallenge.Point,
 		StatusTask:  userTask.TaskChallenge.Status,
 		TaskSteps:   taskStep,
+		UserSteps:   userSteps,
 	}
-
 	dataUsertask := dto.UserTaskResponseCreate{
 		Id:             userTask.ID,
-		TaskChalenge:   data,
 		StatusProgress: userTask.StatusProgress,
+		TaskChalenge:   data,
 	}
-
-	responseData := helper.ResponseData(http.StatusOK, "success", dataUsertask)
-	return c.JSON(http.StatusOK, responseData)
+	responseData := helper.ResponseData(http.StatusCreated, "success", dataUsertask)
+	return c.JSON(http.StatusCreated, responseData)
 }
 
 func (handler *UserTaskHandlerImpl) GetUserTaskByUserTaskIdHandler(c echo.Context) error {

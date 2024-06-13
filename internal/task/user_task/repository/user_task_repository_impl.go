@@ -288,3 +288,15 @@ func (repository *UserTaskRepositoryImpl) FindUserTaskStep(userTaskChallengeID s
 	err := repository.DB.GetDB().Where("user_task_challenge_id = ? AND task_step_id = ?", userTaskChallengeID, taskStepID).First(&userTaskStep).Error
 	return &userTaskStep, err
 }
+
+func (repository *UserTaskRepositoryImpl) FindUserSteps(userTaskChallengeID string) ([]user_task.UserTaskStep, error) {
+	var userTaskStep []user_task.UserTaskStep
+	err := repository.DB.GetDB().Where("user_task_challenge_id = ?", userTaskChallengeID).Find(&userTaskStep).Error
+	return userTaskStep, err
+}
+
+func (repository *UserTaskRepositoryImpl) FindCompletedUserSteps(userTaskChallengeID string) ([]user_task.UserTaskStep, error) {
+	var userTaskSteps []user_task.UserTaskStep
+	err := repository.DB.GetDB().Where("user_task_challenge_id = ? AND completed = ?", userTaskChallengeID, true).Order("task_step_id asc").Find(&userTaskSteps).Error
+	return userTaskSteps, err
+}
