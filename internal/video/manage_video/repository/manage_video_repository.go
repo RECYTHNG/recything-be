@@ -1,14 +1,16 @@
 package repository
 
 import (
+	art "github.com/sawalreverr/recything/internal/article"
 	video "github.com/sawalreverr/recything/internal/video/manage_video/entity"
 )
 
 type ManageVideoRepository interface {
-	CreateDataVideo(video *video.Video) error
+	CreateVideoAndCategories(video *video.Video) (*video.Video, error)
+	CreateVideoCategories(videoCategories []video.VideoCategory) error
 	FindTitleVideo(title string) error
-	FindNameCategoryVideo(name string) error
-	FindNamaTrashCategory(name string) error
+	FindNameCategoryVideo(name string) (*art.ContentCategory, error)
+	FindNamaTrashCategory(name string) (*art.WasteCategory, error)
 	GetAllCategoryVideo() ([]string, error)
 	GetAllTrashCategoryVideo() ([]string, error)
 	GetCategoryVideoById(id int) (*video.VideoCategory, error)

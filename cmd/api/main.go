@@ -54,12 +54,6 @@ func main() {
 	// Init Article
 	db.InitArticle()
 
-	// Init Video Categories
-	db.InitVideoCategories()
-
-	// Init Trash Category Video
-	db.InitTrashCategoryVideo()
-
 	app := server.NewEchoServer(conf, db)
 	c := cron.New()
 

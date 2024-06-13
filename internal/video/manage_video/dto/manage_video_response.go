@@ -10,11 +10,6 @@ type DataVideoCategory struct {
 	Name string `json:"name"`
 }
 
-type DataTrashCategoryResponse struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
-}
-
 type DataVideo struct {
 	Id           int    `json:"id"`
 	Title        string `json:"title"`
@@ -32,6 +27,16 @@ type GetAllDataVideoPaginationResponse struct {
 	TotalPage int          `json:"total_page"`
 }
 
+type DataCategoryVideoResponse struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type DataTrashCategoryResponse struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+}
+
 type GetDetailsDataVideoByIdResponse struct {
 	Id            int                          `json:"id"`
 	Title         string                       `json:"title"`
@@ -39,6 +44,6 @@ type GetDetailsDataVideoByIdResponse struct {
 	UrlThumbnail  string                       `json:"url_thumbnail"`
 	LinkVideo     string                       `json:"link_video"`
 	Viewer        int                          `json:"viewer"`
-	VideoCategory []*DataVideoCategory         `json:"content_categories"`
+	VideoCategory []*DataCategoryVideoResponse `json:"content_categories"`
 	TrashCategory []*DataTrashCategoryResponse `json:"waste_categories"`
 }

@@ -1,6 +1,7 @@
 package repository
 
 import (
+	art "github.com/sawalreverr/recything/internal/article"
 	"github.com/sawalreverr/recything/internal/database"
 	video "github.com/sawalreverr/recything/internal/video/manage_video/entity"
 	"github.com/sawalreverr/recything/pkg"
@@ -18,12 +19,36 @@ func (repository *UserVideoRepositoryImpl) GetAllVideo() (*[]video.Video, error)
 	var videos []video.Video
 	if err := repository.DB.GetDB().
 		Order("created_at desc").
-		Preload("VideoCategories").
-		Preload("TrashCategories").
+		Preload("Categories.ContentCategory").
+		Preload("Categories.WasteCategory").
 		Find(&videos).
 		Error; err != nil {
 		return nil, err
 	}
+
+	for i := range videos {
+		contentCategorySet := make(map[uint]struct{})
+		wasteCategorySet := make(map[uint]struct{})
+
+		var uniqueContentCategories []art.ContentCategory
+		var uniqueWasteCategories []art.WasteCategory
+
+		for _, category := range videos[i].Categories {
+			if _, exists := contentCategorySet[category.ContentCategoryID]; !exists {
+				contentCategorySet[category.ContentCategoryID] = struct{}{}
+				uniqueContentCategories = append(uniqueContentCategories, category.ContentCategory)
+			}
+			if _, exists := wasteCategorySet[category.WasteCategoryID]; !exists {
+				wasteCategorySet[category.WasteCategoryID] = struct{}{}
+				uniqueWasteCategories = append(uniqueWasteCategories, category.WasteCategory)
+			}
+		}
+
+		// Assign unique categories back to the video
+		videos[i].ContentCategories = uniqueContentCategories
+		videos[i].WasteCategories = uniqueWasteCategories
+	}
+
 	return &videos, nil
 }
 
@@ -31,14 +56,16 @@ func (repository *UserVideoRepositoryImpl) SearchVideoByKeyword(keyword string) 
 	var videos []video.Video
 	if err := repository.DB.GetDB().
 		Order("created_at desc").
-		Preload("VideoCategories").
-		Preload("TrashCategories").
+		Preload("Categories.ContentCategory").
+		Preload("Categories.WasteCategory").
 		Joins("JOIN video_categories ON video_categories.video_id = videos.id").
-		Joins("JOIN trash_categories ON trash_categories.video_id = videos.id").
-		Where("videos.title LIKE ? OR videos.description LIKE ? OR trash_categories.name LIKE ? OR video_categories.name LIKE ?", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%").
+		Joins("JOIN content_categories ON content_categories.id = video_categories.content_category_id").
+		Joins("JOIN waste_categories ON waste_categories.id = video_categories.waste_category_id").
+		Where("videos.title LIKE ? OR videos.description LIKE ? OR content_categories.name LIKE ? OR waste_categories.name LIKE ?", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%").
 		Find(&videos).Error; err != nil {
 		return nil, err
 	}
+
 	videoMap := make(map[int]video.Video)
 	for _, v := range videos {
 		videoMap[v.ID] = v
@@ -58,9 +85,10 @@ func (repository *UserVideoRepositoryImpl) SearchVideoByCategory(categoryType st
 		if err := repository.DB.GetDB().
 			Order("created_at desc").
 			Joins("JOIN video_categories ON video_categories.video_id = videos.id").
-			Where("video_categories.name LIKE ?", "%"+name+"%").
-			Preload("VideoCategories").
-			Preload("TrashCategories").
+			Joins("JOIN content_categories ON content_categories.id = video_categories.content_category_id").
+			Where("content_categories.name LIKE ?", "%"+name+"%").
+			Preload("Categories.ContentCategory").
+			Preload("Categories.WasteCategory").
 			Find(&videos).Error; err != nil {
 			return nil, err
 		}
@@ -68,10 +96,11 @@ func (repository *UserVideoRepositoryImpl) SearchVideoByCategory(categoryType st
 	} else if categoryType == "waste" {
 		if err := repository.DB.GetDB().
 			Order("created_at desc").
-			Joins("JOIN trash_categories ON trash_categories.video_id = videos.id").
-			Where("trash_categories.name LIKE ?", "%"+name+"%").
-			Preload("VideoCategories").
-			Preload("TrashCategories").
+			Joins("JOIN video_categories ON video_categories.video_id = videos.id").
+			Joins("JOIN waste_categories ON waste_categories.id = video_categories.waste_category_id").
+			Where("waste_categories.name LIKE ?", "%"+name+"%").
+			Preload("Categories.ContentCategory").
+			Preload("Categories.WasteCategory").
 			Find(&videos).Error; err != nil {
 			return nil, err
 		}

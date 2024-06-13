@@ -14,8 +14,6 @@ type Database interface {
 	InitAboutUs()
 	InitDataVideos()
 	InitArticle()
-	InitTrashCategoryVideo()
-	InitVideoCategories()
 	InitWasteCategories()
 	InitContentCategories()
 }
