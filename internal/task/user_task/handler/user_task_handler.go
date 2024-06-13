@@ -13,4 +13,5 @@ type UserTaskHandler interface {
 	GetUserTaskDetailsHandler(c echo.Context) error
 	GetHistoryPointByUserIdHandler(c echo.Context) error
 	UpdateTaskStepHandler(c echo.Context) error
+	GetUserTaskByUserTaskIdHandler(c echo.Context) error
 }

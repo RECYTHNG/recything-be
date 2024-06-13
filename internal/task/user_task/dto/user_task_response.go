@@ -24,7 +24,6 @@ type TaskSteps struct {
 	Id          int    `json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
-	Status      bool   `json:"status"`
 }
 
 type UserTaskResponseCreate struct {
@@ -47,11 +46,10 @@ type TaskChallengeResponseCreate struct {
 }
 
 type DataUserSteps struct {
-	Id                  int       `json:"id"`
-	UserTaskChallengeID string    `gorm:"index"`
-	TaskStepID          int       `gorm:"index"`
-	Completed           bool      `gorm:"default:false"`
-	CompletedAt         time.Time `gorm:"type:datetime"`
+	Id                  int    `json:"id"`
+	UserTaskChallengeID string `gorm:"index"`
+	TaskStepID          int    `gorm:"index"`
+	Completed           bool   `gorm:"default:false"`
 }
 
 type UserTaskUploadImageResponse struct {

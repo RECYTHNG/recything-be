@@ -561,3 +561,53 @@ func (handler *UserTaskHandlerImpl) UpdateTaskStepHandler(c echo.Context) error 
 	responseData := helper.ResponseData(http.StatusOK, "success", dataUsertask)
 	return c.JSON(http.StatusOK, responseData)
 }
+
+func (handler *UserTaskHandlerImpl) GetUserTaskByUserTaskIdHandler(c echo.Context) error {
+	userId := c.Get("user").(*helper.JwtCustomClaims).UserID
+	userTaskId := c.Param("userTaskId")
+	userTask, err := handler.Usecase.GetUserTaskByUserTaskId(userId, userTaskId)
+	if err != nil {
+		if errors.Is(err, pkg.ErrUserTaskNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserTaskNotFound.Error())
+		}
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+	}
+	var taskStep []dto.TaskSteps
+	var userSteps []dto.DataUserSteps
+
+	for _, step := range userTask.TaskChallenge.TaskSteps {
+		taskStep = append(taskStep, dto.TaskSteps{
+			Id:          step.ID,
+			Title:       step.Title,
+			Description: step.Description,
+		})
+	}
+
+	for _, step := range userTask.UserTaskSteps {
+		userSteps = append(userSteps, dto.DataUserSteps{
+			Id:                  step.ID,
+			UserTaskChallengeID: step.UserTaskChallengeID,
+			TaskStepID:          step.TaskStepID,
+			Completed:           step.Completed,
+		})
+	}
+	data := dto.TaskChallengeResponseCreate{
+		Id:          userTask.TaskChallenge.ID,
+		Title:       userTask.TaskChallenge.Title,
+		Description: userTask.TaskChallenge.Description,
+		Thumbnail:   userTask.TaskChallenge.Thumbnail,
+		StartDate:   userTask.TaskChallenge.StartDate,
+		EndDate:     userTask.TaskChallenge.EndDate,
+		Point:       userTask.TaskChallenge.Point,
+		StatusTask:  userTask.TaskChallenge.Status,
+		TaskSteps:   taskStep,
+		UserSteps:   userSteps,
+	}
+	dataUsertask := dto.UserTaskResponseCreate{
+		Id:             userTask.ID,
+		StatusProgress: userTask.StatusProgress,
+		TaskChalenge:   data,
+	}
+	responseData := helper.ResponseData(http.StatusCreated, "success", dataUsertask)
+	return c.JSON(http.StatusCreated, responseData)
+}

@@ -245,6 +245,9 @@ func (s *echoServer) userTask() {
 
 	// update user task step
 	s.gr.PUT("/user-current/steps", handler.UpdateTaskStepHandler, UserMiddleware)
+
+	// get user task by user task id
+	s.gr.GET("/user/task/:userTaskId", handler.GetUserTaskByUserTaskIdHandler, UserMiddleware)
 }
 
 func (s *echoServer) approvalTask() {
