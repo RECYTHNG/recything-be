@@ -242,6 +242,15 @@ func (s *echoServer) userTask() {
 
 	// get history point by user current
 	s.gr.GET("/user-current/tasks/history", handler.GetHistoryPointByUserIdHandler, UserMiddleware)
+
+	// update user task step
+	s.gr.PUT("/user-current/steps", handler.UpdateTaskStepHandler, UserMiddleware)
+
+	// get user task by user task id
+	s.gr.GET("/user/task/:userTaskId", handler.GetUserTaskByUserTaskIdHandler, UserMiddleware)
+
+	// get user task rejected by user current
+	s.gr.GET("/user/tasks/rejected/:userTaskId", handler.GetUserTaskRejectedByUserIdHandler, UserMiddleware)
 }
 
 func (s *echoServer) approvalTask() {

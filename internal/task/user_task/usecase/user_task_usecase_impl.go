@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"mime/multipart"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 	user_task "github.com/sawalreverr/recything/internal/task/user_task/entity"
 	"github.com/sawalreverr/recything/internal/task/user_task/repository"
 	"github.com/sawalreverr/recything/pkg"
+	"gorm.io/gorm"
 )
 
 type UserTaskUsecaseImpl struct {
@@ -44,7 +46,7 @@ func (usecase *UserTaskUsecaseImpl) CreateUserTaskUsecase(taskChallengeId string
 		return nil, pkg.ErrTaskNotFound
 	}
 
-	if findtask.Status == false {
+	if !findtask.Status {
 		return nil, pkg.ErrTaskCannotBeFollowed
 	}
 
@@ -64,14 +66,18 @@ func (usecase *UserTaskUsecaseImpl) CreateUserTaskUsecase(taskChallengeId string
 		TaskChallengeId: taskChallengeId,
 		AcceptedAt:      time.Now(),
 		ImageTask:       []user_task.UserTaskImage{},
+		StatusProgress:  "in_progress",
+		UserTaskSteps:   []user_task.UserTaskStep{}, // Initialize the UserTaskSteps
 	}
+
+	// Attach TaskSteps to the UserTaskChallenge
+	userTask.TaskChallenge = *findtask
 
 	userTaskData, err := usecase.ManageTaskRepository.CreateUserTask(userTask)
 	if err != nil {
 		return nil, err
 	}
 	return userTaskData, nil
-
 }
 
 func (usecase *UserTaskUsecaseImpl) UploadImageTaskUsecase(request *dto.UploadImageTask, fileImage []*multipart.FileHeader, userId string, userTaskId string) (*user_task.UserTaskChallenge, error) {
@@ -86,6 +92,10 @@ func (usecase *UserTaskUsecaseImpl) UploadImageTaskUsecase(request *dto.UploadIm
 	if errFindTask != nil {
 		return nil, pkg.ErrTaskNotFound
 	}
+
+	if !findTask.Status {
+		return nil, pkg.ErrTaskCannotBeFollowed
+	}
 	countImage := len(fileImage)
 	countTaskSteps := len(findTask.TaskSteps) * 3
 	if countImage > countTaskSteps {
@@ -94,6 +104,18 @@ func (usecase *UserTaskUsecaseImpl) UploadImageTaskUsecase(request *dto.UploadIm
 
 	if findUserTask.StatusProgress == "done" {
 		return nil, pkg.ErrUserTaskDone
+	}
+
+	findUserSteps, errFindUserSteps := usecase.ManageTaskRepository.FindUserSteps(userTaskId)
+
+	if errFindUserSteps != nil {
+		return nil, errFindUserSteps
+	}
+
+	for _, userStep := range findUserSteps {
+		if !userStep.Completed {
+			return nil, pkg.ErrUserTaskNotCompleted
+		}
 	}
 
 	validImages, errImages := helper.ImagesValidation(fileImage)
@@ -233,4 +255,93 @@ func (usecase *UserTaskUsecaseImpl) GetHistoryPointByUserIdUsecase(userId string
 		totalPoint += task.Point
 	}
 	return userTask, totalPoint, nil
+}
+
+func (usecase *UserTaskUsecaseImpl) UpdateTaskStepUsecase(request *dto.UpdateTaskStepRequest, userId string) (*user_task.UserTaskChallenge, error) {
+	userTask, errUserTask := usecase.ManageTaskRepository.FindUserTask(userId, request.UserTaskId)
+	if errUserTask != nil {
+		return nil, pkg.ErrUserTaskNotFound
+	}
+
+	if userTask.StatusProgress != "in_progress" {
+		return nil, pkg.ErrUserTaskDone
+	}
+
+	if userTask.StatusAccept != "need_rivew" {
+		return nil, pkg.ErrUserTaskAlreadyApprove
+	}
+
+	taskStep, errStep := usecase.ManageTaskRepository.FindTaskStep(request.TaskStepId, userTask.TaskChallengeId)
+	if errStep != nil {
+		if errStep == gorm.ErrRecordNotFound {
+			return nil, pkg.ErrTaskStepNotFound
+		}
+		return nil, errStep
+	}
+
+	userTaskStep, errUserTaskStep := usecase.ManageTaskRepository.FindUserTaskStep(userTask.ID, taskStep.ID)
+	if errUserTaskStep != nil {
+		return nil, pkg.ErrUserTaskStepNotFound
+	}
+
+	if userTaskStep.Completed {
+		return nil, pkg.ErrUserTaskStepAlreadyCompleted
+	}
+
+	completedSteps, err := usecase.ManageTaskRepository.FindCompletedUserSteps(userTask.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(completedSteps) > 0 {
+		nextStepID := completedSteps[len(completedSteps)-1].TaskStepID + 1
+		if request.TaskStepId != nextStepID {
+			return nil, pkg.ErrStepNotInOrder
+		}
+	} else {
+		firstStep := userTask.TaskChallenge.TaskSteps[0]
+		if request.TaskStepId != firstStep.ID {
+			return nil, pkg.ErrStepNotInOrder
+		}
+	}
+
+	userTaskStep.Completed = true
+	if err := usecase.ManageTaskRepository.UpdateUserTaskStep(userTaskStep); err != nil {
+		return nil, err
+	}
+
+	updatedUserTask, err := usecase.ManageTaskRepository.FindUserTask(userId, request.UserTaskId)
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedUserTask, nil
+}
+
+func (usecase *UserTaskUsecaseImpl) GetUserTaskByUserTaskId(userId string, userTaskId string) (*user_task.UserTaskChallenge, error) {
+
+	userTask, err := usecase.ManageTaskRepository.FindUserTask(userId, userTaskId)
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, pkg.ErrUserTaskNotFound
+		}
+		return nil, err
+	}
+	if (userTask.StatusProgress != "in_progress" && userTask.StatusAccept != "need_rivew") || userTask.StatusAccept == "reject" {
+		return nil, pkg.ErrUserTaskDone
+	}
+	return userTask, nil
+}
+
+func (usecase *UserTaskUsecaseImpl) GetUserTaskRejectedByUserId(userId string, userTaskId string) (*user_task.UserTaskChallenge, error) {
+	userTask, errUserTask := usecase.ManageTaskRepository.GetUserTaskRejectedByUserId(userId, userTaskId)
+
+	if errUserTask != nil {
+		if errors.Is(errUserTask, gorm.ErrRecordNotFound) {
+			return nil, pkg.ErrUserTaskNotFound
+		}
+		return nil, errUserTask
+	}
+	return userTask, nil
 }
