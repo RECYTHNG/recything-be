@@ -97,26 +97,26 @@ func (repository *UserVideoRepositoryImpl) SearchVideoByCategory(categoryType st
 	return &uniqueVideos, nil
 }
 
-func (repository *UserVideoRepositoryImpl) GetVideoDetail(id int) (*video.Video, *[]video.Comment, error) {
+func (repository *UserVideoRepositoryImpl) GetVideoDetail(id int) (*video.Video, *[]video.Comment, int, error) {
 	var videos video.Video
 	var comments []video.Comment
+	var totalComment int64
 
-	if err := repository.DB.GetDB().
-		Where("id = ?", id).
-		Order("created_at desc").
-		First(&videos).Error; err != nil {
-		return nil, nil, err
+	db := repository.DB.GetDB()
+
+	if err := db.Model(&video.Video{}).Where("id = ?", id).First(&videos).Error; err != nil {
+		return nil, nil, 0, err
 	}
 
-	if err := repository.DB.GetDB().
-		Preload("User").
-		Where("video_id = ?", id).
-		Order("created_at desc").
-		Find(&comments).Error; err != nil {
-		return nil, nil, err
+	if err := db.Model(&video.Comment{}).Preload("User").Where("video_id = ?", id).Find(&comments).Error; err != nil {
+		return nil, nil, 0, err
 	}
 
-	return &videos, &comments, nil
+	if err := db.Model(&video.Comment{}).Where("video_id = ?", id).Count(&totalComment).Error; err != nil {
+		return nil, nil, 0, err
+	}
+
+	return &videos, &comments, int(totalComment), nil
 }
 
 func (repository *UserVideoRepositoryImpl) AddComment(comment *video.Comment) error {

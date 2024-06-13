@@ -21,6 +21,7 @@ var (
 
 	// admin
 	ErrAdminNotFound = errors.New("admin not found")
+	ErrRole          = errors.New("role must be admin or super admin")
 
 	// Report
 	ErrReportNotFound = errors.New("report not found")

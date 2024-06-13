@@ -1451,7 +1451,7 @@ paths:
                   data:
                     type: object
                     $ref: '#/components/schemas/Admin'
-    put:
+    patch:
       tags:
         - manage admins
       summary: Update an admin
@@ -1468,7 +1468,7 @@ paths:
           description: ID of the admin to be updated
           example: AD0001
       requestBody:
-        required: true
+        required: false
         content:
           multipart/form-data:
             schema:
@@ -3661,6 +3661,14 @@ paths:
             type: integer
             example: 1
           description: ID of video
+        - name : sort-comments
+          in: query
+          required: false
+          schema:
+            type: string
+            example: true
+            default: false
+          description: Sort comments
       responses:
         '200':
           description: Success
@@ -3696,6 +3704,9 @@ paths:
                       viewer:
                         type: integer
                         example: 1000
+                      total_comment:
+                        type: integer
+                        example: 10
                       comments:
                         type: array
                         items:
@@ -3713,6 +3724,9 @@ paths:
                             user_name:
                               type: string
                               example: John Doe
+                            user_profile:
+                              type: string
+                              example: "https://example.com/profile.jpg"
                             created_at:
                               type: string
                               format: date
