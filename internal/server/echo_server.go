@@ -41,7 +41,9 @@ func NewEchoServer(conf *config.Config, db database.Database) Server {
 
 func (s *echoServer) Start() {
 	s.app.Use(middleware.Recover())
-	s.app.Use(middleware.Logger())
+	s.app.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "[${method} | ${status}] ~ ${uri} ~ ${remote_ip} ~ ${latency_human}\n",
+	}))
 	s.app.Use(middleware.CORS())
 
 	// Public Handler
@@ -55,6 +57,51 @@ func (s *echoServer) Start() {
 
 	// super admin handler
 	s.supAdminHttpHandler()
+
+	// report handler
+	s.reportHttpHandler()
+
+	// FAQs Handler
+	s.faqHttpHandler()
+
+	// manage task handler
+	s.manageTask()
+
+	// user task handler
+	s.userTask()
+
+	// approval task handler
+	s.approvalTask()
+
+	// manage achievement handler
+	s.manageAchievement()
+
+	// reminai handler
+	s.reminAIHandler()
+
+	// custom data handler
+	s.customDataHandler()
+
+	// user achievement handler
+	s.userAchievement()
+
+	// manage video handler
+	s.manageVideo()
+
+	// user video handler
+	s.userVideo()
+
+	// About-us handler
+	s.aboutUsHandler()
+
+	// leaderboard handler
+	s.leaderboardHandler()
+
+	// Article Handler
+	s.articleHandler()
+
+	// homepage handler
+	s.homepageHandler()
 
 	serverPORT := fmt.Sprintf(":%d", s.conf.Server.Port)
 	s.app.Logger.Fatal(s.app.Start(serverPORT))

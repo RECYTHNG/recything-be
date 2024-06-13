@@ -43,7 +43,7 @@ func (r *userRepository) FindByPhoneNumber(phoneNumber string) (*u.User, error) 
 
 func (r *userRepository) FindByID(userID string) (*u.User, error) {
 	var user u.User
-	if err := r.DB.GetDB().Where("id = ?", userID).First(&user).Error; err != nil {
+	if err := r.DB.GetDB().Unscoped().Where("id = ?", userID).First(&user).Error; err != nil {
 		return nil, err
 	}
 
@@ -70,7 +70,7 @@ func (r *userRepository) FindAll(page int, limit int, sortBy string, sortType st
 
 func (r *userRepository) FindLastID() (string, error) {
 	var user u.User
-	if err := r.DB.GetDB().Order("id DESC").First(&user).Error; err != nil {
+	if err := r.DB.GetDB().Unscoped().Order("id DESC").First(&user).Error; err != nil {
 		return "USR0000", err
 	}
 
