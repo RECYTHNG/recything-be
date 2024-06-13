@@ -20,16 +20,18 @@ type GetAllVideoResponse struct {
 }
 
 type DataComment struct {
-	Id        int       `json:"id"`
-	Comment   string    `json:"comment"`
-	UserID    string    `json:"user_id"`
-	UserName  string    `json:"user_name"`
-	CreatedAt time.Time `json:"created_at"`
+	Id          int       `json:"id"`
+	Comment     string    `json:"comment"`
+	UserID      string    `json:"user_id"`
+	UserName    string    `json:"user_name"`
+	UserProfile string    `json:"user_profile"`
+	CreatedAt   time.Time `json:"created_at"`
 }
 
 type GetDetailsDataVideoByIdResponse struct {
-	DataVideo *DataVideo     `json:"data_video"`
-	Comments  *[]DataComment `json:"comments"`
+	DataVideo    *DataVideo     `json:"data_video"`
+	TotalComment int            `json:"total_comment"`
+	Comments     *[]DataComment `json:"comments"`
 }
 
 type DataCategoryVideo struct {
