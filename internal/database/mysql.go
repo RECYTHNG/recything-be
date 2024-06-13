@@ -252,43 +252,6 @@ func (m *mysqlDatabase) InitAchievements() {
 	log.Println("Dummy Achievements added!")
 }
 
-func (m *mysqlDatabase) InitDataVideos() {
-	videos := []video.Video{
-		{
-			ID:          1,
-			Title:       "Daur Ulang",
-			Description: "Tips Daur Ulang",
-			Link:        "https://www.youtube.com/watch?v=MJd3bo_XRaU",
-		},
-		{
-			ID:          2,
-			Title:       "Tutorial Bernapas",
-			Description: "Tutorial Bernapas Bagi Pemula",
-			Link:        "https://www.youtube.com/watch?v=jp5uhrdhsKI",
-		},
-	}
-
-	for _, video := range videos {
-		m.GetDB().FirstOrCreate(&video, video)
-	}
-
-	log.Println("Video data added!")
-}
-
-func (m *mysqlDatabase) InitVideoCategories() {
-	videoCategories := []video.VideoCategory{
-		{Name: "tips", VideoID: 1},
-		{Name: "daur ulang", VideoID: 1},
-		{Name: "tutorial", VideoID: 1},
-		{Name: "edukasi", VideoID: 2},
-		{Name: "kampanye", VideoID: 2},
-	}
-	for _, videoCategory := range videoCategories {
-		m.GetDB().FirstOrCreate(&videoCategory, videoCategory)
-	}
-	log.Println("Video categories data added!")
-}
-
 func (m *mysqlDatabase) InitAboutUs() {
 	aboutUs := []aboutus.AboutUs{
 		{ID: "ABS01", Category: "perusahaan", Title: "Tentang siapa kami", Description: "RecyThing adalah pemimpin di industri daur ulang sampah yang berkomitmen untuk menjaga lingkungan hidup yang lebih bersih dan lebih berkelanjutan."},
@@ -397,29 +360,6 @@ func (m *mysqlDatabase) InitContentCategories() {
 	log.Println("Content categories data added!")
 }
 
-func (m *mysqlDatabase) InitTrashCategoryVideo() {
-	trashCategories := []video.TrashCategory{
-		{ID: 1, Name: "plastik", VideoID: 1},
-		{ID: 2, Name: "besi", VideoID: 1},
-		{ID: 3, Name: "kaca", VideoID: 1},
-		{ID: 4, Name: "organik", VideoID: 1},
-		{ID: 5, Name: "kayu", VideoID: 1},
-		{ID: 6, Name: "kertas", VideoID: 1},
-		{ID: 7, Name: "baterai", VideoID: 2},
-		{ID: 8, Name: "kaleng", VideoID: 2},
-		{ID: 9, Name: "elektronik", VideoID: 2},
-		{ID: 10, Name: "tekstil", VideoID: 2},
-		{ID: 11, Name: "minyak", VideoID: 2},
-		{ID: 12, Name: "bola lampu", VideoID: 2},
-		{ID: 13, Name: "berbahaya", VideoID: 2},
-	}
-
-	for _, category := range trashCategories {
-		m.GetDB().FirstOrCreate(&category, category)
-	}
-	log.Println("Trash categories data added!")
-}
-
 func (m *mysqlDatabase) InitArticle() {
 	articles := []article.Article{
 		{ID: "ART0001", Title: "Cara Mendaur Ulang Botol Plastik", Description: "Panduan langkah demi langkah tentang cara mendaur ulang botol plastik di rumah.", ThumbnailURL: "https://example.com/daur-ulang-plastik.jpg", AuthorID: "AD0001"},
@@ -455,6 +395,46 @@ func (m *mysqlDatabase) InitArticle() {
 	}
 
 	log.Println("Article data added!")
+}
+
+func (m *mysqlDatabase) InitDataVideos() {
+	videos := []video.Video{
+		{
+			ID:          1,
+			Title:       "Daur Ulang",
+			Description: "Tips Daur Ulang",
+			Link:        "https://www.youtube.com/watch?v=MJd3bo_XRaU",
+		},
+		{
+			ID:          2,
+			Title:       "Tutorial Bernapas",
+			Description: "Tutorial Bernapas Bagi Pemula",
+			Link:        "https://www.youtube.com/watch?v=jp5uhrdhsKI",
+		},
+	}
+
+	videoCategory := []video.VideoCategory{
+		{
+			VideoID:           1,
+			ContentCategoryID: 1,
+			WasteCategoryID:   1,
+		},
+		{
+			VideoID:           2,
+			ContentCategoryID: 2,
+			WasteCategoryID:   2,
+		},
+	}
+
+	for _, video := range videoCategory {
+		m.GetDB().FirstOrCreate(&video, video)
+	}
+
+	for _, video := range videos {
+		m.GetDB().FirstOrCreate(&video, video)
+	}
+
+	log.Println("Video data added!")
 }
 
 func (m *mysqlDatabase) GetDB() *gorm.DB {

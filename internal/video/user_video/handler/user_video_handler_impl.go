@@ -25,22 +25,35 @@ func (handler *UserVideoHandlerImpl) GetAllVideoHandler(c echo.Context) error {
 	if err != nil {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
+
 	var dataVideo []*dto.DataVideoSearchByCategory
 	for _, video := range *videos {
-		videoCategories := make([]*dto.DataCategoryVideo, len(video.VideoCategories))
-		for i, vc := range video.VideoCategories {
-			videoCategories[i] = &dto.DataCategoryVideo{
-				Id:   vc.ID,
-				Name: vc.Name,
+		uniqueContentCategories := make(map[uint]*dto.DataCategoryVideo)
+		uniqueTrashCategories := make(map[uint]*dto.DataTrashCategoryVideo)
+
+		for _, vc := range video.Categories {
+			if _, exists := uniqueContentCategories[vc.ContentCategoryID]; !exists {
+				uniqueContentCategories[vc.ContentCategoryID] = &dto.DataCategoryVideo{
+					Id:   int(vc.ContentCategory.ID),
+					Name: vc.ContentCategory.Name,
+				}
+			}
+			if _, exists := uniqueTrashCategories[vc.WasteCategoryID]; !exists {
+				uniqueTrashCategories[vc.WasteCategoryID] = &dto.DataTrashCategoryVideo{
+					Id:   int(vc.WasteCategory.ID),
+					Name: vc.WasteCategory.Name,
+				}
 			}
 		}
 
-		trashCategories := make([]*dto.DataTrashCategoryVideo, len(video.TrashCategories))
-		for i, tc := range video.TrashCategories {
-			trashCategories[i] = &dto.DataTrashCategoryVideo{
-				Id:   tc.ID,
-				Name: tc.Name,
-			}
+		// Convert maps back to slices
+		var videoCategories []*dto.DataCategoryVideo
+		for _, vc := range uniqueContentCategories {
+			videoCategories = append(videoCategories, vc)
+		}
+		var trashCategories []*dto.DataTrashCategoryVideo
+		for _, tc := range uniqueTrashCategories {
+			trashCategories = append(trashCategories, tc)
 		}
 
 		dataVideo = append(dataVideo, &dto.DataVideoSearchByCategory{
@@ -67,22 +80,35 @@ func (handler *UserVideoHandlerImpl) SearchVideoByKeywordHandler(c echo.Context)
 	if err != nil {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
+
 	var dataVideo []*dto.DataVideoSearchByCategory
 	for _, video := range *videos {
-		videoCategories := make([]*dto.DataCategoryVideo, len(video.VideoCategories))
-		for i, vc := range video.VideoCategories {
-			videoCategories[i] = &dto.DataCategoryVideo{
-				Id:   vc.ID,
-				Name: vc.Name,
+		uniqueContentCategories := make(map[uint]*dto.DataCategoryVideo)
+		uniqueTrashCategories := make(map[uint]*dto.DataTrashCategoryVideo)
+
+		for _, vc := range video.Categories {
+			if _, exists := uniqueContentCategories[vc.ContentCategoryID]; !exists {
+				uniqueContentCategories[vc.ContentCategoryID] = &dto.DataCategoryVideo{
+					Id:   int(vc.ContentCategory.ID),
+					Name: vc.ContentCategory.Name,
+				}
+			}
+			if _, exists := uniqueTrashCategories[vc.WasteCategoryID]; !exists {
+				uniqueTrashCategories[vc.WasteCategoryID] = &dto.DataTrashCategoryVideo{
+					Id:   int(vc.WasteCategory.ID),
+					Name: vc.WasteCategory.Name,
+				}
 			}
 		}
 
-		trashCategories := make([]*dto.DataTrashCategoryVideo, len(video.TrashCategories))
-		for i, tc := range video.TrashCategories {
-			trashCategories[i] = &dto.DataTrashCategoryVideo{
-				Id:   tc.ID,
-				Name: tc.Name,
-			}
+		// Convert maps back to slices
+		var videoCategories []*dto.DataCategoryVideo
+		for _, vc := range uniqueContentCategories {
+			videoCategories = append(videoCategories, vc)
+		}
+		var trashCategories []*dto.DataTrashCategoryVideo
+		for _, tc := range uniqueTrashCategories {
+			trashCategories = append(trashCategories, tc)
 		}
 
 		dataVideo = append(dataVideo, &dto.DataVideoSearchByCategory{
@@ -97,9 +123,10 @@ func (handler *UserVideoHandlerImpl) SearchVideoByKeywordHandler(c echo.Context)
 		})
 	}
 
-	responseData := helper.ResponseData(http.StatusOK, "success", dataVideo)
-
-	return c.JSON(http.StatusOK, responseData)
+	responseData := dto.SearchVideoByCategoryVideoResponse{
+		DataVideo: dataVideo,
+	}
+	return c.JSON(http.StatusOK, helper.ResponseData(http.StatusOK, "success", responseData.DataVideo))
 }
 
 func (handler *UserVideoHandlerImpl) SearchVideoByCategoryHandler(c echo.Context) error {
@@ -112,22 +139,35 @@ func (handler *UserVideoHandlerImpl) SearchVideoByCategoryHandler(c echo.Context
 		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
+
 	var dataVideo []*dto.DataVideoSearchByCategory
 	for _, video := range *videos {
-		videoCategories := make([]*dto.DataCategoryVideo, len(video.VideoCategories))
-		for i, vc := range video.VideoCategories {
-			videoCategories[i] = &dto.DataCategoryVideo{
-				Id:   vc.ID,
-				Name: vc.Name,
+		uniqueContentCategories := make(map[uint]*dto.DataCategoryVideo)
+		uniqueTrashCategories := make(map[uint]*dto.DataTrashCategoryVideo)
+
+		for _, vc := range video.Categories {
+			if _, exists := uniqueContentCategories[vc.ContentCategoryID]; !exists {
+				uniqueContentCategories[vc.ContentCategoryID] = &dto.DataCategoryVideo{
+					Id:   int(vc.ContentCategory.ID),
+					Name: vc.ContentCategory.Name,
+				}
+			}
+			if _, exists := uniqueTrashCategories[vc.WasteCategoryID]; !exists {
+				uniqueTrashCategories[vc.WasteCategoryID] = &dto.DataTrashCategoryVideo{
+					Id:   int(vc.WasteCategory.ID),
+					Name: vc.WasteCategory.Name,
+				}
 			}
 		}
 
-		trashCategories := make([]*dto.DataTrashCategoryVideo, len(video.TrashCategories))
-		for i, tc := range video.TrashCategories {
-			trashCategories[i] = &dto.DataTrashCategoryVideo{
-				Id:   tc.ID,
-				Name: tc.Name,
-			}
+		// Convert maps back to slices
+		var videoCategories []*dto.DataCategoryVideo
+		for _, vc := range uniqueContentCategories {
+			videoCategories = append(videoCategories, vc)
+		}
+		var trashCategories []*dto.DataTrashCategoryVideo
+		for _, tc := range uniqueTrashCategories {
+			trashCategories = append(trashCategories, tc)
 		}
 
 		dataVideo = append(dataVideo, &dto.DataVideoSearchByCategory{

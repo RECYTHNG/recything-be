@@ -171,6 +171,7 @@ func (handler *ManageVideoHandlerImpl) GetDetailsDataVideoByIdHandler(c echo.Con
 	if errConvert != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid id parameter")
 	}
+
 	video, err := handler.ManageVideoUsecase.GetDetailsDataVideoByIdUseCase(idInt)
 	if err != nil {
 		if errors.Is(err, pkg.ErrVideoNotFound) {
@@ -178,31 +179,49 @@ func (handler *ManageVideoHandlerImpl) GetDetailsDataVideoByIdHandler(c echo.Con
 		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
-	var dataVideo *dto.GetDetailsDataVideoByIdResponse
-	var dataVideoCategories []*dto.DataVideoCategory
-	var dataTrashCategories []*dto.DataTrashCategoryResponse
-	for _, category := range video.VideoCategories {
-		dataVideoCategories = append(dataVideoCategories, &dto.DataVideoCategory{
-			Id:   category.ID,
-			Name: category.Name,
-		})
+	uniqueContentCategories := make(map[uint]*dto.DataCategoryVideoResponse)
+	uniqueWasteCategories := make(map[uint]*dto.DataTrashCategoryResponse)
+
+	for _, category := range video.Categories {
+		if category.ContentCategoryID != 0 {
+			if _, exists := uniqueContentCategories[category.ContentCategoryID]; !exists {
+				uniqueContentCategories[category.ContentCategoryID] = &dto.DataCategoryVideoResponse{
+					Id:   int(category.ContentCategory.ID),
+					Name: category.ContentCategory.Name,
+				}
+			}
+		}
+		if category.WasteCategoryID != 0 {
+			if _, exists := uniqueWasteCategories[category.WasteCategoryID]; !exists {
+				uniqueWasteCategories[category.WasteCategoryID] = &dto.DataTrashCategoryResponse{
+					Id:   int(category.WasteCategory.ID),
+					Name: category.WasteCategory.Name,
+				}
+			}
+		}
 	}
-	for _, category := range video.TrashCategories {
-		dataTrashCategories = append(dataTrashCategories, &dto.DataTrashCategoryResponse{
-			Id:   category.ID,
-			Name: category.Name,
-		})
+
+	// Convert maps back to slices
+	var dataContentCategories []*dto.DataCategoryVideoResponse
+	for _, vc := range uniqueContentCategories {
+		dataContentCategories = append(dataContentCategories, vc)
 	}
-	dataVideo = &dto.GetDetailsDataVideoByIdResponse{
+	var dataWasteCategories []*dto.DataTrashCategoryResponse
+	for _, wc := range uniqueWasteCategories {
+		dataWasteCategories = append(dataWasteCategories, wc)
+	}
+
+	dataVideo := &dto.GetDetailsDataVideoByIdResponse{
 		Id:            video.ID,
 		Title:         video.Title,
 		Description:   video.Description,
 		UrlThumbnail:  video.Thumbnail,
 		LinkVideo:     video.Link,
 		Viewer:        video.Viewer,
-		VideoCategory: dataVideoCategories,
-		TrashCategory: dataTrashCategories,
+		VideoCategory: dataContentCategories,
+		TrashCategory: dataWasteCategories,
 	}
+
 	responseData := helper.ResponseData(http.StatusOK, "success", dataVideo)
 	return c.JSON(http.StatusOK, responseData)
 }
