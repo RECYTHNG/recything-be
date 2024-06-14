@@ -2069,15 +2069,15 @@ paths:
                       items:
                         type: object
                         properties:
+                          id:
+                            type: integer
+                            example: 1
                           title:
                             type: string
                             example: "Step 1"
                           description:
                             type: string
                             example: "Step 1 description"
-                        example:
-                          - title: "Step 1"
-                            description: "Step 1 description"
 
   /user/tasks/{taskId}:
     get:
@@ -2144,15 +2144,15 @@ paths:
                         items:
                           type: object
                           properties:
+                            id:
+                              type: integer
+                              example: 1
                             title:
                               type: string
                               example: "Step 1"
                             description:
                               type: string
                               example: "Step 1 description"
-                        example:
-                          - title: "Step 1"
-                            description: "Step 1 description"
         '404':
           description: Task not found
           content:
@@ -2248,9 +2248,7 @@ paths:
                                 description:
                                   type: integer
                                   example: "Step 1 description"
-                            example:
-                              - title: "Step 1"
-                                description: "Step 1 description"
+                            
                       user_steps:
                         type: array
                         items:
@@ -2366,9 +2364,7 @@ paths:
                                 description:
                                   type: integer
                                   example: "Step 1 description"
-                            example:
-                              - title: "Step 1"
-                                description: "Step 1 description"
+                  
                       user_steps:
                         type: array
                         items:
@@ -2487,9 +2483,7 @@ paths:
                                 description:
                                   type: integer
                                   example: "Step 1 description"
-                            example:
-                              - title: "Step 1"
-                                description: "Step 1 description"
+                            
                       user_steps:
                         type: array
                         items:
