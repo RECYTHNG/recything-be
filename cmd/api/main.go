@@ -45,14 +45,14 @@ func main() {
 	// Init Tasks
 	db.InitTasks()
 
-	// Init Task Steps
-	db.InitTaskSteps()
-
 	// Init Videos
-	db.InitDataVideos()
+	db.InitVideos()
 
 	// Init Article
 	db.InitArticle()
+
+	// Init Report
+	db.InitReport()
 
 	app := server.NewEchoServer(conf, db)
 	c := cron.New()

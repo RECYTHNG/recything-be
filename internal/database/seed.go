@@ -12,13 +12,9 @@ import (
 	faqEntity "github.com/sawalreverr/recything/internal/faq"
 	"github.com/sawalreverr/recything/internal/helper"
 	"github.com/sawalreverr/recything/internal/report"
-	task "github.com/sawalreverr/recything/internal/task/manage_task/entity"
-	userEntity "github.com/sawalreverr/recything/internal/user"
-	video "github.com/sawalreverr/recything/internal/video/manage_video/entity"
 )
 
-// Categories
-// // Video and Article Categories
+// Video and Article Categories
 func (m *mysqlDatabase) InitWasteCategories() {
 	categories := []article.WasteCategory{
 		{ID: 1, Name: "plastik"},
@@ -79,7 +75,7 @@ func (m *mysqlDatabase) InitWasteMaterials() {
 	log.Println("Waste material data added!")
 }
 
-// User & Admin
+// Admin
 func (m *mysqlDatabase) InitSuperAdmin() {
 	hashed, _ := helper.GenerateHash("superadmin@123")
 
@@ -91,7 +87,7 @@ func (m *mysqlDatabase) InitSuperAdmin() {
 			Password:  hashed,
 			Role:      "super admin",
 			ImageUrl:  "http://example.com/",
-			CreatedAt: time.Date(2024, time.June, 14, 0, 0, 0, 0, time.UTC), // year, month, day, hour, min, sec, nsec, loc
+			CreatedAt: time.Date(2024, time.June, 14, 0, 0, 0, 0, time.UTC),
 		},
 		{
 			ID:        "AD0002",
@@ -100,7 +96,7 @@ func (m *mysqlDatabase) InitSuperAdmin() {
 			Password:  hashed,
 			Role:      "admin",
 			ImageUrl:  "http://example.com/",
-			CreatedAt: time.Date(2024, time.June, 14, 0, 0, 0, 0, time.UTC), // year, month, day, hour, min, sec, nsec, loc
+			CreatedAt: time.Date(2024, time.June, 14, 0, 0, 0, 0, time.UTC),
 		},
 	}
 
@@ -110,48 +106,7 @@ func (m *mysqlDatabase) InitSuperAdmin() {
 	log.Println("Super admin data added!")
 }
 
-func (m *mysqlDatabase) InitUser() {
-	hashed, _ := helper.GenerateHash("password@123")
-
-	users := []userEntity.User{
-		{
-			ID:         "USR0001",
-			Name:       "John Doe",
-			Email:      "john.doe@gmail.com",
-			Password:   hashed,
-			Point:      1000,
-			Gender:     "laki-laki",
-			BirthDate:  time.Time{},
-			Address:    "Jalan blablabla",
-			PictureURL: "http://example.com/image.jpg",
-			OTP:        892322,
-			IsVerified: true,
-			Badge:      "https://res.cloudinary.com/dymhvau8n/image/upload/v1718189121/user_badge/htaemsjtlhfof7ww01ss.png",
-			CreatedAt:  time.Time{},
-		},
-		{
-			ID:         "USR0002",
-			Name:       "Shin tae yong",
-			Email:      "shin.tae.yong@gmail.com",
-			Password:   hashed,
-			Point:      1000,
-			Gender:     "perempuan",
-			BirthDate:  time.Time{},
-			Address:    "Jalan blablabla",
-			PictureURL: "http://example.com/image.jpg",
-			OTP:        892322,
-			IsVerified: true,
-			Badge:      "https://res.cloudinary.com/dymhvau8n/image/upload/v1718189121/user_badge/htaemsjtlhfof7ww01ss.png",
-			CreatedAt:  time.Time{},
-		},
-	}
-
-	for _, user := range users {
-		m.GetDB().FirstOrCreate(&user, user)
-	}
-	log.Println("User data added!")
-}
-
+// FAQ
 func (m *mysqlDatabase) InitFaqs() {
 	faqs := []faqEntity.FAQ{
 		{ID: "FAQ01", Category: "profil", Question: "Bagaimana cara saya memperbarui informasi profil saya?", Answer: "Anda dapat memperbarui informasi profil Anda melalui menu 'Pengaturan Profil' di aplikasi. Klik ikon profil, pilih 'Pengaturan', dan edit informasi yang diperlukan."},
@@ -189,6 +144,7 @@ func (m *mysqlDatabase) InitFaqs() {
 	log.Println("FAQs data added!")
 }
 
+// Custom Datas
 func (m *mysqlDatabase) InitCustomDatas() {
 	datas := []customDataEntity.CustomData{
 		{ID: "CDT0001", Topic: "Daur Ulang Plastik", Description: "Proses daur ulang plastik melibatkan pengumpulan sampah plastik, pembersihan, penghancuran menjadi serpihan kecil, dan kemudian melelehkannya untuk dibentuk menjadi produk baru. Plastik yang dapat didaur ulang termasuk botol air, wadah makanan, dan kantong belanja tertentu."},
@@ -209,85 +165,7 @@ func (m *mysqlDatabase) InitCustomDatas() {
 	log.Println("Custom Data added!")
 }
 
-func (m *mysqlDatabase) InitTasks() {
-	dummyData := []task.TaskChallenge{
-		{
-			ID:          "TM0001",
-			Title:       "Challenge 1",
-			Description: "Description for Challenge 1",
-			Thumbnail:   "thumbnail1.jpg",
-			StartDate:   time.Now(),
-			EndDate:     time.Now().AddDate(0, 0, 30),
-			Point:       1000,
-			AdminId:     "AD0001",
-		},
-		{
-			ID:          "TM0002",
-			Title:       "Challenge 2",
-			Description: "Description for Challenge 2",
-			Thumbnail:   "thumbnail2.jpg",
-			StartDate:   time.Now(),
-			EndDate:     time.Now().AddDate(0, 1, 0),
-			Point:       200,
-			AdminId:     "AD0001",
-		},
-	}
-
-	for _, taskChallenge := range dummyData {
-		result := m.GetDB().FirstOrCreate(&taskChallenge, task.TaskChallenge{ID: taskChallenge.ID})
-		if result.Error != nil {
-			log.Printf("Error adding task challenge with ID %s: %v", taskChallenge.ID, result.Error)
-		} else if result.RowsAffected == 0 {
-			log.Printf("Task challenge with ID %s already exists.", taskChallenge.ID)
-		} else {
-			log.Printf("Task challenge with ID %s created.", taskChallenge.ID)
-		}
-	}
-
-	log.Println("Tasks data added!")
-}
-
-func (m *mysqlDatabase) InitTaskSteps() {
-	dummyData := []task.TaskStep{
-		{
-			TaskChallengeId: "TM0001",
-			Title:           "Step 1",
-			Description:     "Description for Step 1",
-		},
-		{
-			TaskChallengeId: "TM0001",
-			Title:           "Step 2",
-			Description:     "Description for Step 2",
-		},
-		{
-			TaskChallengeId: "TM0001",
-			Title:           "Step 3",
-			Description:     "Description for Step 3",
-		},
-		{
-			TaskChallengeId: "TM0002",
-			Title:           "Step 1",
-			Description:     "Description for Step 1",
-		},
-		{
-			TaskChallengeId: "TM0002",
-			Title:           "Step 2",
-			Description:     "Description for Step 2",
-		},
-		{
-			TaskChallengeId: "TM0002",
-			Title:           "Step 3",
-			Description:     "Description for Step 3",
-		},
-	}
-
-	for _, taskStep := range dummyData {
-		m.GetDB().FirstOrCreate(&taskStep, taskStep)
-	}
-
-	log.Println("Task Steps data added!")
-}
-
+// Achievements
 func (m *mysqlDatabase) InitAchievements() {
 	dumyData := []achievement.Achievement{
 		{
@@ -323,6 +201,7 @@ func (m *mysqlDatabase) InitAchievements() {
 	log.Println("Achievements data added!")
 }
 
+// About us
 func (m *mysqlDatabase) InitAboutUs() {
 	aboutUs := []aboutus.AboutUs{
 		{ID: "ABS01", Category: "perusahaan", Title: "Tentang siapa kami", Description: "RecyThing adalah pemimpin di industri daur ulang sampah yang berkomitmen untuk menjaga lingkungan hidup yang lebih bersih dan lebih berkelanjutan."},
@@ -391,81 +270,4 @@ func (m *mysqlDatabase) InitAboutUs() {
 	}
 
 	log.Println("About-us data added!")
-}
-
-func (m *mysqlDatabase) InitArticle() {
-	articles := []article.Article{
-		{ID: "ART0001", Title: "Cara Mendaur Ulang Botol Plastik", Description: "Panduan langkah demi langkah tentang cara mendaur ulang botol plastik di rumah.", ThumbnailURL: "https://example.com/daur-ulang-plastik.jpg", AuthorID: "AD0001"},
-		{ID: "ART0002", Title: "Bahaya Limbah Elektronik dan Cara Pembuangan yang Bertanggung Jawab", Description: "Pelajari tentang bahaya lingkungan dan kesehatan dari limbah elektronik dan temukan metode pembuangan yang aman.", ThumbnailURL: "https://example.com/limbah-elektronik.jpg", AuthorID: "AD0001"},
-	}
-
-	articleSections := []article.ArticleSection{
-		{ID: 1, ArticleID: "ART0001", Title: "Membersihkan dan Menyortir", Description: "Bilas botol, lepaskan label, dan pisahkan berdasarkan jenisnya (PET, HDPE, dll.).", ImageURL: "https://example.com/membersihkan-botol.jpg"},
-		{ID: 2, ArticleID: "ART0001", Title: "Meremukkan dan Menyimpan", Description: "Remukkan botol untuk menghemat ruang dan simpan dalam tempat khusus.", ImageURL: "https://example.com/meremukkan-botol.jpg"},
-		{ID: 3, ArticleID: "ART0001", Title: "Mengantar atau Dijemput", Description: "Temukan pusat daur ulang terdekat atau jadwalkan layanan penjemputan.", ImageURL: "https://example.com/pusat-daur-ulang.jpg"},
-
-		{ID: 4, ArticleID: "ART0002", Title: "Apa itu Limbah Elektronik?", Description: "Limbah elektronik mencakup barang elektronik bekas seperti ponsel, komputer, peralatan rumah tangga, dll.", ImageURL: "https://example.com/tumpukan-limbah-elektronik.jpg"},
-		{ID: 5, ArticleID: "ART0002", Title: "Komponen Beracun", Description: "Limbah elektronik mengandung zat berbahaya seperti timbal, merkuri, dan kadmium.", ImageURL: "https://example.com/simbol-beracun.jpg"},
-		{ID: 6, ArticleID: "ART0002", Title: "Pembuangan yang Benar", Description: "Cari pendaur ulang limbah elektronik bersertifikat atau program pengembalian yang ditawarkan oleh produsen.", ImageURL: "https://example.com/daur-ulang-limbah-elektronik.jpg"},
-	}
-
-	articleCategories := []article.ArticleCategories{
-		{ID: 1, ArticleID: "ART0001", WasteCategoryID: 1, ContentCategoryID: 3},
-		{ID: 2, ArticleID: "ART0002", WasteCategoryID: 9, ContentCategoryID: 4},
-		{ID: 3, ArticleID: "ART0002", WasteCategoryID: 13, ContentCategoryID: 5},
-	}
-
-	for _, article := range articles {
-		m.GetDB().FirstOrCreate(&article, article)
-	}
-
-	for _, articleSection := range articleSections {
-		m.GetDB().FirstOrCreate(&articleSection, articleSection)
-	}
-
-	for _, articleCategory := range articleCategories {
-		m.GetDB().FirstOrCreate(&articleCategory, articleCategory)
-	}
-
-	log.Println("Article data added!")
-}
-
-func (m *mysqlDatabase) InitDataVideos() {
-	videos := []video.Video{
-		{
-			ID:          1,
-			Title:       "Daur Ulang",
-			Description: "Tips Daur Ulang",
-			Link:        "https://www.youtube.com/watch?v=MJd3bo_XRaU",
-		},
-		{
-			ID:          2,
-			Title:       "Tutorial Bernapas",
-			Description: "Tutorial Bernapas Bagi Pemula",
-			Link:        "https://www.youtube.com/watch?v=jp5uhrdhsKI",
-		},
-	}
-
-	videoCategory := []video.VideoCategory{
-		{
-			VideoID:           1,
-			ContentCategoryID: 1,
-			WasteCategoryID:   1,
-		},
-		{
-			VideoID:           2,
-			ContentCategoryID: 2,
-			WasteCategoryID:   2,
-		},
-	}
-
-	for _, video := range videos {
-		m.GetDB().FirstOrCreate(&video, video)
-	}
-
-	for _, video := range videoCategory {
-		m.GetDB().FirstOrCreate(&video, video)
-	}
-
-	log.Println("Video data added!")
 }
