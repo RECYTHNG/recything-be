@@ -15,11 +15,26 @@ func main() {
 	db := database.NewMySQLDatabase(conf)
 	database.AutoMigrate(db)
 
+	// Init User
+	db.InitUser()
+
 	// Init super admin
 	db.InitSuperAdmin()
 
 	// Init Waste Materials
 	db.InitWasteMaterials()
+
+	// Init Waste Categories
+	db.InitWasteCategories()
+
+	// Init Content Categories
+	db.InitContentCategories()
+
+	// Init Achievements
+	db.InitAchievements()
+
+	// Init About us
+	db.InitAboutUs()
 
 	// Init Faqs
 	db.InitFaqs()
@@ -33,23 +48,11 @@ func main() {
 	// Init Task Steps
 	db.InitTaskSteps()
 
-	// Init Achievements
-	db.InitAchievements()
-
-	// Init About us
-	db.InitAboutUs()
-
-	// Init Waste Categories
-	db.InitWasteCategories()
-
-	// Init Content Categories
-	db.InitContentCategories()
+	// Init Videos
+	db.InitDataVideos()
 
 	// Init Article
 	db.InitArticle()
-
-	// Init Videos
-	db.InitDataVideos()
 
 	app := server.NewEchoServer(conf, db)
 	c := cron.New()
