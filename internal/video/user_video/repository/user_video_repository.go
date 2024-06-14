@@ -5,7 +5,7 @@ import (
 )
 
 type UserVideoRepository interface {
-	GetAllVideo() (*[]video.Video, error)
+	GetAllVideo(limit int) (*[]video.Video, error)
 	SearchVideoByKeyword(keyword string) (*[]video.Video, error)
 	SearchVideoByCategory(categoryType string, name string) (*[]video.Video, error)
 	GetVideoDetail(id int) (*video.Video, *[]video.Comment, int, error)

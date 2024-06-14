@@ -22,7 +22,15 @@ func NewUserVideoHandler(usecase usecase.UserVideoUsecase) UserVideoHandler {
 }
 
 func (handler *UserVideoHandlerImpl) GetAllVideoHandler(c echo.Context) error {
-	videos, err := handler.Usecase.GetAllVideoUsecase()
+	limit := c.QueryParam("limit")
+	if limit == "" {
+		limit = "10"
+	}
+	limitInt, errLimit := strconv.Atoi(limit)
+	if errLimit != nil {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid limit")
+	}
+	videos, err := handler.Usecase.GetAllVideoUsecase(limitInt)
 	if err != nil {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
