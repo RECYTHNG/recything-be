@@ -3921,6 +3921,15 @@ paths:
       operationId: getAllDataVideo
       security:
         - Bearer: []
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of data
+          example: 10
       responses:
         '200':
           description: Success
