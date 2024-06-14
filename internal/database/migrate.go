@@ -20,29 +20,36 @@ func AutoMigrate(db Database) {
 	if err := db.GetDB().AutoMigrate(
 		&user.User{},
 		&entity.Admin{},
+
 		&report.Report{},
 		&report.WasteMaterial{},
 		&report.ReportWasteMaterial{},
 		&report.ReportImage{},
+
+		&article.WasteCategory{},
+		&article.ContentCategory{},
+
 		&faq.FAQ{},
-		&task.TaskChallenge{},
-		&task.TaskStep{},
-		&user_task.UserTaskChallenge{},
-		&user_task.UserTaskImage{},
 		&achievement.Achievement{},
 		&customdata.CustomData{},
+		&aboutus.AboutUs{},
+		&aboutus.AboutUsImage{},
+
+		&task.TaskChallenge{},
+		&task.TaskStep{},
+
+		&user_task.UserTaskChallenge{},
+		&user_task.UserTaskImage{},
+		&user_task.UserTaskStep{},
+
 		&video.Video{},
 		&video.VideoCategory{},
 		&video.Comment{},
-		&aboutus.AboutUs{},
-		&aboutus.AboutUsImage{},
-		&article.WasteCategory{},
-		&article.ContentCategory{},
+
 		&article.Article{},
 		&article.ArticleSection{},
 		&article.ArticleCategories{},
 		&article.ArticleComment{},
-		&user_task.UserTaskStep{},
 	); err != nil {
 		log.Fatal("Database Migration Failed!")
 	}

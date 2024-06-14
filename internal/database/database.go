@@ -5,15 +5,20 @@ import "gorm.io/gorm"
 type Database interface {
 	GetDB() *gorm.DB
 	InitSuperAdmin()
-	InitWasteMaterials()
-	InitFaqs()
-	InitCustomDatas()
-	InitTasks()
-	InitTaskSteps()
-	InitAchievements()
-	InitAboutUs()
-	InitDataVideos()
-	InitArticle()
+	InitUser()
+
 	InitWasteCategories()
 	InitContentCategories()
+	InitWasteMaterials()
+
+	InitFaqs()
+	InitCustomDatas()
+	InitAboutUs()
+	InitAchievements()
+
+	InitTasks()
+	InitTaskSteps()
+
+	InitDataVideos()
+	InitArticle()
 }

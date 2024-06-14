@@ -25,14 +25,19 @@ func (repository *ApprovalTaskRepositoryImpl) GetAllApprovalTaskPagination(limit
 	var total int64
 	offset = (offset - 1) * limit
 
-	if err := repository.DB.GetDB().Model(&user_task.UserTaskChallenge{}).Count(&total).Error; err != nil {
+	if err := repository.DB.GetDB().Model(&user_task.UserTaskChallenge{}).
+		Where("status_progress = ?", "done").
+		Count(&total).
+		Error; err != nil {
 		return nil, 0, err
 	}
 	if err := repository.DB.GetDB().
 		Preload("TaskChallenge.TaskSteps").
 		Preload("User").
 		Limit(limit).
-		Offset(offset).Order("id desc").Find(&tasks).Error; err != nil {
+		Offset(offset).Order("id desc").
+		Where("status_progress = ?", "done").
+		Find(&tasks).Error; err != nil {
 		return nil, 0, err
 	}
 	return tasks, int(total), nil
@@ -126,6 +131,7 @@ func (repository *ApprovalTaskRepositoryImpl) GetUserTaskDetails(userTaskId stri
 		Preload("User").
 		Preload("TaskChallenge").
 		Where("id = ?", userTaskId).
+		Where("status_progress = ?", "done").
 		First(&userTask).Error; err != nil {
 		return nil, nil, err
 	}
