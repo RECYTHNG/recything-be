@@ -5,6 +5,7 @@ import (
 	"github.com/sawalreverr/recything/internal/task/approval_task/repository"
 	user_task "github.com/sawalreverr/recything/internal/task/user_task/entity"
 	"github.com/sawalreverr/recything/pkg"
+	"gorm.io/gorm"
 )
 
 type ApprovalTaskUsecaseImpl struct {
@@ -65,12 +66,12 @@ func (usecase *ApprovalTaskUsecaseImpl) RejectUserTaskUseCase(request *dto.Rejec
 }
 
 func (usecase *ApprovalTaskUsecaseImpl) GetUserTaskDetailsUseCase(userTaskId string) (*user_task.UserTaskChallenge, []*user_task.UserTaskImage, error) {
-	if _, err := usecase.ApprovalTaskRepository.FindUserTask(userTaskId); err != nil {
-		return nil, []*user_task.UserTaskImage{}, pkg.ErrUserTaskNotFound
-	}
 	task, images, err := usecase.ApprovalTaskRepository.GetUserTaskDetails(userTaskId)
 	if err != nil {
-		return nil, []*user_task.UserTaskImage{}, err
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil, pkg.ErrUserTaskNotFound
+		}
+		return nil, nil, err
 	}
 	return task, images, nil
 }

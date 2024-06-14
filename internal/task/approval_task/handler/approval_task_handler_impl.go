@@ -56,8 +56,9 @@ func (handler *ApprovalTaskHandlerImpl) GetAllApprovalTaskPaginationHandler(c ec
 				EndDate:   task.TaskChallenge.EndDate,
 			},
 			User: dto.DataUser{
-				Id:   task.User.ID,
-				Name: task.User.Name,
+				Id:      task.User.ID,
+				Name:    task.User.Name,
+				Profile: task.User.PictureURL,
 			},
 		})
 	}
