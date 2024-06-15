@@ -14,7 +14,7 @@ import (
 	"github.com/sawalreverr/recything/internal/report"
 )
 
-// Video and Article Categories
+// Video Article Category
 func (m *mysqlDatabase) InitWasteCategories() {
 	categories := []article.WasteCategory{
 		{ID: 1, Name: "plastik"},
