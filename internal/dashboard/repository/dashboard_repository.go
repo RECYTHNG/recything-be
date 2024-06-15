@@ -1,10 +1,11 @@
 package repository
 
 type DashboardRepository interface {
-	GetTotalUser() (int, error)
-	GetTotalReport() (int, error)
-	GetTotalChange() (int, error)
-	GetTotalContent() (int, error)
+	GetTotalUser() (int, int, error)
+	GetTotalReport() (int, int, error)
+	GetTotalChallenge() (int, int, error)
+	GetTotalVideo() (int, int, error)
+	GetTotalArticle() (int, int, error)
 	GetUserClassic() (int, error)
 	GetUserSilver() (int, error)
 	GetUserGold() (int, error)
