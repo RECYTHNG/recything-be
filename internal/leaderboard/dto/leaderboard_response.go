@@ -6,6 +6,7 @@ type DataLeaderboard struct {
 	PictureURL string `json:"picture_url"`
 	Point      int    `json:"point"`
 	Badge      string `json:"badge"`
+	Address    string `json:"address"`
 }
 
 type LeaderboardResponse struct {

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"mime/multipart"
 	"net/http"
 	"strconv"
 	"strings"
@@ -162,34 +163,41 @@ func (handler *adminHandlerImpl) UpdateAdminHandler(c echo.Context) error {
 		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid request body")
 	}
 
-	if err := c.Validate(&request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	if request.Email != "" {
+		if err := c.Validate(&request); err != nil {
+			return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+		}
 	}
 
-	if request.Role != "admin" && request.Role != "super admin" {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "role must be admin or super admin")
+	if (request.NewPassword != "" && request.OldPassword == "") || (request.NewPassword == "" && request.OldPassword != "") {
+		return helper.ErrorHandler(c, http.StatusBadRequest, "both old_password and new_password must be provided together")
 	}
 
-	file, errFile := c.FormFile("profile_photo")
-	if errFile != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "profile_photo is required")
+	var file multipart.File
+	reqFile, errFile := c.FormFile("profile_photo")
+
+	if reqFile != nil {
+		if errFile != nil {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "profile_photo is required")
+		}
+
+		if reqFile.Size > 2*1024*1024 {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "file is too large")
+		}
+
+		if !strings.HasPrefix(reqFile.Header.Get("Content-Type"), "image") {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "invalid file type")
+		}
+		src, errOpen := reqFile.Open()
+		if errOpen != nil {
+			return helper.ErrorHandler(c, http.StatusInternalServerError, "failed to open file: "+errOpen.Error())
+		}
+		defer src.Close()
+
+		file = src
 	}
 
-	if file.Size > 2*1024*1024 {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "file is too large")
-	}
-
-	if !strings.HasPrefix(file.Header.Get("Content-Type"), "image") {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid file type")
-	}
-
-	src, errOpen := file.Open()
-	if errOpen != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "failed to open file: "+errOpen.Error())
-	}
-	defer src.Close()
-
-	admin, errUc := handler.Usecase.UpdateAdminUsecase(request, id, src)
+	admin, errUc := handler.Usecase.UpdateAdminUsecase(&request, id, file)
 	if errUc != nil {
 		if errors.Is(errUc, pkg.ErrAdminNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrAdminNotFound.Error())
@@ -201,6 +209,10 @@ func (handler *adminHandlerImpl) UpdateAdminHandler(c echo.Context) error {
 
 		if errors.Is(errUc, pkg.ErrPasswordInvalid) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrPasswordInvalid.Error())
+		}
+
+		if errors.Is(errUc, pkg.ErrRole) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrRole.Error())
 		}
 
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+errUc.Error())

@@ -3,30 +3,37 @@ package entity
 import (
 	"time"
 
+	art "github.com/sawalreverr/recything/internal/article"
 	"github.com/sawalreverr/recything/internal/user"
 	"gorm.io/gorm"
 )
 
 type Video struct {
-	ID              int `gorm:"primaryKey"`
-	Title           string
-	Description     string
-	Thumbnail       string
-	Link            string
-	Viewer          int
-	VideoCategoryID int            `gorm:"index"`
-	Category        VideoCategory  `gorm:"foreignKey:VideoCategoryID"`
-	CreatedAt       time.Time      `gorm:"autoCreateTime"`
-	UpdatedAt       time.Time      `gorm:"autoUpdateTime"`
-	DeletedAt       gorm.DeletedAt `gorm:"index"`
+	ID                int `gorm:"primaryKey"`
+	Title             string
+	Description       string
+	Thumbnail         string
+	Link              string
+	Viewer            int
+	Categories        []VideoCategory
+	ContentCategories []art.ContentCategory `gorm:"-"`
+	WasteCategories   []art.WasteCategory   `gorm:"-"`
+	CreatedAt         time.Time             `gorm:"autoCreateTime"`
+	UpdatedAt         time.Time             `gorm:"autoUpdateTime"`
+	DeletedAt         gorm.DeletedAt        `gorm:"index"`
 }
 
 type VideoCategory struct {
-	ID        int            `gorm:"primaryKey"`
-	Name      string         `gorm:"unique;not null"`
-	CreatedAt time.Time      `gorm:"autoCreateTime"`
-	UpdatedAt time.Time      `gorm:"autoUpdateTime"`
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	ID                int `gorm:"primaryKey"`
+	VideoID           int
+	Video             Video `gorm:"foreignKey:VideoID"`
+	ContentCategoryID uint
+	ContentCategory   art.ContentCategory `gorm:"foreignKey:ContentCategoryID"`
+	WasteCategoryID   uint
+	WasteCategory     art.WasteCategory `gorm:"foreignKey:WasteCategoryID"`
+	CreatedAt         time.Time         `gorm:"autoCreateTime"`
+	UpdatedAt         time.Time         `gorm:"autoUpdateTime"`
+	DeletedAt         gorm.DeletedAt    `gorm:"index"`
 }
 
 type Comment struct {

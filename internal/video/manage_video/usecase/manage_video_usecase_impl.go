@@ -4,6 +4,7 @@ import (
 	"mime/multipart"
 	"strings"
 
+	art "github.com/sawalreverr/recything/internal/article"
 	"github.com/sawalreverr/recything/internal/helper"
 	"github.com/sawalreverr/recything/internal/video/manage_video/dto"
 	video "github.com/sawalreverr/recything/internal/video/manage_video/entity"
@@ -26,6 +27,12 @@ func (usecase *ManageVideoUsecaseImpl) CreateDataVideoUseCase(request *dto.Creat
 	if len(thumbnail) == 0 {
 		return pkg.ErrThumbnail
 	}
+	if len(request.ContentCategory) == 0 {
+		return pkg.ErrVideoCategory
+	}
+	if len(request.WasteCategory) == 0 {
+		return pkg.ErrVideoTrashCategory
+	}
 	if len(thumbnail) > 1 {
 		return pkg.ErrThumbnailMaximum
 	}
@@ -37,54 +44,74 @@ func (usecase *ManageVideoUsecaseImpl) CreateDataVideoUseCase(request *dto.Creat
 	if err := usecase.manageVideoRepository.FindTitleVideo(request.Title); err == nil {
 		return pkg.ErrVideoTitleAlreadyExist
 	}
-	if _, err := usecase.manageVideoRepository.GetCategoryVideoById(request.CategoryId); err != nil {
-		return pkg.ErrVideoCategoryNotFound
+
+	var contentCategories []*art.ContentCategory
+	var wasteCategories []*art.WasteCategory
+
+	for _, category := range request.ContentCategory {
+		name := strings.ToLower(category.Name)
+		content, err := usecase.manageVideoRepository.FindNameCategoryVideo(name)
+		if err != nil {
+			return pkg.ErrVideoCategory
+		}
+		contentCategories = append(contentCategories, content)
 	}
+
+	for _, category := range request.WasteCategory {
+		name := strings.ToLower(category.Name)
+		waste, err := usecase.manageVideoRepository.FindNamaTrashCategory(name)
+		if err != nil {
+			return pkg.ErrVideoTrashCategory
+		}
+		wasteCategories = append(wasteCategories, waste)
+	}
+
+	var videoCategories []video.VideoCategory
+	for _, content := range contentCategories {
+		for _, waste := range wasteCategories {
+			videoCategories = append(videoCategories, video.VideoCategory{
+				ContentCategoryID: content.ID,
+				WasteCategoryID:   waste.ID,
+			})
+		}
+	}
+
 	view, errGetView := helper.GetVideoViewCount(request.LinkVideo)
 	if errGetView != nil {
 		return errGetView
 	}
-	urlThumbnail, errUpload := helper.UploadToCloudinary(validImages[0], "video_thumbnail_update")
+	urlThumbnail, errUpload := helper.UploadToCloudinary(validImages[0], "video_thumbnail")
 	if errUpload != nil {
 		return pkg.ErrUploadCloudinary
 	}
 	intView := int(view)
-	video := video.Video{
-		Title:           request.Title,
-		Description:     request.Description,
-		Thumbnail:       urlThumbnail,
-		Link:            request.LinkVideo,
-		VideoCategoryID: request.CategoryId,
-		Viewer:          intView,
-		DeletedAt:       gorm.DeletedAt{},
+	videos := video.Video{
+		Title:       request.Title,
+		Description: request.Description,
+		Thumbnail:   urlThumbnail,
+		Link:        request.LinkVideo,
+		Viewer:      intView,
+		Categories:  videoCategories,
 	}
-	if err := usecase.manageVideoRepository.CreateDataVideo(&video); err != nil {
-		return err
+
+	_, errVideo := usecase.manageVideoRepository.CreateVideoAndCategories(&videos)
+	if errVideo != nil {
+		return errVideo
 	}
+
 	return nil
 }
 
-func (usecase *ManageVideoUsecaseImpl) CreateCategoryVideoUseCase(request *dto.CreateCategoryVideoRequest) error {
-	if err := usecase.manageVideoRepository.FindNameCategoryVideo(request.Name); err == nil {
-		return pkg.ErrVideoCategoryNameAlreadyExist
+func (usecase *ManageVideoUsecaseImpl) GetAllCategoryVideoUseCase() ([]string, []string, error) {
+	videoCategories, errvidCategory := usecase.manageVideoRepository.GetAllCategoryVideo()
+	if errvidCategory != nil {
+		return nil, nil, errvidCategory
 	}
-	name := strings.ToLower(request.Name)
-	category := video.VideoCategory{
-		Name:      name,
-		DeletedAt: gorm.DeletedAt{},
+	contentCatgory, errTrashCategory := usecase.manageVideoRepository.GetAllTrashCategoryVideo()
+	if errTrashCategory != nil {
+		return nil, nil, errTrashCategory
 	}
-	if err := usecase.manageVideoRepository.CreateCategoryVideo(&category); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (usecase *ManageVideoUsecaseImpl) GetAllCategoryVideoUseCase() ([]video.VideoCategory, error) {
-	categories, err := usecase.manageVideoRepository.GetAllCategoryVideo()
-	if err != nil {
-		return nil, err
-	}
-	return categories, nil
+	return videoCategories, contentCatgory, nil
 }
 
 func (usecase *ManageVideoUsecaseImpl) GetAllDataVideoPaginationUseCase(limit int, page int) ([]video.Video, int, error) {
@@ -110,6 +137,50 @@ func (usecase *ManageVideoUsecaseImpl) UpdateDataVideoUseCase(request *dto.Updat
 	if len(thumbnail) > 1 {
 		return pkg.ErrThumbnailMaximum
 	}
+
+	dataVideo, err := usecase.manageVideoRepository.GetDetailsDataVideoById(id)
+	if err != nil {
+		return pkg.ErrVideoNotFound
+	}
+
+	var contentCategories []*art.ContentCategory
+	var wasteCategories []*art.WasteCategory
+
+	if request.ContentCategories != nil {
+		for _, category := range request.ContentCategories {
+			name := strings.ToLower(category.Name)
+			content, err := usecase.manageVideoRepository.FindNameCategoryVideo(name)
+			if err != nil {
+				return pkg.ErrVideoCategory
+			}
+			contentCategories = append(contentCategories, content)
+		}
+	}
+
+	if request.WasteCategories != nil {
+		for _, category := range request.WasteCategories {
+			name := strings.ToLower(category.Name)
+			waste, err := usecase.manageVideoRepository.FindNamaTrashCategory(name)
+			if err != nil {
+				return pkg.ErrVideoTrashCategory
+			}
+			wasteCategories = append(wasteCategories, waste)
+		}
+
+	}
+
+	var videoCategories []video.VideoCategory
+	for _, content := range contentCategories {
+		for _, waste := range wasteCategories {
+			videoCategories = append(videoCategories, video.VideoCategory{
+				ContentCategoryID: content.ID,
+				WasteCategoryID:   waste.ID,
+			})
+		}
+	}
+
+	dataVideo.Categories = videoCategories
+
 	var urlThumbnail string
 	if len(thumbnail) == 1 {
 		validImages, errImages := helper.ImagesValidation(thumbnail)
@@ -123,19 +194,14 @@ func (usecase *ManageVideoUsecaseImpl) UpdateDataVideoUseCase(request *dto.Updat
 		urlThumbnail = urlThumbnailUpload
 	}
 
-	video, err := usecase.manageVideoRepository.GetDetailsDataVideoById(id)
-	if err != nil {
-		return pkg.ErrVideoNotFound
-	}
-
 	if request.Title != "" {
-		video.Title = request.Title
+		dataVideo.Title = request.Title
 	}
 	if request.Description != "" {
-		video.Description = request.Description
+		dataVideo.Description = request.Description
 	}
 	if urlThumbnail != "" {
-		video.Thumbnail = urlThumbnail
+		dataVideo.Thumbnail = urlThumbnail
 	}
 	if request.LinkVideo != "" {
 		view, errGetView := helper.GetVideoViewCount(request.LinkVideo)
@@ -144,18 +210,12 @@ func (usecase *ManageVideoUsecaseImpl) UpdateDataVideoUseCase(request *dto.Updat
 		}
 		if view != 0 {
 			intView := int(view)
-			video.Viewer = intView
+			dataVideo.Viewer = intView
 		}
-		video.Link = request.LinkVideo
-	}
-	if request.CategoryId != 0 {
-		if _, err := usecase.manageVideoRepository.GetCategoryVideoById(request.CategoryId); err != nil {
-			return pkg.ErrVideoCategoryNotFound
-		}
-		video.VideoCategoryID = request.CategoryId
+		dataVideo.Link = request.LinkVideo
 	}
 
-	if err := usecase.manageVideoRepository.UpdateDataVideo(video, id); err != nil {
+	if err := usecase.manageVideoRepository.UpdateDataVideo(dataVideo, id); err != nil {
 		return err
 	}
 	return nil

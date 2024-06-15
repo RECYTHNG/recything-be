@@ -6,6 +6,8 @@ info:
 servers:
   - url: http://localhost:8080/api/v1
 tags:
+  - name: homepage
+    description: Endpoint for user get homepage
   - name: authentication
     description: Endpoint for user register/login
   - name: user
@@ -20,6 +22,12 @@ tags:
     description: Endpoint for user asking question to chatbot
   - name: about us
     description: Endpoint for user to get data about us by category
+  - name: achievements
+    description: Endpoint for user get achievement
+  - name: videos
+    description: Endpoint for user get video
+  - name: articles
+    description: Endpoint for user get data article
 
   - name: manage users
     description: Endpoint for admin manage users account
@@ -37,14 +45,15 @@ tags:
     description: Endpoint for admin manage custom data
   - name: manage videos
     description: Endpoint for admin manage videos
-  - name: user videos
-    description: Endpoint for user get video
   - name: approval tasks
     description: Endpoint for admin approval task
-  - name: user achievements
-    description: Endpoint for user get achievement
-  - name: leaderboard
 
+  - name: leaderboards
+    description: Endpoint for leaderboards 
+  - name: categories
+    description: Endpoint for categories 
+  
+    
 paths:
   /register:
     post:
@@ -919,64 +928,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/FAQs'
 
-  /admin/articles:
-    get:
-      tags:
-        - manage articles
-      summary: Get all articles
-      description: Endpoint admin to get all articles with pagination.
-      operationId: viewAllArticles
-      parameters:
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            default: 1
-          description: Page number for pagination
-          example: 1
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
-            default: 10
-          description: Number of articles per page
-          example: 10
-      security:
-        - Bearer: []
-      responses:
-        '200':
-          description: Successfully get articles
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: ok
-                  data:
-                    type: object
-                    properties:
-                      total:
-                        type: integer
-                        example: 50
-                      page:
-                        type: integer
-                        example: 1
-                      limit:
-                        type: integer
-                        example: 10
-                      articles:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Article'
-        '400':
-          description: Invalid request parameters
+  /article:
     post:
       tags:
         - manage articles
@@ -986,7 +938,7 @@ paths:
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
               $ref: '#/components/schemas/Article'
       security:
@@ -1004,10 +956,52 @@ paths:
                     example: 201
                   message:
                     type: string
-                    example: article successfully created!
+                    example: article created!
         '400':
           description: Invalid request data
-  /admin/articles/{articleId}:
+
+  /article/{articleId}:
+    get:
+      tags:
+        - articles
+        - manage articles
+      summary: Get article data by id
+      description: Endpoint user to get article by id
+      operationId: getArticleById
+      parameters:
+        - name: articleId
+          in: query
+          required: true
+          schema:
+            type: string
+            # default: ART0001
+          description: Article ID
+          example: ART0001
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Get data article
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      schema:
+                        $ref: '#/components/schemas/Article'
+        '400':
+          description: Invalid param request
+        '404':
+          description: Article not found
     put:
       tags:
         - manage articles
@@ -1025,7 +1019,7 @@ paths:
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
               $ref: '#/components/schemas/Article'
       security:
@@ -1043,7 +1037,7 @@ paths:
                     example: 200
                   message:
                     type: string
-                    example: article successfully updated!
+                    example: article updated!
         '404':
           description: Article not found
         '400':
@@ -1080,6 +1074,52 @@ paths:
                     example: article successfully deleted!
         '404':
           description: Article not found
+  
+  /article/upload:
+    post:
+      tags:
+        - manage articles
+      summary: Upload image for article
+      description: Endpoint admin to upload an image
+      operationId: uploadArticleImage
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - image
+              properties:
+                image:
+                  type: string
+                  format: image
+                  description: Article image anda
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Upload successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: article updated!
+                  data:
+                    type: object
+                    properties:
+                      image_url:
+                        type: string
+                        example: http://example.com/image.png
+        '400':
+          description: Invalid request data 
+
 
   /achievements:
     get:
@@ -1411,7 +1451,7 @@ paths:
                   data:
                     type: object
                     $ref: '#/components/schemas/Admin'
-    put:
+    patch:
       tags:
         - manage admins
       summary: Update an admin
@@ -1428,7 +1468,7 @@ paths:
           description: ID of the admin to be updated
           example: AD0001
       requestBody:
-        required: true
+        required: false
         content:
           multipart/form-data:
             schema:
@@ -1811,7 +1851,7 @@ paths:
                   message:
                     type: string
                     example: task not found
-    put:
+    patch:
       tags:
         - manage tasks
       summary: Update task
@@ -1828,7 +1868,7 @@ paths:
           description: ID of the task to be updated
           example: TM0001
       requestBody:
-        required: true
+        required: false
         content:
           multipart/form-data::
             schema:
@@ -2029,15 +2069,15 @@ paths:
                       items:
                         type: object
                         properties:
+                          id:
+                            type: integer
+                            example: 1
                           title:
                             type: string
                             example: "Step 1"
                           description:
                             type: string
                             example: "Step 1 description"
-                        example:
-                          - title: "Step 1"
-                            description: "Step 1 description"
 
   /user/tasks/{taskId}:
     get:
@@ -2104,15 +2144,15 @@ paths:
                         items:
                           type: object
                           properties:
+                            id:
+                              type: integer
+                              example: 1
                             title:
                               type: string
                               example: "Step 1"
                             description:
                               type: string
                               example: "Step 1 description"
-                        example:
-                          - title: "Step 1"
-                            description: "Step 1 description"
         '404':
           description: Task not found
           content:
@@ -2208,9 +2248,25 @@ paths:
                                 description:
                                   type: integer
                                   example: "Step 1 description"
-                            example:
-                              - title: "Step 1"
-                                description: "Step 1 description"
+                            
+                      user_steps:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            user_task_challenge_id:
+                              type: string
+                              example: UT0001
+                            task_step_id:
+                              type: integer
+                              example: 1
+                            completed:
+                              type: boolean
+                              example: false
+                            
         '404':
           description: Task not found
           content:
@@ -2224,6 +2280,241 @@ paths:
                   message:
                     type: string
                     example: task not found
+  /user/task/{userTaskId}:
+    get:
+      tags:
+        - user tasks
+      summary: Get user task detail
+      description: Endpoint user to get detail user task
+      operationId: getUserTask
+      security:
+        - Bearer: []
+      parameters:
+        - name: userTaskId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: UT0001
+          description: ID of user task
+          example: UT0001
+      responses:
+        '200':
+          description: Get user task
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: UT0001
+                      status_progress:
+                        type: string
+                        example: "in_progress"
+                      task_challenge:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: CH0001
+                          title:
+                            type: string
+                            example: "Challenge 1"
+                          description:
+                            type: string
+                            example: "Challenge 1 description"
+                          thumbnail:
+                            type: string
+                            example: "https://example.com/thumbnail.jpg"
+                          start_date:
+                            type: string
+                            format: date
+                            example: "2020-01-01"
+                          end_date:
+                            type: string
+                            format: date
+                            example: "2020-01-01"
+                          point:
+                            type: integer
+                            example: 100
+                          status_task:
+                            type: boolean
+                            example: true
+                          task_steps:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                title:
+                                  type: integer
+                                  example: "Step 1"
+                                description:
+                                  type: integer
+                                  example: "Step 1 description"
+                  
+                      user_steps:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            user_task_challenge_id:
+                              type: string
+                              example: UT0001
+                            task_step_id:
+                              type: integer
+                              example: 1
+                            completed:
+                              type: boolean
+                              example: false
+        '404':
+          description: User task not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: user task not found
+
+  /user-current/steps:
+    put:
+      tags:
+        - user tasks
+      summary: Update user current step
+      description: Endpoint user to update task step if status progress is in_progress
+      operationId: updateUserCurrentStep
+      security:
+        - Bearer: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_task_id:
+                  type: string
+                  example: UT0001
+                task_step_id:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: UT0001
+                      status_progress:
+                        type: string
+                        example: "in_progress"
+                      task_challenge:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: CH0001
+                          title:
+                            type: string
+                            example: "Challenge 1"
+                          description:
+                            type: string
+                            example: "Challenge 1 description"
+                          thumbnail:
+                            type: string
+                            example: "https://example.com/thumbnail.jpg"
+                          start_date:
+                            type: string
+                            format: date
+                            example: "2020-01-01"
+                          end_date:
+                            type: string
+                            format: date
+                            example: "2020-01-01"
+                          point:
+                            type: integer
+                            example: 100
+                          status_task:
+                            type: boolean
+                            example: true
+                          task_steps:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                title:
+                                  type: integer
+                                  example: "Step 1"
+                                description:
+                                  type: integer
+                                  example: "Step 1 description"
+                            
+                      user_steps:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            user_task_challenge_id:
+                              type: string
+                              example: UT0001
+                            task_step_id:
+                              type: integer
+                              example: 1
+                            completed:
+                              type: boolean
+                              example: true
+        '404':
+          description: User task not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: user task not found
+  
   /user-current/tasks/in-progress:
     get:
       tags:
@@ -2307,6 +2598,23 @@ paths:
                                     description:
                                       type: integer
                                       example: "Step 1 description"
+                          user_steps:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                user_task_challenge_id:
+                                  type: string
+                                  example: UT0001
+                                task_step_id:
+                                  type: integer
+                                  example: 1
+                                completed:
+                                  type: boolean
+                                  example: false
 
         '400':
           description: Bad Request
@@ -2426,6 +2734,23 @@ paths:
                                 description:
                                   type: integer
                                   example: "Step 1 description"
+                      user_steps:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            user_task_challenge_id:
+                              type: string
+                              example: UT0001
+                            task_step_id:
+                              type: integer
+                              example: 1
+                            completed:
+                              type: boolean
+                              example: false
 
         '400':
           description: Bad Request
@@ -2543,6 +2868,23 @@ paths:
                                 description:
                                   type: integer
                                   example: "Step 1 description"
+                      user_steps:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            user_task_challenge_id:
+                              type: string
+                              example: UT0001
+                            task_step_id:
+                              type: integer
+                              example: 1
+                            completed:
+                              type: boolean
+                              example: false
         '404':
           description: Not Found
           content:
@@ -2704,7 +3046,23 @@ paths:
                                   description:
                                     type: integer
                                     example: "Step 1 description"
-
+                        user_steps:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              user_task_challenge_id:
+                                type: string
+                                example: UT0001
+                              task_step_id:
+                                type: integer
+                                example: 1
+                              completed:
+                                type: boolean
+                                example: false
         '400':
           description: Bad Request
           content:
@@ -2718,6 +3076,116 @@ paths:
                   message:
                     type: string
                     example: user has no current task
+
+  /user/tasks/rejected/{userTaskId}:
+    get:
+      tags:
+        - user tasks
+      summary: Get user task rejected
+      description: Endpoint user to get user task rejected
+      operationId: getUserTaskRejected
+      security:
+        - Bearer: []
+      parameters:
+        - name: userTaskId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the user task
+          example: UT0001
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: UT0001
+                      status_progress:
+                        type: string
+                        example: "done"
+                      status_accepted:
+                        type: string
+                        example: "reject"  
+                      reason:
+                        type: string
+                        example: "reason rejected"
+                      point: 
+                        type: integer
+                        example: 100
+                      task_challenge:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: TM0001 
+                            title:
+                              type: string
+                              example: "Task 1"
+                            description:
+                              type: string
+                              example: "Task 1 description"
+                            thumbnail:
+                              type: string
+                              example: "https://example.com/thumbnail.jpg"
+                            start_date:
+                              type: string
+                              format: date
+                              example: "2020-01-01"
+                            end_date:
+                              type: string
+                              format: date
+                              example: "2020-01-01"
+                            status_task:
+                              type: boolean
+                              example: true
+                            task_steps:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: integer
+                                    example: 1
+                                  title:
+                                    type: integer
+                                    example: "Step 1"
+                                  description:
+                                    type: integer
+                                    example: "Step 1 description"
+                      user_steps:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            user_task_challenge_id:
+                              type: string
+                              example: UT0001
+                            task_step_id:
+                              type: integer
+                              example: 1
+                            completed:
+                              type: boolean
+                              example: true
+                      
+                
+
   /user-current/tasks/history:
     get:
       tags:
@@ -3042,12 +3510,22 @@ paths:
                     items:
                       type: object
                       properties:
-                        id:
-                          type: integer
-                          example: 1
-                        name:
-                          type: string
-                          example: "Category Name"
+                        content_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                example: "tips"
+                        waste_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                example: "berbahaya"
                       
         '500':
           description: Internal server error
@@ -3091,9 +3569,22 @@ paths:
                     link_video:
                       type: string
                       example: "https://example.com/video.mp4"
-                    category_id:
-                      type: integer
-                      example: 1
+                    content_categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "tips"
+                    waste_categories:
+                      type: array
+                      items:
+                        type: object      
+                        properties:
+                          name:
+                            type: string
+                            example: "berbahaya"
                 thumbnail:
                   type: string
                   format: binary
@@ -3263,15 +3754,23 @@ paths:
                       viewer:
                         type: integer
                         example: 1000
-                      category:
-                        type: object
-                        properties:
-                          id:
-                            type: integer
-                            example: 1
-                          name:
-                            type: string
-                            example: "Video Category"
+                      content_categories:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "tips"
+                      waste_categories:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "berbahaya"
+                    
         '404':
           description: Video not found
           content:
@@ -3320,9 +3819,23 @@ paths:
                     link_video:
                       type: string
                       example: "https://example.com/video.mp4"
-                    category_id:
-                      type: integer
-                      example: 1
+                    content_categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "tips"
+                    waste_categories:
+                      type: array
+                      items:
+                        type: object      
+                        properties:
+                          name:
+                            type: string
+                            example: "berbahaya"
+                        
                 thumbnail:
                   type: string
                   format: binary
@@ -3402,12 +3915,21 @@ paths:
   /videos:
     get:
       tags:
-        - user videos
+        - videos
       summary: Get All Data Video
       description: Endpoint user for get all data video
       operationId: getAllDataVideo
       security:
         - Bearer: []
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of data
+          example: 10
       responses:
         '200':
           description: Success
@@ -3445,6 +3967,28 @@ paths:
                         viewer:
                           type: integer
                           example: 1000
+                        content_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              name:
+                                type: string
+                                example: "tips"
+                        waste_categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              name:
+                                type: string
+                                example: "berbahaya"
         '500':
           description: Status internal error'
           content:
@@ -3461,21 +4005,21 @@ paths:
   /videos/search:
     get:
       tags:
-        - user videos
-      summary: Search Videos by title
-      description: Searches for videos that match a specific title
-      operationId: getVideosBytitle
+        - videos
+      summary: Search Videos by keyword
+      description: Searches for videos that match a specific keyword
+      operationId: getVideosBykeyword
       parameters:
         - in: query
-          name: title
+          name: keyword
           required: true
           schema:
             type: string
             example: plastik
-          description: The title to search for videos.
+          description: The keyword to search for videos.
       responses:
         '200':
-          description: Get all data by title
+          description: Get all data by keyword
           content:
             application/json:
               schema:
@@ -3501,8 +4045,30 @@ paths:
                     viewer:
                       type: integer
                       example: 1000
-        '500':
-          description: Status internal error'
+                    content_categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          name:
+                            type: string
+                            example: "tips"
+                    waste_categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          name:
+                            type: string
+                            example: "plastik"
+        '404':
+          description: Video not found
           content:
             application/json:
               schema:
@@ -3510,14 +4076,15 @@ paths:
                 properties:
                   code:
                     type: integer
-                    example: 500
+                    example: 404
                   message:
                     type: string
-                    example: internal server error
-  /videos/{videoId}:
+                    example: video not found
+
+  /video/{videoId}:
     get:
       tags:
-        - user videos
+        - videos
       summary: Get Data Video by id
       description: Get Data Video details by id
       operationId: getDataVideo
@@ -3531,6 +4098,14 @@ paths:
             type: integer
             example: 1
           description: ID of video
+        - name : sort-comments
+          in: query
+          required: false
+          schema:
+            type: string
+            example: true
+            default: false
+          description: Sort comments
       responses:
         '200':
           description: Success
@@ -3566,6 +4141,9 @@ paths:
                       viewer:
                         type: integer
                         example: 1000
+                      total_comment:
+                        type: integer
+                        example: 10
                       comments:
                         type: array
                         items:
@@ -3583,6 +4161,9 @@ paths:
                             user_name:
                               type: string
                               example: John Doe
+                            user_profile:
+                              type: string
+                              example: "https://example.com/profile.jpg"
                             created_at:
                               type: string
                               format: date
@@ -3590,7 +4171,7 @@ paths:
   /videos/comment:
     post:
       tags:
-        - user videos
+        - videos
       summary: Create Comment
       description: Endpoint user for create comment
       operationId: createComment
@@ -3636,6 +4217,107 @@ paths:
                   message:
                     type: string
                     example: video not found
+  /videos/category:
+    get:
+      tags:
+        - videos
+      summary: Get all video by content category or waste category
+      description: Enpoint for user get all video by content category or waste category
+      operationId: getContentCategories
+      security:
+        - Bearer: []
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "content"
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "tips"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        data_video:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              title:
+                                type: string
+                                example: "Video Title"
+                              description:
+                                type: string
+                                example: "Video Description"
+                              url_thumbnail:
+                                type: string
+                                example: "https://example.com/thumbnail.jpg"
+                              link_video:
+                                type: string
+                                example: "https://example.com/video.mp4"
+                              viewer:
+                                type: integer
+                                example: 1000
+                              content_categories:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: integer
+                                      example: 1
+                                    name:
+                                      type: string
+                                      example: "tips"
+                              waste_categories:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    id:
+                                      type: integer
+                                      example: 1
+                                    name:
+                                      type: string
+                                      example: "berbahaya"
+        '404':
+          description: video not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: video not found
+                  
+
   /approval-tasks:
     get:
       tags:
@@ -3920,7 +4602,7 @@ paths:
   /user/achievements:
     get:
       tags: 
-        - user achievements
+        - achievements
       summary: Get user achievements
       description: Endpoint for user get list achievements
       operationId: getUserAchievements
@@ -4034,7 +4716,395 @@ paths:
                         badge:
                           type: string
                           example: https://res.cloudinary.com/dymhvau8n/image/upload/v1717758679/achievement_badge/cq2n246e6twuksnia62t.png
+  /homepage:
+    get:
+      tags:
+        - homepage
+      summary: Get homepage
+      description: Endpoint for user get homepage
+      operationId: getHomepage
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: USR0001
+                            name:
+                              type: string
+                              example: John Doe
+                            picture_url:
+                              type: string
+                              example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                            point:
+                              type: integer
+                              example: 1000
+                            badge:
+                              type: string
+                        articles:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: ART0001
+                              title:
+                                type: string
+                                example: RecyThing
+                              description:
+                                type: string
+                                example: RecyThing adalah pemimpin di industri daur ulang sampah yang berkomitmen untuk menjaga lingkungan hidup yang lebih bersih dan lebih berkelanjutan.
+                              thumbnail:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                                description: Thumbnail article
+                              author_name:
+                                type: string
+                                example: John Doe
+                                description: Name of the author
+                              author_profile:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                                description: Profile picture of the author
+                              created_at:
+                                type: string
+                                format: date
+                                example: "2020-01-01"
+                                description: Date and time when the article was created
+                        videos:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                                example: 1
+                              title:
+                                type: string
+                                example: RecyThing
+                              description:
+                                type: string
+                                example: RecyThing adalah pemimpin di industri daur ulang sampah yang berkomitmen untuk menjaga lingkungan hidup yang lebih bersih dan lebih berkelanjutan.
+                              url_thumbnail:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                                description: Thumbnail video
+                              link_video:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/video/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.mp4
+                                description: Link video Youtube
+                              viewer:
+                                type: integer
+                                example: 1000
+                        leaderboard:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: USR0001
+                                description: ID of the user
+                              name:
+                                type: string
+                                example: John Doe
+                              picture_url:
+                                type: string
+                                example: https://res.cloudinary.com/dlbbsdd3a/image/upload/v1717758300/recything/about-us/kan9fdnp7h6o4hfclghm.png
+                                description: Profile picture of the user
+                              point:
+                                type: integer
+                                example: 1000
+                                description: Point of the user
+                              badge:
+                                type: string
+                                example: https://res.cloudinary.com/dymhvau8n/image/upload/v1717758679/achievement_badge/cq2n246e6twuksnia62t.png
+                                description: Badge of the user
 
+  /articles:
+    get:
+      tags:
+        - articles
+        - manage articles
+      summary: View all articles with pagination
+      description: Endpoint user or admin to view all articles with pagination.
+      operationId: viewAllArticles
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+          example: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of articles per page
+          example: 10
+        - name: sort_by
+          in: query
+          required: false
+          schema:
+            type: string
+            default: created_at
+          description: Sorted by
+          example: created_at
+        - name: sort_type
+          in: query
+          required: false
+          schema:
+            type: string
+            default: asc
+          description: Sorted type
+          example: asc
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Get all articles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                        example: 100
+                      page:
+                        type: integer
+                        example: 1
+                      limit:
+                        type: integer
+                        example: 10
+                      articles:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            schema:
+                              $ref: '#/components/schemas/Article'
+        '400':
+          description: Invalid param request
+  
+  /article/search:
+    get:
+      tags:
+        - articles
+      summary: View all articles by keyword
+      description: Endpoint user to view all articles by keyword.
+      operationId: viewAllArticlesByKeyword
+      parameters:
+        - name: keyword
+          in: query
+          required: true
+          schema:
+            type: string
+            # default: plastik
+          description: Search by keyword
+          example: plastik
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Get all articles by keyword
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: '#/components/schemas/Article'
+        '400':
+          description: Invalid param request
+
+  /article/category:
+    get:
+      tags:
+        - articles
+      summary: View all articles by category type and category name
+      description: Endpoint user to view all articles by category type and category name.
+      operationId: viewAllArticlesByCategory
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            # default: waste
+          description: Category Type (waste, content)
+          example: plastik
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+            # default: plastik
+          description: Category Name, waste(plastik, besi, kaca, organik, kayu, kertas, baterai, kaleng, elektronik, tekstil, minyak, bola lampu, berbahaya), content(tips, daur ulang, tutorial, edukasi, kampanye)
+          example: plastik
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Get all articles by category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: ok
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      $ref: '#/components/schemas/Article'
+        '400':
+          description: Invalid param request
+
+  /article/{articleId}/comment:
+    post:
+      tags:
+        - articles
+      summary: Add new comment to article
+      description: Endpoint user to add comment 
+      operationId: addCommentArticle
+      parameters:
+        - name: articleId
+          in: query
+          required: true
+          schema:
+            type: string
+            # default: ART0001
+          description: Article ID
+          example: ART0001
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string
+                  description: User comment
+                  example: Test comment
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: comment added!
+                  data:
+                    type: object
+                    properties:
+                      schema:
+                        $ref: '#/components/schemas/Article'
+        '400':
+          description: Invalid param request
+        '404':
+          description: Article not found
+
+  /categories:
+    get:
+      tags:
+        - categories
+      summary: Get all categories for content
+      description: Endpoint user/admin to get data categories 
+      operationId: getCategories
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 200
+                  message: 
+                    type: string
+                    example: ok
+                  data:
+                    type: object
+                    properties:
+                      waste_categories:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            name:
+                              type: string
+                              example: plastik
+                      content_categories:
+                        type: array
+                        items:
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            name:
+                              type: string
+                              example: tips
 components:
   schemas:
     User:
@@ -4228,21 +5298,55 @@ components:
         id:
           type: string
           example: ART0001
+        author:
+          type: object
+          properties:
+            id:
+              type: string
+              example: AD0001
+            name: 
+              type: string
+              example: John Doe
+            image_url:
+              type: string
+              example: http://example.com/image.png
         title:
           type: string
-          example: "The Benefits of Recycling"
+          example: Bahaya Limbah Elektronik dan Cara Pembuangan yang Bertanggung Jawab
         description:
           type: string
-          example: "Recycling has numerous benefits for the environment."
-        category:
+          example: Pelajari tentang bahaya lingkungan dan kesehatan dari limbah elektronik dan temukan metode pembuangan yang aman.
+        thumbnail_url:
+          type: string
+          format: uri
+          example: http://example.com/image.png
+        waste_categories:
           type: array
           items:
             type: string
-            enum: [organic, plastic, paper, glass, textile, can, electronic, others]
-            example: "plastic"
-        thumbnail:
+          example: ["elektronik", "berbahaya"]
+        content_categories:
+          type: array
+          items:
+            type: string
+          example: ["edukasi", "kampanye"]
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArticleSection'
+    ArticleSection:
+      type: object
+      properties:
+        title:
           type: string
-          example: "thumbnail.jpg"
+          example: Apa itu Limbah Elektronik?
+        description:
+          type: string
+          example: Limbah elektronik mencakup barang elektronik bekas seperti ponsel, komputer, peralatan rumah tangga, dll.
+        image_url:
+          type: string
+          format: uri
+          example: http://example.com/image.png
     Achievement:
       type: object
       properties:

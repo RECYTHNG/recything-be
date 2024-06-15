@@ -27,6 +27,9 @@ import (
 	faqHandler "github.com/sawalreverr/recything/internal/faq/handler"
 	faqRepo "github.com/sawalreverr/recything/internal/faq/repository"
 	faqUsecase "github.com/sawalreverr/recything/internal/faq/usecase"
+	homepageHandler "github.com/sawalreverr/recything/internal/homepage/handler"
+	homepageRepo "github.com/sawalreverr/recything/internal/homepage/repository"
+	homepageUsecase "github.com/sawalreverr/recything/internal/homepage/usecase"
 	leaderboardHandler "github.com/sawalreverr/recything/internal/leaderboard/handler"
 	leaderboardRepo "github.com/sawalreverr/recything/internal/leaderboard/repository"
 	leaderboardUsecase "github.com/sawalreverr/recything/internal/leaderboard/usecase"
@@ -143,7 +146,7 @@ func (s *echoServer) supAdminHttpHandler() {
 	s.gr.GET("/admin/:adminId", handler.GetDataAdminByIdHandler, SuperAdminMiddleware)
 
 	// update admin by super admin
-	s.gr.PUT("/admin/:adminId", handler.UpdateAdminHandler, SuperAdminMiddleware)
+	s.gr.PATCH("/admin/:adminId", handler.UpdateAdminHandler, SuperAdminMiddleware)
 
 	// delete admin by super admin
 	s.gr.DELETE("/admin/:adminId", handler.DeleteAdminHandler, SuperAdminMiddleware)
@@ -201,7 +204,7 @@ func (s *echoServer) manageTask() {
 	s.gr.GET("/tasks/:taskId", handler.GetTaskByIdHandler, SuperAdminOrAdminMiddleware)
 
 	// update task challenge
-	s.gr.PUT("/tasks/:taskId", handler.UpdateTaskHandler, SuperAdminOrAdminMiddleware)
+	s.gr.PATCH("/tasks/:taskId", handler.UpdateTaskHandler, SuperAdminOrAdminMiddleware)
 
 	// delete task challenge
 	s.gr.DELETE("/tasks/:taskId", handler.DeleteTaskHandler, SuperAdminOrAdminMiddleware)
@@ -239,6 +242,15 @@ func (s *echoServer) userTask() {
 
 	// get history point by user current
 	s.gr.GET("/user-current/tasks/history", handler.GetHistoryPointByUserIdHandler, UserMiddleware)
+
+	// update user task step
+	s.gr.PUT("/user-current/steps", handler.UpdateTaskStepHandler, UserMiddleware)
+
+	// get user task by user task id
+	s.gr.GET("/user/task/:userTaskId", handler.GetUserTaskByUserTaskIdHandler, UserMiddleware)
+
+	// get user task rejected by user current
+	s.gr.GET("/user/tasks/rejected/:userTaskId", handler.GetUserTaskRejectedByUserIdHandler, UserMiddleware)
 }
 
 func (s *echoServer) approvalTask() {
@@ -324,11 +336,8 @@ func (s *echoServer) manageVideo() {
 	// create data video
 	s.gr.POST("/videos/data", handler.CreateDataVideoHandler, SuperAdminOrAdminMiddleware)
 
-	// create category video
-	s.gr.POST("/videos/categories", handler.CreateCategoryVideoHandler, SuperAdminOrAdminMiddleware)
-
 	// get all category video
-	s.gr.GET("/videos/categories", handler.GetAllCategoryVideoHandler, SuperAdminOrAdminMiddleware)
+	s.gr.GET("/videos/categories", handler.GetAllCategoryVideoHandler, AllRoleMiddleware)
 
 	// get all data video pagination
 	s.gr.GET("/videos/data", handler.GetAllDataVideoPaginationHandler, SuperAdminOrAdminMiddleware)
@@ -352,10 +361,13 @@ func (s *echoServer) userVideo() {
 	s.gr.GET("/videos", handler.GetAllVideoHandler, UserMiddleware)
 
 	// search video by title
-	s.gr.GET("/videos/search", handler.SearchVideoByTitleHandler, UserMiddleware)
+	s.gr.GET("/videos/search", handler.SearchVideoByKeywordHandler, UserMiddleware)
+
+	// search video by category
+	s.gr.GET("/videos/category", handler.SearchVideoByCategoryHandler, UserMiddleware)
 
 	// get video detail
-	s.gr.GET("/videos/:videoId", handler.GetVideoDetailHandler, UserMiddleware)
+	s.gr.GET("/video/:videoId", handler.GetVideoDetailHandler, UserMiddleware)
 
 	// add comment
 	s.gr.POST("/videos/comment", handler.AddCommentHandler, UserMiddleware)
@@ -382,9 +394,46 @@ func (s *echoServer) leaderboardHandler() {
 func (s *echoServer) articleHandler() {
 	repositoryArticle := articleRepository.NewArticleRepository(s.db)
 	repositoryAdmin := repository.NewAdminRepository(s.db)
-	usecase := articleUsecase.NewArticleUsecase(repositoryArticle, repositoryAdmin)
+	repositoryUser := userRepo.NewUserRepository(s.db)
+	usecase := articleUsecase.NewArticleUsecase(repositoryArticle, repositoryAdmin, repositoryUser)
 	handler := articleHandler.NewArticleHandler(usecase)
+
+	// Get all article
+	s.gr.GET("/articles", handler.GetAllArticle, AllRoleMiddleware)
+
+	// Get by keyword
+	s.gr.GET("/article/search", handler.GetArticleByKeyword, AllRoleMiddleware)
+
+	// Get by category
+	s.gr.GET("/article/category", handler.GetArticleByCategory, AllRoleMiddleware)
 
 	// Get article by id
 	s.gr.GET("/article/:articleId", handler.GetArticleByID, AllRoleMiddleware)
+
+	// Create new article by admin
+	s.gr.POST("/article", handler.NewArticle, SuperAdminOrAdminMiddleware)
+
+	// Update article by admin
+	s.gr.PUT("/article/:articleId", handler.UpdateArticle, SuperAdminOrAdminMiddleware)
+
+	// Delete article by admin
+	s.gr.DELETE("/article/:articleId", handler.DeleteArticle, SuperAdminOrAdminMiddleware)
+
+	// Add new comment by user
+	s.gr.POST("/article/:articleId/comment", handler.NewArticleComment, UserMiddleware)
+
+	// Upload image
+	s.gr.POST("/article/upload", handler.ArticleUploadImage, SuperAdminOrAdminMiddleware)
+
+	// Get all categories
+	s.gr.GET("/categories", handler.GetAllCategories)
+}
+
+func (s *echoServer) homepageHandler() {
+	repository := homepageRepo.NewHomepageRepository(s.db)
+	usecase := homepageUsecase.NewHomepageUsecase(repository)
+	handler := homepageHandler.NewHomePageHandler(usecase)
+
+	// Get homepage
+	s.gr.GET("/homepage", handler.GetHomepageHandler, UserMiddleware)
 }

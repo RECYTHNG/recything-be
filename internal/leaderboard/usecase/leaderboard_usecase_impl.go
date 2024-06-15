@@ -26,6 +26,7 @@ func (usecase *LeaderboardUsecaseImpl) GetLeaderboardUsecase() (*dto.Leaderboard
 			PictureURL: user.PictureURL,
 			Point:      int(user.Point),
 			Badge:      user.Badge,
+			Address:    user.Address,
 		})
 	}
 	return &dto.LeaderboardResponse{DataLeaderboard: dataLeaderboard}, nil

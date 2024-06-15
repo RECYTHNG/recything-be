@@ -10,8 +10,9 @@ type DataTasks struct {
 }
 
 type DataUser struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
+	Id      string `json:"id"`
+	Name    string `json:"name"`
+	Profile string `json:"profile"`
 }
 
 type DataUserTask struct {

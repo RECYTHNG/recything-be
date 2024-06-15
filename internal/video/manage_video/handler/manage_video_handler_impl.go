@@ -42,8 +42,17 @@ func (handler *ManageVideoHandlerImpl) CreateDataVideoHandler(c echo.Context) er
 		if errors.Is(err, pkg.ErrVideoTitleAlreadyExist) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoTitleAlreadyExist.Error())
 		}
-		if errors.Is(err, pkg.ErrVideoCategoryNotFound) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoCategoryNotFound.Error())
+		if errors.Is(err, pkg.ErrVideoCategory) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoCategory.Error())
+		}
+		if errors.Is(err, pkg.ErrVideoTrashCategory) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoTrashCategory.Error())
+		}
+		if errors.Is(err, pkg.ErrNameCategoryVideoNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrNameCategoryVideoNotFound.Error())
+		}
+		if errors.Is(err, pkg.ErrNameTrashCategoryNotFound) {
+			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrNameTrashCategoryNotFound.Error())
 		}
 		if errors.Is(err, pkg.ErrNoVideoIdFoundOnUrl) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrNoVideoIdFoundOnUrl.Error())
@@ -80,42 +89,32 @@ func (handler *ManageVideoHandlerImpl) CreateDataVideoHandler(c echo.Context) er
 	return helper.ResponseHandler(c, http.StatusCreated, "success create data video", nil)
 }
 
-func (handler *ManageVideoHandlerImpl) CreateCategoryVideoHandler(c echo.Context) error {
-	var request dto.CreateCategoryVideoRequest
-
-	if err := c.Bind(&request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid request body, detail+"+err.Error())
-	}
-	if err := c.Validate(&request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
-	}
-	if err := handler.ManageVideoUsecase.CreateCategoryVideoUseCase(&request); err != nil {
-		if errors.Is(err, pkg.ErrVideoCategoryNameAlreadyExist) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoCategoryNameAlreadyExist.Error())
-		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
-	}
-	return helper.ResponseHandler(c, http.StatusCreated, "success create category video", nil)
-}
-
 func (handler *ManageVideoHandlerImpl) GetAllCategoryVideoHandler(c echo.Context) error {
-	categories, err := handler.ManageVideoUsecase.GetAllCategoryVideoUseCase()
+	videoCategories, trashCategories, err := handler.ManageVideoUsecase.GetAllCategoryVideoUseCase()
 	if err != nil {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
-	var dataCategories []*dto.DataCategory
+	var dataVideoCategories []*dto.DataCategoryVideo
+	var dataTrashCategories []*dto.DataTrashCategory
 	data := &dto.GetAllCategoryVideoResponse{
-		Data: []*dto.DataCategory{},
+		VideoCategory: dataVideoCategories,
+		TrashCategory: dataTrashCategories,
 	}
 
-	for _, category := range categories {
-		dataCategories = append(dataCategories, &dto.DataCategory{
-			Id:   category.ID,
-			Name: category.Name,
+	for _, category := range videoCategories {
+		dataVideoCategories = append(dataVideoCategories, &dto.DataCategoryVideo{
+			Name: category,
 		})
 	}
-	data.Data = dataCategories
-	responseData := helper.ResponseData(http.StatusOK, "success", data.Data)
+	for _, category := range trashCategories {
+		dataTrashCategories = append(dataTrashCategories, &dto.DataTrashCategory{
+			Name: category,
+		})
+	}
+
+	data.VideoCategory = dataVideoCategories
+	data.TrashCategory = dataTrashCategories
+	responseData := helper.ResponseData(http.StatusOK, "success", data)
 	return c.JSON(http.StatusOK, responseData)
 }
 
@@ -172,6 +171,7 @@ func (handler *ManageVideoHandlerImpl) GetDetailsDataVideoByIdHandler(c echo.Con
 	if errConvert != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid id parameter")
 	}
+
 	video, err := handler.ManageVideoUsecase.GetDetailsDataVideoByIdUseCase(idInt)
 	if err != nil {
 		if errors.Is(err, pkg.ErrVideoNotFound) {
@@ -179,16 +179,49 @@ func (handler *ManageVideoHandlerImpl) GetDetailsDataVideoByIdHandler(c echo.Con
 		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
-	var dataVideo *dto.GetDetailsDataVideoByIdResponse
-	dataVideo = &dto.GetDetailsDataVideoByIdResponse{
-		Id:           video.ID,
-		Title:        video.Title,
-		Description:  video.Description,
-		UrlThumbnail: video.Thumbnail,
-		LinkVideo:    video.Link,
-		Viewer:       video.Viewer,
-		Category:     dto.DataCategory{Id: video.Category.ID, Name: video.Category.Name},
+	uniqueContentCategories := make(map[uint]*dto.DataCategoryVideoResponse)
+	uniqueWasteCategories := make(map[uint]*dto.DataTrashCategoryResponse)
+
+	for _, category := range video.Categories {
+		if category.ContentCategoryID != 0 {
+			if _, exists := uniqueContentCategories[category.ContentCategoryID]; !exists {
+				uniqueContentCategories[category.ContentCategoryID] = &dto.DataCategoryVideoResponse{
+					Id:   int(category.ContentCategory.ID),
+					Name: category.ContentCategory.Name,
+				}
+			}
+		}
+		if category.WasteCategoryID != 0 {
+			if _, exists := uniqueWasteCategories[category.WasteCategoryID]; !exists {
+				uniqueWasteCategories[category.WasteCategoryID] = &dto.DataTrashCategoryResponse{
+					Id:   int(category.WasteCategory.ID),
+					Name: category.WasteCategory.Name,
+				}
+			}
+		}
 	}
+
+	// Convert maps back to slices
+	var dataContentCategories []*dto.DataCategoryVideoResponse
+	for _, vc := range uniqueContentCategories {
+		dataContentCategories = append(dataContentCategories, vc)
+	}
+	var dataWasteCategories []*dto.DataTrashCategoryResponse
+	for _, wc := range uniqueWasteCategories {
+		dataWasteCategories = append(dataWasteCategories, wc)
+	}
+
+	dataVideo := &dto.GetDetailsDataVideoByIdResponse{
+		Id:            video.ID,
+		Title:         video.Title,
+		Description:   video.Description,
+		UrlThumbnail:  video.Thumbnail,
+		LinkVideo:     video.Link,
+		Viewer:        video.Viewer,
+		VideoCategory: dataContentCategories,
+		TrashCategory: dataWasteCategories,
+	}
+
 	responseData := helper.ResponseData(http.StatusOK, "success", dataVideo)
 	return c.JSON(http.StatusOK, responseData)
 }
@@ -201,12 +234,12 @@ func (handler *ManageVideoHandlerImpl) UpdateDataVideoHandler(c echo.Context) er
 	}
 	var request dto.UpdateDataVideoRequest
 	json_data := c.FormValue("json_data")
-	if err := json.Unmarshal([]byte(json_data), &request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+	if json_data != "" {
+		if err := json.Unmarshal([]byte(json_data), &request); err != nil {
+			return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+		}
 	}
-	if err := c.Validate(&request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
-	}
+
 	form, errForm := c.MultipartForm()
 	if errForm != nil {
 		return helper.ErrorHandler(c, http.StatusBadRequest, errForm.Error())
@@ -220,8 +253,11 @@ func (handler *ManageVideoHandlerImpl) UpdateDataVideoHandler(c echo.Context) er
 		if errors.Is(err, pkg.ErrVideoNotFound) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoNotFound.Error())
 		}
-		if errors.Is(err, pkg.ErrVideoCategoryNotFound) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoCategoryNotFound.Error())
+		if errors.Is(err, pkg.ErrNameCategoryVideoNotFound) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrNameCategoryVideoNotFound.Error())
+		}
+		if errors.Is(err, pkg.ErrNameTrashCategoryNotFound) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrNameTrashCategoryNotFound.Error())
 		}
 		if errors.Is(err, pkg.ErrNoVideoIdFoundOnUrl) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrNoVideoIdFoundOnUrl.Error())

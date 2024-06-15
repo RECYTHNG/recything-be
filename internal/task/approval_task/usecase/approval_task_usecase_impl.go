@@ -5,6 +5,7 @@ import (
 	"github.com/sawalreverr/recything/internal/task/approval_task/repository"
 	user_task "github.com/sawalreverr/recything/internal/task/user_task/entity"
 	"github.com/sawalreverr/recything/pkg"
+	"gorm.io/gorm"
 )
 
 type ApprovalTaskUsecaseImpl struct {
@@ -25,11 +26,12 @@ func (usecase *ApprovalTaskUsecaseImpl) GetAllApprovalTaskPaginationUseCase(limi
 }
 
 func (usecase *ApprovalTaskUsecaseImpl) ApproveUserTaskUseCase(userTaskId string) error {
-	if _, err := usecase.ApprovalTaskRepository.FindUserTask(userTaskId); err != nil {
+	userTask, err := usecase.ApprovalTaskRepository.FindUserTask(userTaskId)
+	if err != nil {
 		return pkg.ErrUserTaskNotFound
 	}
 
-	if _, err := usecase.ApprovalTaskRepository.FindUserTaskForApprove(userTaskId); err != nil {
+	if userTask.StatusAccept == "accept" {
 		return pkg.ErrUserTaskAlreadyApprove
 	}
 
@@ -41,11 +43,16 @@ func (usecase *ApprovalTaskUsecaseImpl) ApproveUserTaskUseCase(userTaskId string
 }
 
 func (usecase *ApprovalTaskUsecaseImpl) RejectUserTaskUseCase(request *dto.RejectUserTaskRequest, userTaskId string) error {
-	if _, err := usecase.ApprovalTaskRepository.FindUserTask(userTaskId); err != nil {
+	userTask, err := usecase.ApprovalTaskRepository.FindUserTask(userTaskId)
+	if err != nil {
 		return pkg.ErrUserTaskNotFound
 	}
-	if _, err := usecase.ApprovalTaskRepository.FindUserTaskForReject(userTaskId); err != nil {
+	if userTask.StatusAccept == "reject" {
 		return pkg.ErrUserTaskAlreadyReject
+	}
+
+	if userTask.StatusAccept == "accept" {
+		return pkg.ErrUserTaskAlreadyAccepted
 	}
 
 	status := "reject"
@@ -59,12 +66,12 @@ func (usecase *ApprovalTaskUsecaseImpl) RejectUserTaskUseCase(request *dto.Rejec
 }
 
 func (usecase *ApprovalTaskUsecaseImpl) GetUserTaskDetailsUseCase(userTaskId string) (*user_task.UserTaskChallenge, []*user_task.UserTaskImage, error) {
-	if _, err := usecase.ApprovalTaskRepository.FindUserTask(userTaskId); err != nil {
-		return nil, []*user_task.UserTaskImage{}, pkg.ErrUserTaskNotFound
-	}
 	task, images, err := usecase.ApprovalTaskRepository.GetUserTaskDetails(userTaskId)
 	if err != nil {
-		return nil, []*user_task.UserTaskImage{}, err
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil, pkg.ErrUserTaskNotFound
+		}
+		return nil, nil, err
 	}
 	return task, images, nil
 }

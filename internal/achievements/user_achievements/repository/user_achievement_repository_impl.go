@@ -23,7 +23,7 @@ func (repository UserAchievementRepositoryImpl) GetAvhievementsByUser() (*[]arch
 	return &achievements, nil
 }
 
-func (repository UserAchievementRepositoryImpl) GetHostoryUserPoint(userId string) (*[]user_task.UserTaskChallenge, error) {
+func (repository UserAchievementRepositoryImpl) GetHistoryUserPoint(userId string) (*[]user_task.UserTaskChallenge, error) {
 	var userTasks []user_task.UserTaskChallenge
 	if err := repository.DB.GetDB().
 		Where("user_id = ?", userId).

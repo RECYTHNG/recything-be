@@ -9,9 +9,9 @@ type AdminRequestCreate struct {
 }
 
 type AdminUpdateRequest struct {
-	Name        string `form:"name" validate:"required"`
-	Email       string `form:"email" validate:"required,email"`
-	OldPassword string `form:"old_password" validate:"required"`
-	NewPassword string `form:"new_password" validate:"required"`
-	Role        string `form:"role" validate:"required"`
+	Name        string `form:"name"`
+	Email       string `form:"email" validate:"email"`
+	OldPassword string `form:"old_password"`
+	NewPassword string `form:"new_password"`
+	Role        string `form:"role"`
 }

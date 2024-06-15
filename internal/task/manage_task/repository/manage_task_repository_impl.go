@@ -66,9 +66,8 @@ func (repository *ManageTaskRepositoryImpl) GetTaskById(id string) (*task.TaskCh
 }
 
 func (repository *ManageTaskRepositoryImpl) FindTask(id string) (*task.TaskChallenge, error) {
-	log.Println("Finding task with ID:", id)
 	var task task.TaskChallenge
-	if err := repository.DB.GetDB().Where("id = ?", id).First(&task).Error; err != nil {
+	if err := repository.DB.GetDB().Preload("TaskSteps").Where("id = ?", id).First(&task).Error; err != nil {
 		log.Println("Error finding task:", err)
 		return nil, err
 	}
@@ -76,7 +75,6 @@ func (repository *ManageTaskRepositoryImpl) FindTask(id string) (*task.TaskChall
 }
 
 func (repository *ManageTaskRepositoryImpl) UpdateTaskChallenge(taskChallenge *task.TaskChallenge, taskId string) (*task.TaskChallenge, error) {
-	log.Println("Updating task with ID:", taskId)
 	tx := repository.DB.GetDB().Begin()
 
 	defer func() {
@@ -85,10 +83,13 @@ func (repository *ManageTaskRepositoryImpl) UpdateTaskChallenge(taskChallenge *t
 			log.Println("Transaction rollback due to panic:", r)
 		}
 	}()
-	if err := tx.Where("task_challenge_id = ?", taskId).Delete(&task.TaskStep{}).Error; err != nil {
-		log.Println("Error deleting task steps:", err)
-		tx.Rollback()
-		return nil, err
+
+	if len(taskChallenge.TaskSteps) != 0 {
+		if err := tx.Where("task_challenge_id = ?", taskId).Delete(&task.TaskStep{}).Error; err != nil {
+			log.Println("Error deleting task steps:", err)
+			tx.Rollback()
+			return nil, err
+		}
 	}
 
 	if err := tx.Session(&gorm.Session{FullSaveAssociations: true}).Updates(taskChallenge).Error; err != nil {
