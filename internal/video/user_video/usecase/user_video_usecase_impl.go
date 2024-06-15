@@ -19,8 +19,8 @@ func NewUserVideoUsecase(repository repository.UserVideoRepository) *UserVideoUs
 	return &UserVideoUsecaseImpl{Repository: repository}
 }
 
-func (usecase *UserVideoUsecaseImpl) GetAllVideoUsecase() (*[]video.Video, error) {
-	videos, err := usecase.Repository.GetAllVideo()
+func (usecase *UserVideoUsecaseImpl) GetAllVideoUsecase(limit int) (*[]video.Video, error) {
+	videos, err := usecase.Repository.GetAllVideo(limit)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +38,7 @@ func (usecase *UserVideoUsecaseImpl) GetAllVideoUsecase() (*[]video.Video, error
 		}
 	}
 
-	updatedVideos, err := usecase.Repository.GetAllVideo()
+	updatedVideos, err := usecase.Repository.GetAllVideo(limit)
 	if err != nil {
 		return nil, err
 	}

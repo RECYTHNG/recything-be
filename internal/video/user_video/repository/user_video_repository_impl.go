@@ -14,9 +14,10 @@ func NewUserVideoRepository(db database.Database) *UserVideoRepositoryImpl {
 	return &UserVideoRepositoryImpl{DB: db}
 }
 
-func (repository *UserVideoRepositoryImpl) GetAllVideo() (*[]video.Video, error) {
+func (repository *UserVideoRepositoryImpl) GetAllVideo(limit int) (*[]video.Video, error) {
 	var videos []video.Video
 	if err := repository.DB.GetDB().
+		Limit(limit).
 		Order("created_at desc").
 		Preload("Categories.ContentCategory").
 		Preload("Categories.WasteCategory").

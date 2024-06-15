@@ -17,8 +17,7 @@ type Database interface {
 	InitAchievements()
 
 	InitTasks()
-	InitTaskSteps()
-
-	InitDataVideos()
+	InitVideos()
 	InitArticle()
+	InitReport()
 }
