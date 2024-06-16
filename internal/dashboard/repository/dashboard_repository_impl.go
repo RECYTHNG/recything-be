@@ -2,14 +2,20 @@ package repository
 
 import (
 	art "github.com/sawalreverr/recything/internal/article"
+	"github.com/sawalreverr/recything/internal/dashboard/dto"
 	"github.com/sawalreverr/recything/internal/database"
 	rep "github.com/sawalreverr/recything/internal/report"
 	ch "github.com/sawalreverr/recything/internal/task/manage_task/entity"
 	usr "github.com/sawalreverr/recything/internal/user"
+	vid "github.com/sawalreverr/recything/internal/video/manage_video/entity"
 )
 
 type DashboardRepositoryImpl struct {
 	DB database.Database
+}
+
+func NewDashboardRepository(db database.Database) DashboardRepository {
+	return &DashboardRepositoryImpl{DB: db}
 }
 
 // GetTotalArticle implements DashboardRepository.
@@ -20,7 +26,7 @@ func (d *DashboardRepositoryImpl) GetTotalArticle() (int, int, error) {
 	if err := d.DB.GetDB().Model(&art.Article{}).Count(&totalArticle).Error; err != nil {
 		return 0, 0, err
 	}
-	if err := d.DB.GetDB().Model(&art.Article{}).Where("created_at >= ?", "now() + interval '1 day'").Count(&additionContentToday).Error; err != nil {
+	if err := d.DB.GetDB().Model(&art.Article{}).Where("created_at >= CURRENT_DATE").Count(&additionContentToday).Error; err != nil {
 		return 0, 0, err
 	}
 	return int(totalArticle), int(additionContentToday), nil
@@ -28,37 +34,58 @@ func (d *DashboardRepositoryImpl) GetTotalArticle() (int, int, error) {
 
 // GetTotalVideo implements DashboardRepository.
 func (d *DashboardRepositoryImpl) GetTotalVideo() (int, int, error) {
-	panic("unimplemented")
-}
+	var totalVideo int64
+	var additionVideoToday int64
 
-func NewDashboardRepository(db database.Database) DashboardRepository {
-	return &DashboardRepositoryImpl{DB: db}
+	// Hitung total video
+	if err := d.DB.GetDB().Model(&vid.Video{}).Count(&totalVideo).Error; err != nil {
+		return 0, 0, err
+	}
+
+	// Hitung video yang ditambahkan hari ini
+	if err := d.DB.GetDB().Model(&vid.Video{}).Where("created_at >= CURRENT_DATE").Count(&additionVideoToday).Error; err != nil {
+		return 0, 0, err
+	}
+
+	return int(totalVideo), int(additionVideoToday), nil
 }
 
 // GetReportLittering implements DashboardRepository.
 func (d *DashboardRepositoryImpl) GetReportLittering() (int, error) {
-	panic("unimplemented")
+	var totalLitering int64
+
+	if err := d.DB.GetDB().Model(&rep.Report{}).Where("report_type = ?", "littering").Count(&totalLitering).Error; err != nil {
+		return 0, err
+	}
+	return int(totalLitering), nil
 }
 
 // GetReportRubbish implements DashboardRepository.
 func (d *DashboardRepositoryImpl) GetReportRubbish() (int, error) {
-	panic("unimplemented")
+	var totalRubbish int64
+
+	if err := d.DB.GetDB().Model(&rep.Report{}).Where("report_type = ?", "rubbish").Count(&totalRubbish).Error; err != nil {
+		return 0, err
+	}
+	return int(totalRubbish), nil
 }
 
 // GetTotalChange implements DashboardRepository.
 func (d *DashboardRepositoryImpl) GetTotalChallenge() (int, int, error) {
-	var totalChange int64
+	var totalChallenge int64
 	var additionChallengeSinceLastWeek int64
 
-	if err := d.DB.GetDB().Model(&ch.TaskChallenge{}).Count(&totalChange).Error; err != nil {
+	// Hitung total tantangan
+	if err := d.DB.GetDB().Model(&ch.TaskChallenge{}).Count(&totalChallenge).Error; err != nil {
 		return 0, 0, err
 	}
 
-	if err := d.DB.GetDB().Model(&ch.TaskChallenge{}).Where("created_at > now() - interval '1 week'").Count(&additionChallengeSinceLastWeek).Error; err != nil {
+	// Hitung tantangan yang ditambahkan dalam 1 minggu terakhir
+	if err := d.DB.GetDB().Model(&ch.TaskChallenge{}).Where("created_at > NOW() - INTERVAL 1 WEEK").Count(&additionChallengeSinceLastWeek).Error; err != nil {
 		return 0, 0, err
 	}
 
-	return int(totalChange), int(additionChallengeSinceLastWeek), nil
+	return int(totalChallenge), int(additionChallengeSinceLastWeek), nil
 }
 
 // GetTotalReport implements DashboardRepository.
@@ -70,7 +97,7 @@ func (d *DashboardRepositoryImpl) GetTotalReport() (int, int, error) {
 		return 0, 0, err
 	}
 
-	if err := d.DB.GetDB().Model(&rep.Report{}).Where("created_at > now() - interval '1 day'").Count(&additionReportSinceYesterday).Error; err != nil {
+	if err := d.DB.GetDB().Model(&rep.Report{}).Where("created_at > now() - interval 1 day").Count(&additionReportSinceYesterday).Error; err != nil {
 		return 0, 0, err
 	}
 
@@ -80,34 +107,140 @@ func (d *DashboardRepositoryImpl) GetTotalReport() (int, int, error) {
 // GetTotalUser implements DashboardRepository.
 func (d *DashboardRepositoryImpl) GetTotalUser() (int, int, error) {
 	var totalUser int64
-	var addtionUserSinceYesterday int64
+	var additionUserSinceYesterday int64
 
+	// Hitung total user
 	if err := d.DB.GetDB().Model(&usr.User{}).Count(&totalUser).Error; err != nil {
 		return 0, 0, err
 	}
 
-	if err := d.DB.GetDB().Model(&usr.User{}).Where("created_at > now() - interval '1 day'").Count(&addtionUserSinceYesterday).Error; err != nil {
+	// Hitung user yang ditambahkan sejak kemarin
+	if err := d.DB.GetDB().Model(&usr.User{}).Where("created_at >= NOW() - INTERVAL 1 DAY").Count(&additionUserSinceYesterday).Error; err != nil {
 		return 0, 0, err
 	}
-	return int(totalUser), int(addtionUserSinceYesterday), nil
+
+	return int(totalUser), int(additionUserSinceYesterday), nil
 }
 
 // GetUserClassic implements DashboardRepository.
 func (d *DashboardRepositoryImpl) GetUserClassic() (int, error) {
-	panic("unimplemented")
+	classic := "https://res.cloudinary.com/dymhvau8n/image/upload/v1718189121/user_badge/htaemsjtlhfof7ww01ss.png"
+
+	var totalUser int64
+	if err := d.DB.GetDB().Model(&usr.User{}).Where("badge = ?", classic).Count(&totalUser).Error; err != nil {
+		return 0, err
+	}
+	return int(totalUser), nil
 }
 
 // GetUserGold implements DashboardRepository.
 func (d *DashboardRepositoryImpl) GetUserGold() (int, error) {
-	panic("unimplemented")
+	gold := "https://res.cloudinary.com/dymhvau8n/image/upload/v1718189184/user_badge/jshs1s2fwevahgtvjkgj.png"
+
+	var totalUser int64
+	if err := d.DB.GetDB().Model(&usr.User{}).Where("badge = ?", gold).Count(&totalUser).Error; err != nil {
+		return 0, err
+	}
+	return int(totalUser), nil
 }
 
-// GetUserPlatinum implements DashboardRepository.
 func (d *DashboardRepositoryImpl) GetUserPlatinum() (int, error) {
-	panic("unimplemented")
+	platinum := "https://res.cloudinary.com/dymhvau8n/image/upload/v1718188250/user_badge/icureiapdvtzyu5b99zu.png"
+
+	var totalUser int64
+	if err := d.DB.GetDB().Model(&usr.User{}).Where("badge = ?", platinum).Count(&totalUser).Error; err != nil {
+		return 0, err
+	}
+	return int(totalUser), nil
 }
 
 // GetUserSilver implements DashboardRepository.
 func (d *DashboardRepositoryImpl) GetUserSilver() (int, error) {
-	panic("unimplemented")
+	silver := "https://res.cloudinary.com/dymhvau8n/image/upload/v1718189221/user_badge/oespnjdgoynkairlutbk.png"
+
+	var totalUser int64
+	if err := d.DB.GetDB().Model(&usr.User{}).Where("badge = ?", silver).Count(&totalUser).Error; err != nil {
+		return 0, err
+	}
+	return int(totalUser), nil
+}
+
+func (d *DashboardRepositoryImpl) GetMonthlyReport(year int, reportType string) ([]dto.MonthlyReportStats, error) {
+	var stats []dto.MonthlyReportStats
+
+	for month := 1; month <= 12; month++ {
+		var dailyStats []dto.DailyReportStats
+
+		// Tentukan jumlah hari dalam bulan tersebut
+		var daysInMonth int
+		if month == 2 {
+			if (year%4 == 0 && year%100 != 0) || (year%400 == 0) {
+				daysInMonth = 29 // Tahun kabisat
+			} else {
+				daysInMonth = 28
+			}
+		} else if month == 4 || month == 6 || month == 9 || month == 11 {
+			daysInMonth = 30
+		} else {
+			daysInMonth = 31
+		}
+
+		// Inisialisasi hasil dengan hari dari 1 hingga jumlah hari dalam bulan tersebut
+		for day := 1; day <= daysInMonth; day++ {
+			dailyStats = append(dailyStats, dto.DailyReportStats{
+				Day: int64(day),
+			})
+		}
+
+		// Query untuk menghitung jumlah laporan per hari dalam bulan tertentu
+		query := `
+            SELECT
+                DAY(created_at) AS day,
+                COUNT(*) AS total_reports
+            FROM
+                reports
+            WHERE
+                YEAR(created_at) = ? AND MONTH(created_at) = ? AND report_type = ?
+            GROUP BY
+                DAY(created_at)
+            ORDER BY
+                DAY(created_at)
+        `
+
+		var queryResults []dto.DailyReportStats
+		if err := d.DB.GetDB().Raw(query, year, month, reportType).Scan(&queryResults).Error; err != nil {
+			return nil, err
+		}
+
+		// Isi hasil dengan data yang diambil dari query
+		for _, queryResult := range queryResults {
+			dailyStats[queryResult.Day-1].TotalReports = queryResult.TotalReports
+		}
+
+		// Hitung total laporan dalam bulan tersebut
+		var totalReports int64
+		for _, stat := range dailyStats {
+			totalReports += stat.TotalReports
+		}
+
+		// Tambahkan statistik bulanan ke hasil akhir
+		stats = append(stats, dto.MonthlyReportStats{
+			Month:        getMonthName(month),
+			DailyStats:   dailyStats,
+			TotalReports: totalReports,
+		})
+	}
+
+	return stats, nil
+}
+
+func getMonthName(month int) string {
+	months := []string{
+		"Januari", "Februari", "Maret", "April", "Mei", "Juni",
+		"Juli", "Agustus", "September", "Oktober", "November", "Desember",
+	}
+	if month >= 1 && month <= 12 {
+		return months[month-1]
+	}
+	return ""
 }

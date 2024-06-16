@@ -103,6 +103,9 @@ func (s *echoServer) Start() {
 	// homepage handler
 	s.homepageHandler()
 
+	// dashboard handler
+	s.dashboardHandler()
+
 	serverPORT := fmt.Sprintf(":%d", s.conf.Server.Port)
 	s.app.Logger.Fatal(s.app.Start(serverPORT))
 }
