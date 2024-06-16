@@ -1,5 +1,7 @@
 package repository
 
+import "github.com/sawalreverr/recything/internal/dashboard/dto"
+
 type DashboardRepository interface {
 	GetTotalUser() (int, int, error)
 	GetTotalReport() (int, int, error)
@@ -12,4 +14,5 @@ type DashboardRepository interface {
 	GetUserPlatinum() (int, error)
 	GetReportLittering() (int, error)
 	GetReportRubbish() (int, error)
+	GetMonthlyReport(year int, reportType string) ([]dto.MonthlyReportStats, error)
 }
