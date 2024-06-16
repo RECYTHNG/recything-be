@@ -15,4 +15,5 @@ type DashboardRepository interface {
 	GetReportLittering() (int, error)
 	GetReportRubbish() (int, error)
 	GetMonthlyReport(year int, reportType string) ([]dto.MonthlyReportStats, error)
+	GetDataUserByAddress() ([]dto.DataUserByAddress, error)
 }

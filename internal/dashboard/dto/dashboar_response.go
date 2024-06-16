@@ -1,15 +1,16 @@
 package dto
 
 type DashboardResponse struct {
-	User                TotalUser       `json:"user"`
-	Report              TotalReport     `json:"report"`
-	Challenge           TotalChallenge  `json:"challenge"`
-	Content             TotalContent    `json:"content"`
-	UserAchievement     UserAchievement `json:"user_achievement"`
-	TotalLittering      int             `json:"total_littering"`
-	TotalRubbish        int             `json:"total_rubbish"`
-	DataReportLittering ReportLittering `json:"data_report_littering"`
-	DataReportRubbish   ReportRubbish   `json:"data_report_rubbish"`
+	User                TotalUser           `json:"user"`
+	Report              TotalReport         `json:"report"`
+	Challenge           TotalChallenge      `json:"challenge"`
+	Content             TotalContent        `json:"content"`
+	UserAchievement     UserAchievement     `json:"user_achievement"`
+	TotalLittering      int                 `json:"total_littering"`
+	TotalRubbish        int                 `json:"total_rubbish"`
+	DataUserByAddress   []DataUserByAddress `json:"data_user_by_address"`
+	DataReportLittering ReportLittering     `json:"data_report_littering"`
+	DataReportRubbish   ReportRubbish       `json:"data_report_rubbish"`
 }
 
 type TotalUser struct {
@@ -57,4 +58,9 @@ type ReportLittering struct {
 
 type ReportRubbish struct {
 	ReportRubbish []MonthlyReportStats `json:"report_rubbish"`
+}
+
+type DataUserByAddress struct {
+	City      string `json:"city"`
+	TotalUser int    `json:"total_user"`
 }
