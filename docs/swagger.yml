@@ -8,6 +8,8 @@ servers:
 tags:
   - name: homepage
     description: Endpoint for user get homepage
+  - name: dashboard
+    description: Endpoint for admin dashboard
   - name: authentication
     description: Endpoint for user register/login
   - name: user
@@ -3921,6 +3923,15 @@ paths:
       operationId: getAllDataVideo
       security:
         - Bearer: []
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+          description: Number of data
+          example: 10
       responses:
         '200':
           description: Success
@@ -5096,6 +5107,22 @@ paths:
                             name:
                               type: string
                               example: tips
+                    
+  /dashboards:
+    get:
+      tags:
+        - dashboard
+      summary: Get dashboard data
+      description: Endpoint admin to get data dashboard 
+      operationId: getDashboard
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dashboard'
+
 components:
   schemas:
     User:
@@ -5505,8 +5532,178 @@ components:
                     format: date
                     example: "2020-01-01"
 
-
-            
-
+    Dashboard:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: success
+        data:
+          type: object
+          properties:
+            user:
+              type: object
+              properties:
+                total_user:
+                  type: integer
+                  example: 100
+                addition_user_since_yesterday:
+                  type: integer
+                  example: 10
+            report:
+              type: object
+              properties:
+                total_report:
+                  type: integer
+                  example: 100
+                addition_report_since_yesterday:
+                  type: integer
+                  example: 10
+            challenge:
+              type: object
+              properties:
+                total_challenge:
+                  type: integer
+                  example: 100
+                addition_challenge_since_last_week:
+                  type: integer
+                  example: 10
+            content:
+              type: object
+              properties:
+                total_content:
+                  type: integer
+                  example: 100
+                addition_content_today:
+                  type: integer
+                  example: 10
+            user_achievement:
+              type: object
+              properties:
+                total_user:
+                  type: integer
+                  example: 100
+                classic:
+                  type: integer
+                  example: 10
+                silver:
+                  type: integer
+                  example: 10
+                gold:
+                  type: integer
+                  example: 10
+                platinum:
+                  type: integer
+                  example: 10
+        data_user_by_address:
+          type: array
+          items:
+            type: object
+            properties:
+              city:
+                type: string
+                example: "Jakarta"
+              total_user:
+                type: integer
+                example: 100
+        data_user_by_gender:
+          type: array
+          items:
+            type: object
+            properties:
+              gender:
+                type: string
+                example: laki-laki
+              total_user:
+                type: integer
+                example: 100
+              percentage:
+                type: number
+                example: 50
+        total_report_littering:
+          type: integer
+          example: 100
+        total_report_rubbish:
+          type: integer
+          example: 100
+        data_report_by_waste_rubbish:
+          type: array
+          items:
+            type: object
+            properties:
+              report_type:
+                type: string
+                example: rubbish
+              waste_type:
+                type: string
+                example: plastik
+              total_reports:
+                type: integer
+                example: 40
+              percentage:
+                type: number
+                example: 50
+        data_report_by_waste_littering:
+          type: array
+          items:
+            type: object
+            properties:
+              report_type:
+                type: string
+                example: littering
+              waste_type:
+                type: string
+                example: organic
+              total_reports:
+                type: integer
+                example: 40
+              percentage:
+                type: number
+                example: 50
+        data_report_statistic:
+          type: object
+          properties:
+            report_littering:
+              type: array
+              items:
+                type: object
+                properties:
+                  month: 
+                    type: string
+                    example: Januari
+                  daily_statistic:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        day:
+                          type: integer
+                          example: 1
+                        total_reports:
+                          type: integer
+                          example: 10
+            report_rubbish:
+              type: array
+              items:
+                type: object
+                properties:
+                  month: 
+                    type: string
+                    example: Januari
+                  daily_statistic:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        day:
+                          type: integer
+                          example: 1
+                        total_reports:
+                          type: integer
+                          example: 10
+        
 
         

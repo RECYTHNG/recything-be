@@ -24,6 +24,9 @@ import (
 	customDataHandler "github.com/sawalreverr/recything/internal/custom-data/handler"
 	customDataRepository "github.com/sawalreverr/recything/internal/custom-data/repository"
 	customDataUsecase "github.com/sawalreverr/recything/internal/custom-data/usecase"
+	dashboardHandler "github.com/sawalreverr/recything/internal/dashboard/handler"
+	dashboardRepo "github.com/sawalreverr/recything/internal/dashboard/repository"
+	dashboardUsecase "github.com/sawalreverr/recything/internal/dashboard/usecase"
 	faqHandler "github.com/sawalreverr/recything/internal/faq/handler"
 	faqRepo "github.com/sawalreverr/recything/internal/faq/repository"
 	faqUsecase "github.com/sawalreverr/recything/internal/faq/usecase"
@@ -441,4 +444,13 @@ func (s *echoServer) homepageHandler() {
 
 	// Get homepage
 	s.gr.GET("/homepage", handler.GetHomepageHandler, UserMiddleware)
+}
+
+func (s *echoServer) dashboardHandler() {
+	repository := dashboardRepo.NewDashboardRepository(s.db)
+	usecase := dashboardUsecase.NewDashboardUsecase(repository)
+	handler := dashboardHandler.NewDashboardHandler(usecase)
+
+	// Get dashboard
+	s.gr.GET("/dashboards", handler.GetDashboardHandler, SuperAdminOrAdminMiddleware)
 }
