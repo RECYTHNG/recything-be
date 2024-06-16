@@ -296,3 +296,41 @@ func (d *DashboardRepositoryImpl) GetUserByGender() ([]dto.DataUserByGender, err
 
 	return genderStats, nil
 }
+
+func (d *DashboardRepositoryImpl) GetDataReportByWasteType(reportType string, wasteTypes []string) ([]dto.DataReportByWasteType, error) {
+	var wasteStats []dto.DataReportByWasteType
+	var totalReports int64
+
+	// Hitung total laporan untuk reportType tertentu
+	if err := d.DB.GetDB().Model(&rep.Report{}).Where("report_type = ?", reportType).Count(&totalReports).Error; err != nil {
+		return nil, err
+	}
+
+	// Hitung jumlah laporan per waste type
+	type Result struct {
+		WasteType    string
+		TotalReports int64
+	}
+
+	var results []Result
+	if err := d.DB.GetDB().Model(&rep.Report{}).
+		Select("waste_type, COUNT(*) as total_reports").
+		Where("report_type = ? AND waste_type IN ?", reportType, wasteTypes).
+		Group("waste_type").
+		Scan(&results).Error; err != nil {
+		return nil, err
+	}
+
+	// Hitung persentase
+	for _, result := range results {
+		percentage := float64(result.TotalReports) * 100 / float64(totalReports)
+		wasteStats = append(wasteStats, dto.DataReportByWasteType{
+			ReportType:   reportType,
+			WasteType:    result.WasteType,
+			TotalReports: result.TotalReports,
+			Percentage:   percentage,
+		})
+	}
+
+	return wasteStats, nil
+}

@@ -1,17 +1,18 @@
 package dto
 
 type DashboardResponse struct {
-	User                TotalUser           `json:"user"`
-	Report              TotalReport         `json:"report"`
-	Challenge           TotalChallenge      `json:"challenge"`
-	Content             TotalContent        `json:"content"`
-	UserAchievement     UserAchievement     `json:"user_achievement"`
-	DataUserByAddress   []DataUserByAddress `json:"data_user_by_address"`
-	DataUserByGender    []DataUserByGender  `json:"data_user_by_gender"`
-	TotalLittering      int                 `json:"total_littering"`
-	TotalRubbish        int                 `json:"total_rubbish"`
-	DataReportLittering ReportLittering     `json:"data_report_littering"`
-	DataReportRubbish   ReportRubbish       `json:"data_report_rubbish"`
+	User                           TotalUser               `json:"user"`
+	Report                         TotalReport             `json:"report"`
+	Challenge                      TotalChallenge          `json:"challenge"`
+	Content                        TotalContent            `json:"content"`
+	UserAchievement                UserAchievement         `json:"user_achievement"`
+	DataUserByAddress              []DataUserByAddress     `json:"data_user_by_address"`
+	DataUserByGender               []DataUserByGender      `json:"data_user_by_gender"`
+	TotalLittering                 int                     `json:"total_report_littering"`
+	TotalRubbish                   int                     `json:"total_report_rubbish"`
+	DataReportByWasteTypeRubbish   []DataReportByWasteType `json:"data_report_by_waste_rubbish"`
+	DataReportByWasteTypeLittering []DataReportByWasteType `json:"data_report_by_waste_littering"`
+	DataReportStatistic            DataReportStatistic     `json:"data_report_statistic"`
 }
 
 type TotalUser struct {
@@ -49,16 +50,13 @@ type DailyReportStats struct {
 
 type MonthlyReportStats struct {
 	Month        string             `json:"month"`
-	DailyStats   []DailyReportStats `json:"daily_stats"`
+	DailyStats   []DailyReportStats `json:"daily_statistic"`
 	TotalReports int64              `json:"total_reports"`
 }
 
-type ReportLittering struct {
+type DataReportStatistic struct {
 	ReportLittering []MonthlyReportStats `json:"report_littering"`
-}
-
-type ReportRubbish struct {
-	ReportRubbish []MonthlyReportStats `json:"report_rubbish"`
+	ReportRubbish   []MonthlyReportStats `json:"report_rubbish"`
 }
 
 type DataUserByAddress struct {
@@ -70,4 +68,11 @@ type DataUserByGender struct {
 	Gender     string  `json:"gender"`
 	TotalUser  int64   `json:"total_user"`
 	Percentage float64 `json:"percentage"`
+}
+
+type DataReportByWasteType struct {
+	ReportType   string  `json:"report_type"`
+	WasteType    string  `json:"waste_type"`
+	TotalReports int64   `json:"total_reports"`
+	Percentage   float64 `json:"percentage"`
 }

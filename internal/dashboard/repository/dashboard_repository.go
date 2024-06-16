@@ -17,4 +17,5 @@ type DashboardRepository interface {
 	GetMonthlyReport(year int, reportType string) ([]dto.MonthlyReportStats, error)
 	GetDataUserByAddress() ([]dto.DataUserByAddress, error)
 	GetUserByGender() ([]dto.DataUserByGender, error)
+	GetDataReportByWasteType(reportType string, wasteTypes []string) ([]dto.DataReportByWasteType, error)
 }

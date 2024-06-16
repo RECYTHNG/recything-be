@@ -79,6 +79,16 @@ func (usecase *DashboardUsecaseImpl) GetDashboardUsecase() (*dto.DashboardRespon
 		return nil, err
 	}
 
+	dataReportByWasteRubbish, err := usecase.dashboardRepository.GetDataReportByWasteType("rubbish", []string{"sampah basah", "sampah kering", "sampah basah,sampah kering"})
+	if err != nil {
+		return nil, err
+	}
+
+	dataReportByWasteLittering, err := usecase.dashboardRepository.GetDataReportByWasteType("littering", []string{"organik", "anorganik", "berbahaya"})
+	if err != nil {
+		return nil, err
+	}
+
 	user := dto.TotalUser{
 		TotalUser:                  totalUser,
 		AdditionUserSinceYesterday: additionUserSinceYesterday,
@@ -97,6 +107,11 @@ func (usecase *DashboardUsecaseImpl) GetDashboardUsecase() (*dto.DashboardRespon
 		AdditionReportSinceYesterday: additionReportSinceYesterday,
 	}
 
+	dataReportStats := dto.DataReportStatistic{
+		ReportLittering: reportLittering,
+		ReportRubbish:   reportRubbish,
+	}
+
 	totalContent := totalArticle + totalVideo
 
 	challenge := dto.TotalChallenge{
@@ -110,16 +125,17 @@ func (usecase *DashboardUsecaseImpl) GetDashboardUsecase() (*dto.DashboardRespon
 	}
 
 	return &dto.DashboardResponse{
-		User:                user,
-		Report:              report,
-		Challenge:           challenge,
-		Content:             content,
-		UserAchievement:     userAchievement,
-		TotalLittering:      totalLittering,
-		TotalRubbish:        totalRubbish,
-		DataReportLittering: dto.ReportLittering{ReportLittering: reportLittering},
-		DataReportRubbish:   dto.ReportRubbish{ReportRubbish: reportRubbish},
-		DataUserByAddress:   userByAddress,
-		DataUserByGender:    userByGender,
+		User:                           user,
+		Report:                         report,
+		Challenge:                      challenge,
+		Content:                        content,
+		UserAchievement:                userAchievement,
+		TotalLittering:                 totalLittering,
+		TotalRubbish:                   totalRubbish,
+		DataReportStatistic:            dataReportStats,
+		DataUserByAddress:              userByAddress,
+		DataUserByGender:               userByGender,
+		DataReportByWasteTypeRubbish:   dataReportByWasteRubbish,
+		DataReportByWasteTypeLittering: dataReportByWasteLittering,
 	}, nil
 }
