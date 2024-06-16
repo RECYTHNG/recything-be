@@ -263,3 +263,36 @@ func (d *DashboardRepositoryImpl) GetDataUserByAddress() ([]dto.DataUserByAddres
 	}
 	return userByAddress, nil
 }
+
+func (d *DashboardRepositoryImpl) GetUserByGender() ([]dto.DataUserByGender, error) {
+	var genderStats []dto.DataUserByGender
+	var totalUsers int64
+
+	// Hitung total pengguna
+	if err := d.DB.GetDB().Model(&usr.User{}).Count(&totalUsers).Error; err != nil {
+		return nil, err
+	}
+
+	// Hitung total pengguna per gender
+	type Result struct {
+		Gender    string
+		TotalUser int64
+	}
+
+	var results []Result
+	if err := d.DB.GetDB().Model(&usr.User{}).Select("gender, COUNT(*) as total_user").Group("gender").Scan(&results).Error; err != nil {
+		return nil, err
+	}
+
+	// Hitung persentase
+	for _, result := range results {
+		percentage := float64(result.TotalUser) * 100 / float64(totalUsers)
+		genderStats = append(genderStats, dto.DataUserByGender{
+			Gender:     result.Gender,
+			TotalUser:  result.TotalUser,
+			Percentage: percentage,
+		})
+	}
+
+	return genderStats, nil
+}
