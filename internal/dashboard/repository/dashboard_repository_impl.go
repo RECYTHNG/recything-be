@@ -244,3 +244,22 @@ func getMonthName(month int) string {
 	}
 	return ""
 }
+
+func (d *DashboardRepositoryImpl) GetDataUserByAddress() ([]dto.DataUserByAddress, error) {
+	var userByAddress []dto.DataUserByAddress
+	query := `
+		SELECT
+		    SUBSTRING_INDEX(SUBSTRING_INDEX(address, ', ', -2), ', ', 1) AS city,
+		    COUNT(*) AS total_user
+		FROM
+		    users
+		GROUP BY
+		    city
+		ORDER BY
+		    total_user DESC;
+	`
+	if err := d.DB.GetDB().Raw(query).Scan(&userByAddress).Error; err != nil {
+		return nil, err
+	}
+	return userByAddress, nil
+}
