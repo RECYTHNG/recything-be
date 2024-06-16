@@ -148,6 +148,7 @@ func (usecase *ManageTaskUsecaseImpl) UpdateTaskChallengeUsecase(request *dto.Up
 			return nil, pkg.ErrParsedTime
 		}
 		tasks.EndDate = parsedEndDate
+		tasks.Status = true
 	}
 
 	if len(request.TaskSteps) != 0 {
