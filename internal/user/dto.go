@@ -23,7 +23,9 @@ type UserResponse struct {
 	BirthDate  time.Time `json:"birth_date"`
 	Address    string    `json:"address"`
 	PictureURL string    `json:"picture_url"`
+	CreatedAt  time.Time `json:"created_at"`
 }
+
 type UserPaginationResponse struct {
 	TotalUser int            `json:"total_user"`
 	Page      int            `json:"page"`

@@ -2,12 +2,10 @@ package database
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
-	"github.com/sawalreverr/recything/internal/helper"
 	userEntity "github.com/sawalreverr/recything/internal/user"
 )
 
@@ -86,20 +84,20 @@ func generateUser(password string) []userEntity.User {
 }
 
 func (m *mysqlDatabase) InitUser() {
-	if err := m.GetDB().Migrator().DropTable(&userEntity.User{}); err != nil {
-		return
-	}
+	// if err := m.GetDB().Migrator().DropTable(&userEntity.User{}); err != nil {
+	// 	return
+	// }
 
-	if err := m.GetDB().AutoMigrate(&userEntity.User{}); err != nil {
-		return
-	}
+	// if err := m.GetDB().AutoMigrate(&userEntity.User{}); err != nil {
+	// 	return
+	// }
 
-	hashed, _ := helper.GenerateHash("password@123")
-	users := generateUser(hashed)
+	// hashed, _ := helper.GenerateHash("password@123")
+	// users := generateUser(hashed)
 
-	for _, user := range users {
-		m.GetDB().FirstOrCreate(&user, user)
-	}
+	// for _, user := range users {
+	// 	m.GetDB().FirstOrCreate(&user, user)
+	// }
 
-	log.Println("User data added!")
+	// log.Println("User data added!")
 }

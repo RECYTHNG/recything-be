@@ -11,39 +11,39 @@ import (
 )
 
 func (m *mysqlDatabase) InitReport() {
-	if err := m.GetDB().Migrator().DropTable(&rpt.ReportImage{}); err != nil {
-		return
-	}
-	if err := m.GetDB().Migrator().DropTable(&rpt.ReportWasteMaterial{}); err != nil {
-		return
-	}
-	if err := m.GetDB().Migrator().DropTable(&rpt.Report{}); err != nil {
-		return
-	}
+	// if err := m.GetDB().Migrator().DropTable(&rpt.ReportImage{}); err != nil {
+	// 	return
+	// }
+	// if err := m.GetDB().Migrator().DropTable(&rpt.ReportWasteMaterial{}); err != nil {
+	// 	return
+	// }
+	// if err := m.GetDB().Migrator().DropTable(&rpt.Report{}); err != nil {
+	// 	return
+	// }
 
-	if err := m.GetDB().AutoMigrate(&rpt.ReportImage{}); err != nil {
-		return
-	}
-	if err := m.GetDB().AutoMigrate(&rpt.ReportWasteMaterial{}); err != nil {
-		return
-	}
-	if err := m.GetDB().AutoMigrate(&rpt.Report{}); err != nil {
-		return
-	}
+	// if err := m.GetDB().AutoMigrate(&rpt.ReportImage{}); err != nil {
+	// 	return
+	// }
+	// if err := m.GetDB().AutoMigrate(&rpt.ReportWasteMaterial{}); err != nil {
+	// 	return
+	// }
+	// if err := m.GetDB().AutoMigrate(&rpt.Report{}); err != nil {
+	// 	return
+	// }
 
-	reports, reportWasteMaterials, reportImages := generateReports()
+	// reports, reportWasteMaterials, reportImages := generateReports()
 
-	for _, report := range reports {
-		m.GetDB().FirstOrCreate(&report, report)
-	}
+	// for _, report := range reports {
+	// 	m.GetDB().FirstOrCreate(&report, report)
+	// }
 
-	for _, reportWasteMaterial := range reportWasteMaterials {
-		m.GetDB().FirstOrCreate(&reportWasteMaterial, reportWasteMaterial)
-	}
+	// for _, reportWasteMaterial := range reportWasteMaterials {
+	// 	m.GetDB().FirstOrCreate(&reportWasteMaterial, reportWasteMaterial)
+	// }
 
-	for _, reportImage := range reportImages {
-		m.GetDB().FirstOrCreate(&reportImage, reportImage)
-	}
+	// for _, reportImage := range reportImages {
+	// 	m.GetDB().FirstOrCreate(&reportImage, reportImage)
+	// }
 }
 
 var wasteMaterials = []struct {

@@ -64,6 +64,7 @@ func (uc *userUsecase) FindUserByID(userID string) (*u.UserResponse, error) {
 		BirthDate:  userFound.BirthDate,
 		Address:    userFound.Address,
 		PictureURL: userFound.PictureURL,
+		CreatedAt:  userFound.CreatedAt,
 	}
 
 	return &response, nil
@@ -93,6 +94,7 @@ func (uc *userUsecase) FindAllUser(page int, limit int, sortBy string, sortType 
 			BirthDate:  user.BirthDate,
 			Address:    user.Address,
 			PictureURL: user.PictureURL,
+			CreatedAt:  user.CreatedAt,
 		}
 
 		usersResponse = append(usersResponse, response)

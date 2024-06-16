@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"time"
 
@@ -11,41 +10,41 @@ import (
 )
 
 func (m *mysqlDatabase) InitArticle() {
-	if err := m.GetDB().Migrator().DropTable(&art.ArticleCategories{}); err != nil {
-		return
-	}
-	if err := m.GetDB().Migrator().DropTable(&art.ArticleSection{}); err != nil {
-		return
-	}
-	if err := m.GetDB().Migrator().DropTable(&art.Article{}); err != nil {
-		return
-	}
+	// if err := m.GetDB().Migrator().DropTable(&art.ArticleCategories{}); err != nil {
+	// 	return
+	// }
+	// if err := m.GetDB().Migrator().DropTable(&art.ArticleSection{}); err != nil {
+	// 	return
+	// }
+	// if err := m.GetDB().Migrator().DropTable(&art.Article{}); err != nil {
+	// 	return
+	// }
 
-	if err := m.GetDB().AutoMigrate(&art.ArticleCategories{}); err != nil {
-		return
-	}
-	if err := m.GetDB().AutoMigrate(&art.ArticleSection{}); err != nil {
-		return
-	}
-	if err := m.GetDB().AutoMigrate(&art.Article{}); err != nil {
-		return
-	}
+	// if err := m.GetDB().AutoMigrate(&art.ArticleCategories{}); err != nil {
+	// 	return
+	// }
+	// if err := m.GetDB().AutoMigrate(&art.ArticleSection{}); err != nil {
+	// 	return
+	// }
+	// if err := m.GetDB().AutoMigrate(&art.Article{}); err != nil {
+	// 	return
+	// }
 
-	articles, articleSections, articleCategories := generateArticle()
+	// articles, articleSections, articleCategories := generateArticle()
 
-	for _, article := range articles {
-		m.GetDB().FirstOrCreate(&article, article)
-	}
+	// for _, article := range articles {
+	// 	m.GetDB().FirstOrCreate(&article, article)
+	// }
 
-	for _, articleSection := range articleSections {
-		m.GetDB().FirstOrCreate(&articleSection, articleSection)
-	}
+	// for _, articleSection := range articleSections {
+	// 	m.GetDB().FirstOrCreate(&articleSection, articleSection)
+	// }
 
-	for _, articleCategory := range articleCategories {
-		m.GetDB().FirstOrCreate(&articleCategory, articleCategory)
-	}
+	// for _, articleCategory := range articleCategories {
+	// 	m.GetDB().FirstOrCreate(&articleCategory, articleCategory)
+	// }
 
-	log.Println("Article data added!")
+	// log.Println("Article data added!")
 }
 
 var wasteCategories = []struct {
