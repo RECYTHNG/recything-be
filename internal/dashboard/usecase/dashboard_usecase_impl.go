@@ -74,6 +74,11 @@ func (usecase *DashboardUsecaseImpl) GetDashboardUsecase() (*dto.DashboardRespon
 		return nil, err
 	}
 
+	userByGender, err := usecase.dashboardRepository.GetUserByGender()
+	if err != nil {
+		return nil, err
+	}
+
 	user := dto.TotalUser{
 		TotalUser:                  totalUser,
 		AdditionUserSinceYesterday: additionUserSinceYesterday,
@@ -115,5 +120,6 @@ func (usecase *DashboardUsecaseImpl) GetDashboardUsecase() (*dto.DashboardRespon
 		DataReportLittering: dto.ReportLittering{ReportLittering: reportLittering},
 		DataReportRubbish:   dto.ReportRubbish{ReportRubbish: reportRubbish},
 		DataUserByAddress:   userByAddress,
+		DataUserByGender:    userByGender,
 	}, nil
 }
