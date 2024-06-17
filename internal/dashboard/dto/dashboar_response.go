@@ -6,7 +6,7 @@ type DashboardResponse struct {
 	Challenge                      TotalChallenge          `json:"challenge"`
 	Content                        TotalContent            `json:"content"`
 	UserAchievement                UserAchievement         `json:"user_achievement"`
-	DataUserByAddress              []DataUserByAddress     `json:"data_user_by_address"`
+	DataReportByCity               []DataReportByCity      `json:"data_report_by_city"`
 	DataUserByGender               []DataUserByGender      `json:"data_user_by_gender"`
 	TotalLittering                 int                     `json:"total_report_littering"`
 	TotalRubbish                   int                     `json:"total_report_rubbish"`
@@ -59,9 +59,9 @@ type DataReportStatistic struct {
 	ReportRubbish   []MonthlyReportStats `json:"report_rubbish"`
 }
 
-type DataUserByAddress struct {
-	City      string `json:"city"`
-	TotalUser int    `json:"total_user"`
+type DataReportByCity struct {
+	City        string `json:"city"`
+	TotalReport int    `json:"total_report"`
 }
 
 type DataUserByGender struct {

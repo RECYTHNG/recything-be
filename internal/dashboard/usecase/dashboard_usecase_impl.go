@@ -69,7 +69,7 @@ func (usecase *DashboardUsecaseImpl) GetDashboardUsecase() (*dto.DashboardRespon
 		return nil, err
 	}
 
-	userByAddress, err := usecase.dashboardRepository.GetDataUserByAddress()
+	reportByCity, err := usecase.dashboardRepository.GetReportByCity()
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +133,7 @@ func (usecase *DashboardUsecaseImpl) GetDashboardUsecase() (*dto.DashboardRespon
 		TotalLittering:                 totalLittering,
 		TotalRubbish:                   totalRubbish,
 		DataReportStatistic:            dataReportStats,
-		DataUserByAddress:              userByAddress,
+		DataReportByCity:               reportByCity,
 		DataUserByGender:               userByGender,
 		DataReportByWasteTypeRubbish:   dataReportByWasteRubbish,
 		DataReportByWasteTypeLittering: dataReportByWasteLittering,
