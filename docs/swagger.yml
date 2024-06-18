@@ -2323,6 +2323,9 @@ paths:
                       status_progress:
                         type: string
                         example: "in_progress"
+                      status_accepted:
+                        type: string
+                        example: "need_review"
                       task_challenge:
                         type: object
                         properties:

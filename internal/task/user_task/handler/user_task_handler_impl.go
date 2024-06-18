@@ -591,9 +591,6 @@ func (handler *UserTaskHandlerImpl) GetUserTaskByUserTaskIdHandler(c echo.Contex
 		if errors.Is(err, pkg.ErrUserTaskNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserTaskNotFound.Error())
 		}
-		if errors.Is(err, pkg.ErrUserTaskDone) {
-			return helper.ErrorHandler(c, http.StatusConflict, pkg.ErrUserTaskDone.Error())
-		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
 	}
 	var taskStep []dto.TaskSteps
@@ -615,7 +612,7 @@ func (handler *UserTaskHandlerImpl) GetUserTaskByUserTaskIdHandler(c echo.Contex
 			Completed:           step.Completed,
 		})
 	}
-	data := dto.TaskChallengeResponseCreate{
+	data := dto.DataGetUserTaskByUserTaskId{
 		Id:          userTask.TaskChallenge.ID,
 		Title:       userTask.TaskChallenge.Title,
 		Description: userTask.TaskChallenge.Description,
@@ -627,9 +624,11 @@ func (handler *UserTaskHandlerImpl) GetUserTaskByUserTaskIdHandler(c echo.Contex
 		TaskSteps:   taskStep,
 		UserSteps:   userSteps,
 	}
-	dataUsertask := dto.UserTaskResponseCreate{
+	dataUsertask := dto.GetUserTaskByUserTaskIdResponse{
 		Id:             userTask.ID,
 		StatusProgress: userTask.StatusProgress,
+		StatusAccept:   userTask.StatusAccept,
+		Reason:         userTask.Reason,
 		TaskChalenge:   data,
 	}
 	responseData := helper.ResponseData(http.StatusCreated, "success", dataUsertask)

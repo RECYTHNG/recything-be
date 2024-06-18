@@ -328,9 +328,6 @@ func (usecase *UserTaskUsecaseImpl) GetUserTaskByUserTaskId(userId string, userT
 		}
 		return nil, err
 	}
-	if (userTask.StatusProgress != "in_progress" && userTask.StatusAccept != "need_rivew") || userTask.StatusAccept == "reject" {
-		return nil, pkg.ErrUserTaskDone
-	}
 	return userTask, nil
 }
 
