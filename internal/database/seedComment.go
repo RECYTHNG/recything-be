@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"time"
 
@@ -12,31 +11,31 @@ import (
 )
 
 func (m *mysqlDatabase) InitComment() {
-	if err := m.GetDB().Migrator().DropTable(&art.ArticleComment{}); err != nil {
-		return
-	}
-	if err := m.GetDB().Migrator().DropTable(&vid.Comment{}); err != nil {
-		return
-	}
+	// if err := m.GetDB().Migrator().DropTable(&art.ArticleComment{}); err != nil {
+	// 	return
+	// }
+	// if err := m.GetDB().Migrator().DropTable(&vid.Comment{}); err != nil {
+	// 	return
+	// }
 
-	if err := m.GetDB().AutoMigrate(&art.ArticleComment{}); err != nil {
-		return
-	}
-	if err := m.GetDB().AutoMigrate(&vid.Comment{}); err != nil {
-		return
-	}
+	// if err := m.GetDB().AutoMigrate(&art.ArticleComment{}); err != nil {
+	// 	return
+	// }
+	// if err := m.GetDB().AutoMigrate(&vid.Comment{}); err != nil {
+	// 	return
+	// }
 
-	articleComments, videoComments := generateComment()
+	// articleComments, videoComments := generateComment()
 
-	for _, articleComment := range articleComments {
-		m.GetDB().FirstOrCreate(&articleComment, articleComment)
-	}
+	// for _, articleComment := range articleComments {
+	// 	m.GetDB().FirstOrCreate(&articleComment, articleComment)
+	// }
 
-	for _, videoComment := range videoComments {
-		m.GetDB().FirstOrCreate(&videoComment, videoComment)
-	}
+	// for _, videoComment := range videoComments {
+	// 	m.GetDB().FirstOrCreate(&videoComment, videoComment)
+	// }
 
-	log.Println("Comments data added!")
+	// log.Println("Comments data added!")
 }
 
 func randomUserID() string {

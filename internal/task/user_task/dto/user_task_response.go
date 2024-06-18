@@ -133,3 +133,24 @@ type UpdateTaskStep struct {
 	StatusProgress string                      `json:"status_progress"`
 	TaskChalenge   TaskChallengeResponseCreate `json:"task_challenge"`
 }
+
+type DataGetUserTaskByUserTaskId struct {
+	Id          string          `json:"id"`
+	Title       string          `json:"title"`
+	Description string          `json:"description"`
+	Thumbnail   string          `json:"thumbnail"`
+	StartDate   time.Time       `json:"start_date"`
+	EndDate     time.Time       `json:"end_date"`
+	Point       int             `json:"point"`
+	StatusTask  bool            `json:"status_task"`
+	TaskSteps   []TaskSteps     `json:"task_steps"`
+	UserSteps   []DataUserSteps `json:"user_steps"`
+}
+
+type GetUserTaskByUserTaskIdResponse struct {
+	Id             string                      `json:"id"`
+	StatusProgress string                      `json:"status_progress"`
+	StatusAccept   string                      `json:"status_accepted"`
+	Reason         string                      `json:"reason"`
+	TaskChalenge   DataGetUserTaskByUserTaskId `json:"task_challenge"`
+}
