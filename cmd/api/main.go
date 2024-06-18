@@ -54,6 +54,9 @@ func main() {
 	// Init Report
 	db.InitReport()
 
+	// Init Comment
+	db.InitComment()
+
 	app := server.NewEchoServer(conf, db)
 	c := cron.New()
 
