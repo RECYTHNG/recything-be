@@ -20,4 +20,6 @@ type Database interface {
 	InitVideos()
 	InitArticle()
 	InitReport()
+
+	InitComment()
 }
