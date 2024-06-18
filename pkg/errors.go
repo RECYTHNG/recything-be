@@ -56,8 +56,8 @@ var (
 	ErrUserTaskStepAlreadyCompleted = errors.New("user task step already completed")
 
 	// manage achievement
-	ErrAchievementLevelAlreadyExist = errors.New("archievement level already exist")
-	ErrAchievementNotFound          = errors.New("archievement not found")
+	ErrAchievementLevelAlreadyExist = errors.New("achievement level already exist")
+	ErrAchievementNotFound          = errors.New("achievement not found")
 	ErrBadge                        = errors.New("badge is required")
 	ErrBadgeMaximum                 = errors.New("badge must be one image")
 
