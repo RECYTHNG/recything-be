@@ -57,3 +57,66 @@ Recything is a mobile platform designed to facilitate recycling education, litte
 
 [( ERD - draw.io )](https://drive.google.com/file/d/1fbE-hpS4z3lMEEUfUAiL2XWvwETfgipp/view)
 ![ERD](docs/ERD%20Recything.drawio.png)
+
+## Setup
+
+### Manually
+
+1. Rename **config.example.yaml** to **config.yaml**
+2. Fill all the field in **config.yaml** with your configuration
+3. Make sure you have **GO** version **1.22.0** and **MySQL** to run this project
+4. Create new database in **MySQL** named **recything_db**
+5. Run the program
+   ```bash
+   go run cmd/api/main.go
+   ```
+
+### Docker
+
+1. Build an image
+   ```bash
+   docker build -t sawalrever23/recything-be:latest .
+   ```
+2. Create new network
+   ```bash
+   docker network create api-network
+   ```
+3. Pull MySQL image (if you don't have one)
+   ```bash
+   docker pull mysql
+   ```
+4. Pull Golang image (if you don't have one)
+   ```bash
+   docker pull golang
+   ```
+5. Run MySQL on port 3306
+   ```bash
+   docker run -itd --name mysql-service \
+    --network api-network \
+    -p 3306:3306 \
+    -e MYSQL_ROOT_PASSWORD={your_password} \
+    -e MYSQL_DATABASE=recything_db \
+    -v /tmp/mysql-volume:/var/lib/mysql \
+    mysql:latest
+   ```
+6. Run our build
+   ```bash
+   docker run -itd --name recything-be \
+   -p 8080:8080 \
+   --network api-network \
+   --restart on-failure \
+   sawalrever23/recything-be:latest
+   ```
+
+### Docker Compose
+
+- Running our compose
+
+  ```bash
+  docker compose up -d
+  ```
+
+- Stopping compose
+  ```bash
+  docker compose down
+  ```
