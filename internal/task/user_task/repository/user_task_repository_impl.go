@@ -11,7 +11,7 @@ type UserTaskRepositoryImpl struct {
 	DB database.Database
 }
 
-func NewUserTaskRepository(db database.Database) *UserTaskRepositoryImpl {
+func NewUserTaskRepository(db database.Database) UserTaskRepository {
 	return &UserTaskRepositoryImpl{DB: db}
 }
 
