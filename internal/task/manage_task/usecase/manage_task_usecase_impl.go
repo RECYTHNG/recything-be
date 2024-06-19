@@ -16,7 +16,7 @@ type ManageTaskUsecaseImpl struct {
 	ManageTaskRepository repository.ManageTaskRepository
 }
 
-func NewManageTaskUsecase(repository repository.ManageTaskRepository) *ManageTaskUsecaseImpl {
+func NewManageTaskUsecase(repository repository.ManageTaskRepository) ManageTaskUsecase {
 	return &ManageTaskUsecaseImpl{ManageTaskRepository: repository}
 }
 
@@ -51,6 +51,12 @@ func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskR
 	if errParsedEndDate != nil {
 		return nil, pkg.ErrParsedTime
 	}
+	var statusTask bool
+	if parsedEndDate.Before(time.Now()) {
+		statusTask = false
+	} else {
+		statusTask = true
+	}
 
 	taskChallange := &task.TaskChallenge{
 		ID:          id,
@@ -61,6 +67,7 @@ func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskR
 		StartDate:   parsedStartDate,
 		EndDate:     parsedEndDate,
 		Point:       request.Point,
+		Status:      statusTask,
 		TaskSteps:   []task.TaskStep{},
 		DeletedAt:   gorm.DeletedAt{},
 	}
@@ -85,6 +92,8 @@ func (usecase *ManageTaskUsecaseImpl) GetTaskChallengePagination(page int, limit
 	if err != nil {
 		return nil, 0, err
 	}
+	usecase.ManageTaskRepository.UpdateTaskChallengeStatus()
+
 	return tasks, total, nil
 }
 
@@ -148,6 +157,11 @@ func (usecase *ManageTaskUsecaseImpl) UpdateTaskChallengeUsecase(request *dto.Up
 			return nil, pkg.ErrParsedTime
 		}
 		tasks.EndDate = parsedEndDate
+		if parsedEndDate.Before(time.Now()) {
+			tasks.Status = false
+		} else {
+			tasks.Status = true
+		}
 	}
 
 	if len(request.TaskSteps) != 0 {
