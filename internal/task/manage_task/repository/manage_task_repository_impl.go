@@ -15,7 +15,7 @@ type ManageTaskRepositoryImpl struct {
 	DB database.Database
 }
 
-func NewManageTaskRepository(db database.Database) *ManageTaskRepositoryImpl {
+func NewManageTaskRepository(db database.Database) ManageTaskRepository {
 	return &ManageTaskRepositoryImpl{DB: db}
 }
 
@@ -113,15 +113,16 @@ func (repository *ManageTaskRepositoryImpl) DeleteTaskChallenge(taskId string) e
 	return nil
 }
 
-// cronjob for update task challenge status
-func UpdateTaskChallengeStatus(db *ManageTaskRepositoryImpl) {
+func (repository *ManageTaskRepositoryImpl) UpdateTaskChallengeStatus() error {
 	now := time.Now()
-	result := db.DB.GetDB().Model(&entity.TaskChallenge{}).
+	result := repository.DB.GetDB().Model(&entity.TaskChallenge{}).
 		Where("end_date < ? AND status = ?", now, true).Update("status", false)
 
 	if result.Error != nil {
 		log.Printf("Error updating task challenge status: %v", result.Error)
+		return result.Error
 	} else {
 		log.Printf("Updated %d task challenge(s) status to false", result.RowsAffected)
+		return nil
 	}
 }

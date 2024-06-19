@@ -15,15 +15,15 @@ import (
 )
 
 type UserTaskUsecaseImpl struct {
-	ManageTaskRepository repository.UserTaskRepository
+	UserTaskRepository repository.UserTaskRepository
 }
 
-func NewUserTaskUsecase(repository repository.UserTaskRepository) *UserTaskUsecaseImpl {
-	return &UserTaskUsecaseImpl{ManageTaskRepository: repository}
+func NewUserTaskUsecase(repository repository.UserTaskRepository) UserTaskUsecase {
+	return &UserTaskUsecaseImpl{UserTaskRepository: repository}
 }
 
 func (usecase *UserTaskUsecaseImpl) GetAllTasksUsecase() ([]task.TaskChallenge, error) {
-	userTask, err := usecase.ManageTaskRepository.GetAllTasks()
+	userTask, err := usecase.UserTaskRepository.GetAllTasks()
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +31,7 @@ func (usecase *UserTaskUsecaseImpl) GetAllTasksUsecase() ([]task.TaskChallenge, 
 }
 
 func (usecase *UserTaskUsecaseImpl) GetTaskByIdUsecase(id string) (*task.TaskChallenge, error) {
-	userTask, err := usecase.ManageTaskRepository.GetTaskById(id)
+	userTask, err := usecase.UserTaskRepository.GetTaskById(id)
 	if err != nil {
 		return nil, pkg.ErrTaskNotFound
 	}
@@ -40,7 +40,7 @@ func (usecase *UserTaskUsecaseImpl) GetTaskByIdUsecase(id string) (*task.TaskCha
 }
 
 func (usecase *UserTaskUsecaseImpl) CreateUserTaskUsecase(taskChallengeId string, userId string) (*user_task.UserTaskChallenge, error) {
-	findtask, errFindTask := usecase.ManageTaskRepository.FindTask(taskChallengeId)
+	findtask, errFindTask := usecase.UserTaskRepository.FindTask(taskChallengeId)
 
 	if errFindTask != nil {
 		return nil, pkg.ErrTaskNotFound
@@ -50,15 +50,15 @@ func (usecase *UserTaskUsecaseImpl) CreateUserTaskUsecase(taskChallengeId string
 		return nil, pkg.ErrTaskCannotBeFollowed
 	}
 
-	if _, err := usecase.ManageTaskRepository.FindUserTask(userId, taskChallengeId); err == nil {
+	if _, err := usecase.UserTaskRepository.FindUserTask(userId, taskChallengeId); err == nil {
 		return nil, pkg.ErrUserTaskExist
 	}
 
-	if _, err := usecase.ManageTaskRepository.FindUserHasSameTask(userId, taskChallengeId); err == nil {
+	if _, err := usecase.UserTaskRepository.FindUserHasSameTask(userId, taskChallengeId); err == nil {
 		return nil, pkg.ErrUserTaskExist
 	}
 
-	lastId, _ := usecase.ManageTaskRepository.FindLastIdTaskChallenge()
+	lastId, _ := usecase.UserTaskRepository.FindLastIdTaskChallenge()
 	id := helper.GenerateCustomID(lastId, "UT")
 	userTask := &user_task.UserTaskChallenge{
 		ID:              id,
@@ -67,13 +67,12 @@ func (usecase *UserTaskUsecaseImpl) CreateUserTaskUsecase(taskChallengeId string
 		AcceptedAt:      time.Now(),
 		ImageTask:       []user_task.UserTaskImage{},
 		StatusProgress:  "in_progress",
-		UserTaskSteps:   []user_task.UserTaskStep{}, // Initialize the UserTaskSteps
+		UserTaskSteps:   []user_task.UserTaskStep{},
 	}
 
-	// Attach TaskSteps to the UserTaskChallenge
 	userTask.TaskChallenge = *findtask
 
-	userTaskData, err := usecase.ManageTaskRepository.CreateUserTask(userTask)
+	userTaskData, err := usecase.UserTaskRepository.CreateUserTask(userTask)
 	if err != nil {
 		return nil, err
 	}
@@ -81,13 +80,13 @@ func (usecase *UserTaskUsecaseImpl) CreateUserTaskUsecase(taskChallengeId string
 }
 
 func (usecase *UserTaskUsecaseImpl) UploadImageTaskUsecase(request *dto.UploadImageTask, fileImage []*multipart.FileHeader, userId string, userTaskId string) (*user_task.UserTaskChallenge, error) {
-	findUserTask, errFind := usecase.ManageTaskRepository.FindUserTask(userId, userTaskId)
+	findUserTask, errFind := usecase.UserTaskRepository.FindUserTask(userId, userTaskId)
 
 	if errFind != nil {
 		return nil, pkg.ErrUserTaskNotFound
 	}
 
-	findTask, errFindTask := usecase.ManageTaskRepository.FindTask(findUserTask.TaskChallengeId)
+	findTask, errFindTask := usecase.UserTaskRepository.FindTask(findUserTask.TaskChallengeId)
 
 	if errFindTask != nil {
 		return nil, pkg.ErrTaskNotFound
@@ -106,7 +105,7 @@ func (usecase *UserTaskUsecaseImpl) UploadImageTaskUsecase(request *dto.UploadIm
 		return nil, pkg.ErrUserTaskDone
 	}
 
-	findUserSteps, errFindUserSteps := usecase.ManageTaskRepository.FindUserSteps(userTaskId)
+	findUserSteps, errFindUserSteps := usecase.UserTaskRepository.FindUserSteps(userTaskId)
 
 	if errFindUserSteps != nil {
 		return nil, errFindUserSteps
@@ -145,7 +144,7 @@ func (usecase *UserTaskUsecaseImpl) UploadImageTaskUsecase(request *dto.UploadIm
 		})
 	}
 
-	userTask, err := usecase.ManageTaskRepository.UploadImageTask(data, userTaskId)
+	userTask, err := usecase.UserTaskRepository.UploadImageTask(data, userTaskId)
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +153,7 @@ func (usecase *UserTaskUsecaseImpl) UploadImageTaskUsecase(request *dto.UploadIm
 }
 
 func (usecase *UserTaskUsecaseImpl) GetUserTaskByUserIdUsecase(userId string) ([]user_task.UserTaskChallenge, error) {
-	userTask, err := usecase.ManageTaskRepository.GetUserTaskByUserId(userId)
+	userTask, err := usecase.UserTaskRepository.GetUserTaskByUserId(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +164,7 @@ func (usecase *UserTaskUsecaseImpl) GetUserTaskByUserIdUsecase(userId string) ([
 }
 
 func (usecase *UserTaskUsecaseImpl) GetUserTaskDoneByUserIdUsecase(userId string) ([]user_task.UserTaskChallenge, error) {
-	userTask, err := usecase.ManageTaskRepository.GetUserTaskDoneByUserId(userId)
+	userTask, err := usecase.UserTaskRepository.GetUserTaskDoneByUserId(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -176,7 +175,7 @@ func (usecase *UserTaskUsecaseImpl) GetUserTaskDoneByUserIdUsecase(userId string
 }
 
 func (usecase *UserTaskUsecaseImpl) UpdateUserTaskUsecase(request *dto.UpdateUserTaskRequest, fileImage []*multipart.FileHeader, userId string, userTaskId string) (*user_task.UserTaskChallenge, error) {
-	findUserTask, errFind := usecase.ManageTaskRepository.FindUserTask(userId, userTaskId)
+	findUserTask, errFind := usecase.UserTaskRepository.FindUserTask(userId, userTaskId)
 
 	if errFind != nil {
 		return nil, pkg.ErrUserTaskNotFound
@@ -186,7 +185,7 @@ func (usecase *UserTaskUsecaseImpl) UpdateUserTaskUsecase(request *dto.UpdateUse
 		return nil, pkg.ErrUserTaskNotReject
 	}
 
-	findTask, errFindTask := usecase.ManageTaskRepository.FindTask(findUserTask.TaskChallengeId)
+	findTask, errFindTask := usecase.UserTaskRepository.FindTask(findUserTask.TaskChallengeId)
 
 	if errFindTask != nil {
 		return nil, pkg.ErrTaskNotFound
@@ -225,7 +224,7 @@ func (usecase *UserTaskUsecaseImpl) UpdateUserTaskUsecase(request *dto.UpdateUse
 		})
 	}
 
-	userTask, err := usecase.ManageTaskRepository.UpdateUserTask(data, userTaskId)
+	userTask, err := usecase.UserTaskRepository.UpdateUserTask(data, userTaskId)
 	if err != nil {
 		return nil, err
 	}
@@ -233,7 +232,7 @@ func (usecase *UserTaskUsecaseImpl) UpdateUserTaskUsecase(request *dto.UpdateUse
 }
 
 func (usecase *UserTaskUsecaseImpl) GetUserTaskDetailsUsecase(userTaskId string, userId string) (*user_task.UserTaskChallenge, []*user_task.UserTaskImage, error) {
-	userTask, imageTask, err := usecase.ManageTaskRepository.GetUserTaskDetails(userTaskId, userId)
+	userTask, imageTask, err := usecase.UserTaskRepository.GetUserTaskDetails(userTaskId, userId)
 	if err != nil {
 		return nil, nil, pkg.ErrUserTaskNotFound
 	}
@@ -242,7 +241,7 @@ func (usecase *UserTaskUsecaseImpl) GetUserTaskDetailsUsecase(userTaskId string,
 
 func (usecase *UserTaskUsecaseImpl) GetHistoryPointByUserIdUsecase(userId string) ([]user_task.UserTaskChallenge, int, error) {
 
-	userTask, err := usecase.ManageTaskRepository.GetHistoryPointByUserId(userId)
+	userTask, err := usecase.UserTaskRepository.GetHistoryPointByUserId(userId)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -258,7 +257,7 @@ func (usecase *UserTaskUsecaseImpl) GetHistoryPointByUserIdUsecase(userId string
 }
 
 func (usecase *UserTaskUsecaseImpl) UpdateTaskStepUsecase(request *dto.UpdateTaskStepRequest, userId string) (*user_task.UserTaskChallenge, error) {
-	userTask, errUserTask := usecase.ManageTaskRepository.FindUserTask(userId, request.UserTaskId)
+	userTask, errUserTask := usecase.UserTaskRepository.FindUserTask(userId, request.UserTaskId)
 	if errUserTask != nil {
 		return nil, pkg.ErrUserTaskNotFound
 	}
@@ -271,7 +270,7 @@ func (usecase *UserTaskUsecaseImpl) UpdateTaskStepUsecase(request *dto.UpdateTas
 		return nil, pkg.ErrUserTaskAlreadyApprove
 	}
 
-	taskStep, errStep := usecase.ManageTaskRepository.FindTaskStep(request.TaskStepId, userTask.TaskChallengeId)
+	taskStep, errStep := usecase.UserTaskRepository.FindTaskStep(request.TaskStepId, userTask.TaskChallengeId)
 	if errStep != nil {
 		if errStep == gorm.ErrRecordNotFound {
 			return nil, pkg.ErrTaskStepNotFound
@@ -279,7 +278,7 @@ func (usecase *UserTaskUsecaseImpl) UpdateTaskStepUsecase(request *dto.UpdateTas
 		return nil, errStep
 	}
 
-	userTaskStep, errUserTaskStep := usecase.ManageTaskRepository.FindUserTaskStep(userTask.ID, taskStep.ID)
+	userTaskStep, errUserTaskStep := usecase.UserTaskRepository.FindUserTaskStep(userTask.ID, taskStep.ID)
 	if errUserTaskStep != nil {
 		return nil, pkg.ErrUserTaskStepNotFound
 	}
@@ -288,7 +287,8 @@ func (usecase *UserTaskUsecaseImpl) UpdateTaskStepUsecase(request *dto.UpdateTas
 		return nil, pkg.ErrUserTaskStepAlreadyCompleted
 	}
 
-	completedSteps, err := usecase.ManageTaskRepository.FindCompletedUserSteps(userTask.ID)
+	// Find completed user task steps
+	completedSteps, err := usecase.UserTaskRepository.FindCompletedUserSteps(userTask.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -306,11 +306,11 @@ func (usecase *UserTaskUsecaseImpl) UpdateTaskStepUsecase(request *dto.UpdateTas
 	}
 
 	userTaskStep.Completed = true
-	if err := usecase.ManageTaskRepository.UpdateUserTaskStep(userTaskStep); err != nil {
+	if err := usecase.UserTaskRepository.UpdateUserTaskStep(userTaskStep); err != nil {
 		return nil, err
 	}
 
-	updatedUserTask, err := usecase.ManageTaskRepository.FindUserTask(userId, request.UserTaskId)
+	updatedUserTask, err := usecase.UserTaskRepository.FindUserTask(userId, request.UserTaskId)
 	if err != nil {
 		return nil, err
 	}
@@ -320,7 +320,7 @@ func (usecase *UserTaskUsecaseImpl) UpdateTaskStepUsecase(request *dto.UpdateTas
 
 func (usecase *UserTaskUsecaseImpl) GetUserTaskByUserTaskId(userId string, userTaskId string) (*user_task.UserTaskChallenge, error) {
 
-	userTask, err := usecase.ManageTaskRepository.FindUserTask(userId, userTaskId)
+	userTask, err := usecase.UserTaskRepository.FindUserTask(userId, userTaskId)
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -332,7 +332,7 @@ func (usecase *UserTaskUsecaseImpl) GetUserTaskByUserTaskId(userId string, userT
 }
 
 func (usecase *UserTaskUsecaseImpl) GetUserTaskRejectedByUserId(userId string, userTaskId string) (*user_task.UserTaskChallenge, error) {
-	userTask, errUserTask := usecase.ManageTaskRepository.GetUserTaskRejectedByUserId(userId, userTaskId)
+	userTask, errUserTask := usecase.UserTaskRepository.GetUserTaskRejectedByUserId(userId, userTaskId)
 
 	if errUserTask != nil {
 		if errors.Is(errUserTask, gorm.ErrRecordNotFound) {
