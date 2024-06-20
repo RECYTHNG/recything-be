@@ -78,8 +78,13 @@ func (s *echoServer) publicHttpHandler() {
 	// Swagger
 	s.app.Static("/assets", "web/assets")
 	s.app.Static("/docs", "docs")
+
 	s.app.GET("/", func(c echo.Context) error {
 		return c.File("web/index.html")
+	})
+
+	s.app.GET("/terms-and-conditions", func(c echo.Context) error {
+		return c.File("web/syarat-dan-ketentuan.html")
 	})
 
 	// Example need user auth
