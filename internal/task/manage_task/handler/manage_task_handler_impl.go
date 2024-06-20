@@ -44,6 +44,9 @@ func (handler *ManageTaskHandlerImpl) CreateTaskHandler(c echo.Context) error {
 		if errors.Is(err, pkg.ErrTaskStepsNull) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrTaskStepsNull.Error())
 		}
+		if errors.Is(err, pkg.ErrParsedTime) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrParsedTime.Error())
+		}
 		if errors.Is(err, pkg.ErrThumbnail) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrThumbnail.Error())
 		}
@@ -93,6 +96,8 @@ func (handler *ManageTaskHandlerImpl) CreateTaskHandler(c echo.Context) error {
 func (handler *ManageTaskHandlerImpl) GetTaskChallengePaginationHandler(c echo.Context) error {
 	page := c.QueryParam("page")
 	limit := c.QueryParam("limit")
+	status := c.QueryParam("status")
+	endDate := c.QueryParam("end-date")
 	if page == "" {
 		page = "1"
 	}
@@ -107,8 +112,19 @@ func (handler *ManageTaskHandlerImpl) GetTaskChallengePaginationHandler(c echo.C
 	if errPage != nil || pageInt <= 0 {
 		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid page parameter")
 	}
+	if status != "" {
+		if status != "true" && status != "false" {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "invalid status parameter")
+		}
+	}
 
-	tasks, totalData, err := handler.Usecase.GetTaskChallengePagination(pageInt, limitInt)
+	if endDate != "" {
+		if endDate != "asc" && endDate != "desc" {
+			return helper.ErrorHandler(c, http.StatusBadRequest, "invalid end date parameter")
+		}
+	}
+
+	tasks, totalData, err := handler.Usecase.GetTaskChallengePagination(pageInt, limitInt, status, endDate)
 	if err != nil {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
 	}
@@ -220,6 +236,9 @@ func (handler *ManageTaskHandlerImpl) UpdateTaskHandler(c echo.Context) error {
 		}
 		if errors.Is(err, pkg.ErrTaskStepsNull) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrTaskStepsNull.Error())
+		}
+		if errors.Is(err, pkg.ErrParsedTime) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrParsedTime.Error())
 		}
 		if errors.Is(err, pkg.ErrThumbnail) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrThumbnail.Error())
