@@ -7,7 +7,7 @@ import (
 type ManageTaskRepository interface {
 	CreateTask(task *task.TaskChallenge) (*task.TaskChallenge, error)
 	FindLastIdTaskChallenge() (string, error)
-	GetTaskChallengePagination(page int, limit int) ([]task.TaskChallenge, int, error)
+	GetTaskChallengePagination(page int, limit int, status string, endDate string) ([]task.TaskChallenge, int, error)
 	GetTaskById(id string) (*task.TaskChallenge, error)
 	FindTask(id string) (*task.TaskChallenge, error)
 	UpdateTaskChallenge(taskChallenge *task.TaskChallenge, taskId string) (*task.TaskChallenge, error)
