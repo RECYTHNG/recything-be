@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -34,20 +33,43 @@ func (repository *ManageTaskRepositoryImpl) FindLastIdTaskChallenge() (string, e
 	return task.ID, nil
 }
 
-func (repository *ManageTaskRepositoryImpl) GetTaskChallengePagination(page int, limit int) ([]task.TaskChallenge, int, error) {
+func (repository *ManageTaskRepositoryImpl) GetTaskChallengePagination(page int, limit int, status string, endDate string) ([]task.TaskChallenge, int, error) {
 	var tasks []task.TaskChallenge
 	var total int64
 	offset := (page - 1) * limit
 
-	db := repository.DB.GetDB()
-	err := db.Model(&task.TaskChallenge{}).Count(&total).Error
-	if err != nil {
-		return nil, 0, fmt.Errorf("failed to count total tasks: %w", err)
+	baseQuery := repository.DB.GetDB().Model(&task.TaskChallenge{})
+
+	if status != "" {
+		if status == "true" {
+			baseQuery = baseQuery.Where("status = ?", true)
+		} else if status == "false" {
+			baseQuery = baseQuery.Where("status = ?", false)
+		}
+	}
+	totalQuery := baseQuery
+	if err := totalQuery.Count(&total).Error; err != nil {
+		return nil, 0, err
 	}
 
-	err = db.Preload("TaskSteps").Preload("Admin").Limit(limit).Offset(offset).Order("id desc").Find(&tasks).Error
-	if err != nil {
-		return nil, 0, fmt.Errorf("failed to fetch tasks: %w", err)
+	dataQuery := baseQuery.
+		Preload("TaskSteps").
+		Preload("Admin").
+		Limit(limit).
+		Offset(offset)
+
+	if endDate != "" {
+		if endDate == "desc" {
+			dataQuery = dataQuery.Order("end_date DESC")
+		} else if endDate == "asc" {
+			dataQuery = dataQuery.Order("end_date ASC")
+		}
+	} else {
+		dataQuery = dataQuery.Order("created_at DESC")
+	}
+
+	if err := dataQuery.Find(&tasks).Error; err != nil {
+		return nil, 0, err
 	}
 
 	return tasks, int(total), nil

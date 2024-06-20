@@ -87,8 +87,8 @@ func (usecase *ManageTaskUsecaseImpl) CreateTaskUsecase(request *dto.CreateTaskR
 	return taskChallange, nil
 }
 
-func (usecase *ManageTaskUsecaseImpl) GetTaskChallengePagination(page int, limit int) ([]task.TaskChallenge, int, error) {
-	tasks, total, err := usecase.ManageTaskRepository.GetTaskChallengePagination(page, limit)
+func (usecase *ManageTaskUsecaseImpl) GetTaskChallengePagination(page int, limit int, status string, endDate string) ([]task.TaskChallenge, int, error) {
+	tasks, total, err := usecase.ManageTaskRepository.GetTaskChallengePagination(page, limit, status, endDate)
 	if err != nil {
 		return nil, 0, err
 	}

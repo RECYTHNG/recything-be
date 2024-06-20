@@ -9,7 +9,7 @@ import (
 
 type ManageTaskUsecase interface {
 	CreateTaskUsecase(request *dto.CreateTaskResquest, thumbnail []*multipart.FileHeader, adminId string) (*task.TaskChallenge, error)
-	GetTaskChallengePagination(page int, limit int) ([]task.TaskChallenge, int, error)
+	GetTaskChallengePagination(page int, limit int, status string, endDate string) ([]task.TaskChallenge, int, error)
 	GetTaskByIdUsecase(id string) (*task.TaskChallenge, error)
 	UpdateTaskChallengeUsecase(request *dto.UpdateTaskRequest, thumbnail []*multipart.FileHeader, id string) (*task.TaskChallenge, error)
 	DeleteTaskChallengeUsecase(id string) error
