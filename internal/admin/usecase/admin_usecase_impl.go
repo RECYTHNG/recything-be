@@ -103,7 +103,7 @@ func (usecase *AdminUsecaseImpl) UpdateAdminUsecase(request *dto.AdminUpdateRequ
 	}
 
 	if request.Role != "" {
-		if request.Role != "admin" && request.Role != "user" {
+		if request.Role != "admin" && request.Role != "super admin" {
 			return nil, pkg.ErrRole
 		}
 		findAdmin.Role = request.Role
