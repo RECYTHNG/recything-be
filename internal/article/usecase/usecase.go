@@ -1,6 +1,8 @@
 package article
 
 import (
+	"time"
+
 	admin "github.com/sawalreverr/recything/internal/admin/repository"
 	art "github.com/sawalreverr/recything/internal/article"
 	"github.com/sawalreverr/recything/internal/helper"
@@ -151,6 +153,8 @@ func (u *articleUsecase) Update(articleID string, article art.ArticleInput) erro
 		Description:  article.Description,
 		ThumbnailURL: article.ThumbnailURL,
 		AuthorID:     articleFound.AuthorID,
+		CreatedAt:    articleFound.CreatedAt,
+		UpdatedAt:    time.Now(),
 	}
 
 	if err := u.articleRepo.DeleteAllSection(articleID); err != nil {
