@@ -64,7 +64,7 @@ Recything is a mobile platform designed to facilitate recycling education, litte
 
 1. Rename **config.example.yaml** to **config.yaml**
 2. Fill all the field in **config.yaml** with your configuration
-3. Make sure you have **GO** version **1.22.0** and **MySQL** to run this project
+3. Make sure you have **GO** version **1.22+** and **MySQL** to run this project
 4. Create new database in **MySQL** named **recything_db**
 5. Run the program
    ```bash
