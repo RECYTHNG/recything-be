@@ -138,6 +138,7 @@ type ArticleUsecase interface {
 
 	// Waste Category & Content Category
 	GetAllCategories() (*CategoriesResponse, error)
+	CategoryValidation(wasteCategories []string, contentCategories []string) ([]uint, []uint, error)
 }
 
 type ArticleHandler interface {
