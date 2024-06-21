@@ -32,50 +32,43 @@ func (u *articleUsecase) NewArticle(article art.ArticleInput, authorId string) (
 		AuthorID:     authorId,
 	}
 
+	wasteIDs, contentIDs, err := u.CategoryValidation(article.WasteCategories, article.ContentCategories)
+	if err != nil {
+		return nil, err
+	}
+
 	createdArticle, err := u.articleRepo.Create(newArticle)
 	if err != nil {
 		return nil, err
 	}
 
+	for i := range article.WasteCategories {
+		articleCategory := art.ArticleCategories{
+			ArticleID:       createdArticle.ID,
+			WasteCategoryID: wasteIDs[i],
+		}
+
+		if err := u.articleRepo.CreateArticleCategory(articleCategory); err != nil {
+			_ = u.articleRepo.Delete(createdArticle.ID)
+			return nil, err
+		}
+	}
+
+	for i := range article.ContentCategories {
+		articleCategory := art.ArticleCategories{
+			ArticleID:         createdArticle.ID,
+			ContentCategoryID: int(contentIDs[i]),
+		}
+
+		if err := u.articleRepo.CreateArticleCategory(articleCategory); err != nil {
+			_ = u.articleRepo.Delete(createdArticle.ID)
+			return nil, err
+		}
+	}
+
 	for _, section := range article.Sections {
 		section.ArticleID = createdArticle.ID
 		if err := u.articleRepo.CreateSection(section); err != nil {
-			_ = u.articleRepo.Delete(createdArticle.ID)
-			return nil, err
-		}
-	}
-
-	for _, categoryName := range article.WasteCategories {
-		categoryID, err := u.articleRepo.FindCategoryByName(categoryName, "waste")
-		if err != nil {
-			_ = u.articleRepo.Delete(createdArticle.ID)
-			return nil, err
-		}
-
-		articleCategory := art.ArticleCategories{
-			ArticleID:       createdArticle.ID,
-			WasteCategoryID: categoryID,
-		}
-
-		if err := u.articleRepo.CreateArticleCategory(articleCategory); err != nil {
-			_ = u.articleRepo.Delete(createdArticle.ID)
-			return nil, err
-		}
-	}
-
-	for _, categoryName := range article.ContentCategories {
-		categoryID, err := u.articleRepo.FindCategoryByName(categoryName, "content")
-		if err != nil {
-			_ = u.articleRepo.Delete(createdArticle.ID)
-			return nil, err
-		}
-
-		articleCategory := art.ArticleCategories{
-			ArticleID:         createdArticle.ID,
-			ContentCategoryID: int(categoryID),
-		}
-
-		if err := u.articleRepo.CreateArticleCategory(articleCategory); err != nil {
 			_ = u.articleRepo.Delete(createdArticle.ID)
 			return nil, err
 		}
@@ -147,6 +140,11 @@ func (u *articleUsecase) Update(articleID string, article art.ArticleInput) erro
 		return err
 	}
 
+	wasteIDs, contentIDs, err := u.CategoryValidation(article.WasteCategories, article.ContentCategories)
+	if err != nil {
+		return err
+	}
+
 	articleToUpdate := art.Article{
 		ID:           articleFound.ID,
 		Title:        article.Title,
@@ -157,6 +155,32 @@ func (u *articleUsecase) Update(articleID string, article art.ArticleInput) erro
 		UpdatedAt:    time.Now(),
 	}
 
+	if err := u.articleRepo.DeleteAllArticleCategory(articleID); err != nil {
+		return err
+	}
+
+	for i := range article.WasteCategories {
+		articleCategory := art.ArticleCategories{
+			ArticleID:       articleID,
+			WasteCategoryID: wasteIDs[i],
+		}
+
+		if err := u.articleRepo.CreateArticleCategory(articleCategory); err != nil {
+			return err
+		}
+	}
+
+	for i := range article.ContentCategories {
+		articleCategory := art.ArticleCategories{
+			ArticleID:         articleID,
+			ContentCategoryID: int(contentIDs[i]),
+		}
+
+		if err := u.articleRepo.CreateArticleCategory(articleCategory); err != nil {
+			return err
+		}
+	}
+
 	if err := u.articleRepo.DeleteAllSection(articleID); err != nil {
 		return err
 	}
@@ -164,42 +188,6 @@ func (u *articleUsecase) Update(articleID string, article art.ArticleInput) erro
 	for _, section := range article.Sections {
 		section.ArticleID = articleID
 		if err := u.articleRepo.CreateSection(section); err != nil {
-			return err
-		}
-	}
-
-	if err := u.articleRepo.DeleteAllArticleCategory(articleID); err != nil {
-		return err
-	}
-
-	for _, wasteCategoryName := range article.WasteCategories {
-		wasteCategoryID, err := u.articleRepo.FindCategoryByName(wasteCategoryName, "waste")
-		if err != nil {
-			return err
-		}
-
-		articleCategory := art.ArticleCategories{
-			ArticleID:       articleID,
-			WasteCategoryID: wasteCategoryID,
-		}
-
-		if err := u.articleRepo.CreateArticleCategory(articleCategory); err != nil {
-			return err
-		}
-	}
-
-	for _, contentCategoryName := range article.ContentCategories {
-		contentCategoryID, err := u.articleRepo.FindCategoryByName(contentCategoryName, "content")
-		if err != nil {
-			return err
-		}
-
-		articleCategory := art.ArticleCategories{
-			ArticleID:         articleID,
-			ContentCategoryID: int(contentCategoryID),
-		}
-
-		if err := u.articleRepo.CreateArticleCategory(articleCategory); err != nil {
 			return err
 		}
 	}
@@ -335,4 +323,26 @@ func (uc *articleUsecase) GetAllCategories() (*art.CategoriesResponse, error) {
 		WasteCategories:   *wasteCategories,
 		ContentCategories: *contentCategories,
 	}, nil
+}
+
+func (uc *articleUsecase) CategoryValidation(wasteCategories []string, contentCategories []string) ([]uint, []uint, error) {
+	var wasteCategoriesID []uint
+	for _, wasteCategory := range wasteCategories {
+		categoryID, err := uc.articleRepo.FindCategoryByName(wasteCategory, "waste")
+		if err != nil {
+			return nil, nil, pkg.ErrCategoryArticleNotFound
+		}
+		wasteCategoriesID = append(wasteCategoriesID, categoryID)
+	}
+
+	var contentCategoriesID []uint
+	for _, contentCategory := range contentCategories {
+		categoryID, err := uc.articleRepo.FindCategoryByName(contentCategory, "content")
+		if err != nil {
+			return nil, nil, pkg.ErrCategoryArticleNotFound
+		}
+		contentCategoriesID = append(contentCategoriesID, categoryID)
+	}
+
+	return wasteCategoriesID, contentCategoriesID, nil
 }

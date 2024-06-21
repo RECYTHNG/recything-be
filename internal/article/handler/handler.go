@@ -35,6 +35,9 @@ func (h *articleHandler) NewArticle(c echo.Context) error {
 
 	response, err := h.usecase.NewArticle(request, authorID)
 	if err != nil {
+		if errors.Is(pkg.ErrCategoryArticleNotFound, err) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
+		}
 		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
 	}
 
@@ -56,6 +59,8 @@ func (h *articleHandler) UpdateArticle(c echo.Context) error {
 	if err := h.usecase.Update(articleID, request); err != nil {
 		if errors.Is(pkg.ErrArticleNotFound, err) {
 			return helper.ErrorHandler(c, http.StatusNotFound, err.Error())
+		} else if errors.Is(pkg.ErrCategoryArticleNotFound, err) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 		}
 
 		return helper.ErrorHandler(c, http.StatusInternalServerError, err.Error())
