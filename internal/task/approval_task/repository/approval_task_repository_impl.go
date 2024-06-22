@@ -66,6 +66,7 @@ func (repository *ApprovalTaskRepositoryImpl) ApproveUserTask(userTaskId string)
 	if err := tx.Model(&userTask).Where("id = ?", userTaskId).Updates(map[string]interface{}{
 		"status_accept": "accept",
 		"accepted_at":   acceptedAt,
+		"reason":        "",
 	}).Error; err != nil {
 		tx.Rollback()
 		return err

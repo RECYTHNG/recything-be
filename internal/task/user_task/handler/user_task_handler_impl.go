@@ -314,7 +314,7 @@ func (handler *UserTaskHandlerImpl) GetUserTaskDoneByUserIdHandler(c echo.Contex
 			StatusAccept:   userTask.StatusAccept,
 			Point:          userTask.Point,
 			ReasonReject:   userTask.Reason,
-			TaskChallenge: dto.DataTaskChallenges{
+			TaskChallenge: dto.DataTaskChanlengesDone{
 				Id:          userTask.TaskChallenge.ID,
 				Title:       userTask.TaskChallenge.Title,
 				Description: userTask.TaskChallenge.Description,
@@ -323,8 +323,8 @@ func (handler *UserTaskHandlerImpl) GetUserTaskDoneByUserIdHandler(c echo.Contex
 				EndDate:     userTask.TaskChallenge.EndDate,
 				StatusTask:  userTask.TaskChallenge.Status,
 				TaskSteps:   []dto.TaskSteps{},
+				UserSteps:   []dto.DataUserSteps{},
 			},
-			UserSteps: []dto.DataUserSteps{},
 		})
 
 		for _, step := range userTask.TaskChallenge.TaskSteps {
@@ -336,7 +336,7 @@ func (handler *UserTaskHandlerImpl) GetUserTaskDoneByUserIdHandler(c echo.Contex
 		}
 
 		for _, step := range userTask.UserTaskSteps {
-			data[len(data)-1].UserSteps = append(data[len(data)-1].UserSteps, dto.DataUserSteps{
+			data[len(data)-1].TaskChallenge.UserSteps = append(data[len(data)-1].TaskChallenge.UserSteps, dto.DataUserSteps{
 				Id:                  step.ID,
 				UserTaskChallengeID: step.UserTaskChallengeID,
 				TaskStepID:          step.TaskStepID,
