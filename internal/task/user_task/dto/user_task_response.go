@@ -83,24 +83,36 @@ type UserTaskGetByIdUserResponse struct {
 }
 
 type GetUserTaskDoneByIdUserResponse struct {
-	Id             string             `json:"id"`
-	StatusProgress string             `json:"status_progress"`
-	StatusAccept   string             `json:"status_accepted"`
-	Point          int                `json:"point"`
-	ReasonReject   string             `json:"reason_reject"`
-	TaskChallenge  DataTaskChallenges `json:"task_challenge"`
-	UserSteps      []DataUserSteps    `json:"user_steps"`
+	Id             string                 `json:"id"`
+	StatusProgress string                 `json:"status_progress"`
+	StatusAccept   string                 `json:"status_accepted"`
+	Point          int                    `json:"point"`
+	ReasonReject   string                 `json:"reason_reject"`
+	TaskChallenge  DataTaskChanlengesDone `json:"task_challenge"`
+}
+
+type DataTaskChanlengesDone struct {
+	Id          string          `json:"id"`
+	Title       string          `json:"title"`
+	Description string          `json:"description"`
+	Thumbnail   string          `json:"thumbnail"`
+	StartDate   time.Time       `json:"start_date"`
+	EndDate     time.Time       `json:"end_date"`
+	StatusTask  bool            `json:"status_task"`
+	TaskSteps   []TaskSteps     `json:"task_steps"`
+	UserSteps   []DataUserSteps `json:"user_steps"`
 }
 
 type DataTaskChallenges struct {
-	Id          string      `json:"id"`
-	Title       string      `json:"title"`
-	Description string      `json:"description"`
-	Thumbnail   string      `json:"thumbnail"`
-	StartDate   time.Time   `json:"start_date"`
-	EndDate     time.Time   `json:"end_date"`
-	StatusTask  bool        `json:"status_task"`
-	TaskSteps   []TaskSteps `json:"task_steps"`
+	Id          string          `json:"id"`
+	Title       string          `json:"title"`
+	Description string          `json:"description"`
+	Thumbnail   string          `json:"thumbnail"`
+	StartDate   time.Time       `json:"start_date"`
+	EndDate     time.Time       `json:"end_date"`
+	StatusTask  bool            `json:"status_task"`
+	TaskSteps   []TaskSteps     `json:"task_steps"`
+	UserSteps   []DataUserSteps `json:"user_steps"`
 }
 
 type GetUserTaskDetailsResponse struct {
