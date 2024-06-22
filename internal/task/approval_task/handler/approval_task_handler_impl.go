@@ -38,7 +38,7 @@ func (handler *ApprovalTaskHandlerImpl) GetAllApprovalTaskPaginationHandler(c ec
 		return err
 	}
 
-	userTask, total, err := handler.usecase.GetAllApprovalTaskPaginationUseCase(limitInt, (pageInt-1)*limitInt)
+	userTask, total, err := handler.usecase.GetAllApprovalTaskPaginationUseCase(limitInt, pageInt)
 	if err != nil {
 		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
@@ -76,7 +76,7 @@ func (handler *ApprovalTaskHandlerImpl) GetAllApprovalTaskPaginationHandler(c ec
 		TotalData: total,
 		TotalPage: totalPage,
 	}
-	responseData := helper.ResponseData(http.StatusOK, "success get all task", responseDataPagination)
+	responseData := helper.ResponseData(http.StatusOK, "success get all user task", responseDataPagination)
 
 	return c.JSON(http.StatusOK, responseData)
 
