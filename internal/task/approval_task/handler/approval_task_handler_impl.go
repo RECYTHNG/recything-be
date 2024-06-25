@@ -40,7 +40,7 @@ func (handler *ApprovalTaskHandlerImpl) GetAllApprovalTaskPaginationHandler(c ec
 
 	userTask, total, err := handler.usecase.GetAllApprovalTaskPaginationUseCase(limitInt, pageInt)
 	if err != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
 	var data []dto.DataUserTask
@@ -91,7 +91,7 @@ func (handler *ApprovalTaskHandlerImpl) ApproveUserTaskHandler(c echo.Context) e
 		if errors.Is(err, pkg.ErrUserTaskNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserTaskNotFound.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
 	responseData := helper.ResponseData(http.StatusOK, "success approve user task", nil)
@@ -106,7 +106,7 @@ func (handler *ApprovalTaskHandlerImpl) RejectUserTaskHandler(c echo.Context) er
 		return helper.ErrorHandler(c, http.StatusBadRequest, err.Error())
 	}
 	if err := c.Validate(&request); err != nil {
-		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid request body, detail : "+err.Error())
+		return helper.ErrorHandler(c, http.StatusBadRequest, "invalid request body")
 	}
 	if err := handler.usecase.RejectUserTaskUseCase(&request, userTaskId); err != nil {
 		if errors.Is(err, pkg.ErrUserTaskAlreadyReject) {
@@ -115,10 +115,7 @@ func (handler *ApprovalTaskHandlerImpl) RejectUserTaskHandler(c echo.Context) er
 		if errors.Is(err, pkg.ErrUserTaskNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserTaskNotFound.Error())
 		}
-		if errors.Is(err, pkg.ErrUserTaskAlreadyAccepted) {
-			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrUserTaskAlreadyAccepted.Error())
-		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
 	responseData := helper.ResponseData(http.StatusOK, "success reject user task", nil)
@@ -133,7 +130,7 @@ func (handler *ApprovalTaskHandlerImpl) GetUserTaskDetailsHandler(c echo.Context
 		if errors.Is(err, pkg.ErrUserTaskNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserTaskNotFound.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
 	var dataImages []*dto.DataImages

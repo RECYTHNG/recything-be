@@ -32,7 +32,7 @@ func (handler *UserVideoHandlerImpl) GetAllVideoHandler(c echo.Context) error {
 	}
 	videos, err := handler.Usecase.GetAllVideoUsecase(limitInt)
 	if err != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
 	var dataVideo []*dto.DataVideoSearchByCategory
@@ -87,7 +87,7 @@ func (handler *UserVideoHandlerImpl) SearchVideoByKeywordHandler(c echo.Context)
 	keyword := c.QueryParam("keyword")
 	videos, err := handler.Usecase.SearchVideoByKeywordUsecase(keyword)
 	if err != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
 	var dataVideo []*dto.DataVideoSearchByCategory
@@ -146,7 +146,7 @@ func (handler *UserVideoHandlerImpl) SearchVideoByCategoryHandler(c echo.Context
 		if errors.Is(err, pkg.ErrVideoNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrVideoNotFound.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
 	var dataVideo []*dto.DataVideoSearchByCategory
@@ -209,7 +209,7 @@ func (handler *UserVideoHandlerImpl) GetVideoDetailHandler(c echo.Context) error
 		if errors.Is(err, pkg.ErrVideoNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrVideoNotFound.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
 	sortComments := c.QueryParam("sort-comments")
@@ -266,7 +266,7 @@ func (handler *UserVideoHandlerImpl) AddCommentHandler(c echo.Context) error {
 		if errors.Is(err, pkg.ErrVideoNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrVideoNotFound.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 	responseData := helper.ResponseData(http.StatusOK, "success add comment", nil)
 	return c.JSON(http.StatusCreated, responseData)
