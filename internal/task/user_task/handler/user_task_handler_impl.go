@@ -23,7 +23,7 @@ func NewUserTaskHandler(usecase usecase.UserTaskUsecase) UserTaskHandler {
 func (handler *UserTaskHandlerImpl) GetAllTasksHandler(c echo.Context) error {
 	userTask, err := handler.Usecase.GetAllTasksUsecase()
 	if err != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
 	var data []dto.DataUserTask
@@ -61,7 +61,7 @@ func (handler *UserTaskHandlerImpl) GetTaskByIdHandler(c echo.Context) error {
 		if errors.Is(err, pkg.ErrTaskNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrTaskNotFound.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 	var taskStep []dto.TaskSteps
 	for _, step := range task.TaskSteps {
@@ -100,7 +100,7 @@ func (handler *UserTaskHandlerImpl) CreateUserTaskHandler(c echo.Context) error 
 		if errors.Is(err, pkg.ErrTaskCannotBeFollowed) {
 			return helper.ErrorHandler(c, http.StatusConflict, pkg.ErrTaskCannotBeFollowed.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
 	var taskStep []dto.TaskSteps
@@ -192,7 +192,7 @@ func (handler *UserTaskHandlerImpl) UploadImageTaskHandler(c echo.Context) error
 		if errors.Is(err, pkg.ErrUserTaskNotCompleted) {
 			return helper.ErrorHandler(c, http.StatusConflict, pkg.ErrUserTaskNotCompleted.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 	var taskStep []dto.TaskSteps
 	var urlImages []dto.Images
@@ -252,7 +252,7 @@ func (handler *UserTaskHandlerImpl) GetUserTaskByUserIdHandler(c echo.Context) e
 		if errors.Is(err, pkg.ErrUserNoHasTask) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrUserNoHasTask.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
 	var data []dto.UserTaskGetByIdUserResponse
@@ -303,7 +303,7 @@ func (handler *UserTaskHandlerImpl) GetUserTaskDoneByUserIdHandler(c echo.Contex
 		if errors.Is(err, pkg.ErrUserNoHasTask) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrUserNoHasTask.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
 	var data []dto.GetUserTaskDoneByIdUserResponse
@@ -398,7 +398,7 @@ func (handler *UserTaskHandlerImpl) UpdateUserTaskHandler(c echo.Context) error 
 		if errors.Is(err, pkg.ErrUserTaskNotReject) {
 			return helper.ErrorHandler(c, http.StatusConflict, pkg.ErrUserTaskNotReject.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 	var taskStep []dto.TaskSteps
 	var urlImages []dto.Images
@@ -461,7 +461,7 @@ func (handler *UserTaskHandlerImpl) GetUserTaskDetailsHandler(c echo.Context) er
 		if errors.Is(err, pkg.ErrUserTaskNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserTaskNotFound.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
 	var dataImages []*dto.DataImages
@@ -491,7 +491,7 @@ func (handler *UserTaskHandlerImpl) GetHistoryPointByUserIdHandler(c echo.Contex
 		if errors.Is(err, pkg.ErrUserNoHasTask) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserNoHasTask.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
 	var dataHistoryPoints []*dto.DataHistoryPoint
@@ -540,7 +540,7 @@ func (handler *UserTaskHandlerImpl) UpdateTaskStepHandler(c echo.Context) error 
 		if errors.Is(err, pkg.ErrUserTaskStepAlreadyCompleted) {
 			return helper.ErrorHandler(c, http.StatusConflict, pkg.ErrUserTaskStepAlreadyCompleted.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
 	var taskStep []dto.TaskSteps
@@ -591,7 +591,7 @@ func (handler *UserTaskHandlerImpl) GetUserTaskByUserTaskIdHandler(c echo.Contex
 		if errors.Is(err, pkg.ErrUserTaskNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrUserTaskNotFound.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 	var taskStep []dto.TaskSteps
 	var userSteps []dto.DataUserSteps
