@@ -62,7 +62,7 @@ func (handler *ManageTaskHandlerImpl) CreateTaskHandler(c echo.Context) error {
 		if errors.Is(err, pkg.ErrUploadCloudinary) {
 			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
 
 	taskStep := []dto.TaskSteps{}
@@ -126,7 +126,7 @@ func (handler *ManageTaskHandlerImpl) GetTaskChallengePaginationHandler(c echo.C
 
 	tasks, totalData, err := handler.Usecase.GetTaskChallengePagination(pageInt, limitInt, status, endDate)
 	if err != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
 	}
 
 	var data []dto.DataTasks
@@ -181,7 +181,7 @@ func (handler *ManageTaskHandlerImpl) GetTaskByIdHandler(c echo.Context) error {
 		if errors.Is(err, pkg.ErrTaskNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrTaskNotFound.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
 	}
 
 	var taskSteps []dto.TaskSteps
@@ -255,7 +255,7 @@ func (handler *ManageTaskHandlerImpl) UpdateTaskHandler(c echo.Context) error {
 		if errors.Is(err, pkg.ErrUploadCloudinary) {
 			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
 	}
 	var taskSteps []dto.TaskSteps
 	for _, step := range task.TaskSteps {
@@ -286,7 +286,7 @@ func (handler *ManageTaskHandlerImpl) DeleteTaskHandler(c echo.Context) error {
 		if errors.Is(err, pkg.ErrTaskNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrTaskNotFound.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail: "+err.Error())
 	}
 	responseData := helper.ResponseData(http.StatusOK, "data deleted successfully", nil)
 	return c.JSON(http.StatusOK, responseData)

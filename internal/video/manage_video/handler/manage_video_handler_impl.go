@@ -58,7 +58,7 @@ func (handler *ManageVideoHandlerImpl) CreateDataVideoHandler(c echo.Context) er
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrNoVideoIdFoundOnUrl.Error())
 		}
 		if errors.Is(err, pkg.ErrVideoNotFound) {
-			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrVideoNotFound.Error())
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoNotFound.Error())
 		}
 		if errors.Is(err, pkg.ErrVideoService) {
 			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrVideoService.Error())
@@ -84,7 +84,7 @@ func (handler *ManageVideoHandlerImpl) CreateDataVideoHandler(c echo.Context) er
 		if errors.Is(err, pkg.ErrUploadCloudinary) {
 			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
 	return helper.ResponseHandler(c, http.StatusCreated, "success create data video", nil)
 }
@@ -92,7 +92,7 @@ func (handler *ManageVideoHandlerImpl) CreateDataVideoHandler(c echo.Context) er
 func (handler *ManageVideoHandlerImpl) GetAllCategoryVideoHandler(c echo.Context) error {
 	videoCategories, trashCategories, err := handler.ManageVideoUsecase.GetAllCategoryVideoUseCase()
 	if err != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
 	var dataVideoCategories []*dto.DataCategoryVideo
 	var dataTrashCategories []*dto.DataTrashCategory
@@ -175,9 +175,9 @@ func (handler *ManageVideoHandlerImpl) GetDetailsDataVideoByIdHandler(c echo.Con
 	video, err := handler.ManageVideoUsecase.GetDetailsDataVideoByIdUseCase(idInt)
 	if err != nil {
 		if errors.Is(err, pkg.ErrVideoNotFound) {
-			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrVideoNotFound.Error())
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoNotFound.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
 	uniqueContentCategories := make(map[uint]*dto.DataCategoryVideoResponse)
 	uniqueWasteCategories := make(map[uint]*dto.DataTrashCategoryResponse)
@@ -201,6 +201,7 @@ func (handler *ManageVideoHandlerImpl) GetDetailsDataVideoByIdHandler(c echo.Con
 		}
 	}
 
+	// Convert maps back to slices
 	var dataContentCategories []*dto.DataCategoryVideoResponse
 	for _, vc := range uniqueContentCategories {
 		dataContentCategories = append(dataContentCategories, vc)
@@ -249,11 +250,14 @@ func (handler *ManageVideoHandlerImpl) UpdateDataVideoHandler(c echo.Context) er
 	}
 
 	if err := handler.ManageVideoUsecase.UpdateDataVideoUseCase(&request, thumbnail, idInt); err != nil {
+		if errors.Is(err, pkg.ErrVideoNotFound) {
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoNotFound.Error())
+		}
 		if errors.Is(err, pkg.ErrNameCategoryVideoNotFound) {
-			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrNameCategoryVideoNotFound.Error())
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrNameCategoryVideoNotFound.Error())
 		}
 		if errors.Is(err, pkg.ErrNameTrashCategoryNotFound) {
-			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrNameTrashCategoryNotFound.Error())
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrNameTrashCategoryNotFound.Error())
 		}
 		if errors.Is(err, pkg.ErrNoVideoIdFoundOnUrl) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrNoVideoIdFoundOnUrl.Error())
@@ -285,7 +289,7 @@ func (handler *ManageVideoHandlerImpl) UpdateDataVideoHandler(c echo.Context) er
 		if errors.Is(err, pkg.ErrUploadCloudinary) {
 			return helper.ErrorHandler(c, http.StatusInternalServerError, pkg.ErrUploadCloudinary.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
 	return helper.ResponseHandler(c, http.StatusOK, "success update data video", nil)
 }
@@ -298,9 +302,9 @@ func (handler *ManageVideoHandlerImpl) DeleteDataVideoHandler(c echo.Context) er
 	}
 	if err := handler.ManageVideoUsecase.DeleteDataVideoUseCase(idInt); err != nil {
 		if errors.Is(err, pkg.ErrVideoNotFound) {
-			return helper.ErrorHandler(c, http.StatusNotFound, pkg.ErrVideoNotFound.Error())
+			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrVideoNotFound.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
 	}
 	return helper.ResponseHandler(c, http.StatusOK, "success delete data video", nil)
 }
