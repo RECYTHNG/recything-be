@@ -40,7 +40,7 @@ func (handler *adminHandlerImpl) AddAdminHandler(c echo.Context) error {
 		if errors.Is(errUc, pkg.ErrEmailAlreadyExists) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrEmailAlreadyExists.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+errUc.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
 	data := dto.AdminResponseRegister{
@@ -162,7 +162,7 @@ func (handler *adminHandlerImpl) UpdateAdminHandler(c echo.Context) error {
 
 	src, errOpen := file.Open()
 	if errOpen != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "failed to open file: "+errOpen.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "failed to open file")
 	}
 	defer src.Close()
 
@@ -180,7 +180,7 @@ func (handler *adminHandlerImpl) UpdateAdminHandler(c echo.Context) error {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrPasswordInvalid.Error())
 		}
 
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+errUc.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
 	data := dto.AdminResponseUpdate{
@@ -201,7 +201,7 @@ func (handler *adminHandlerImpl) GetProfileAdminHandler(c echo.Context) error {
 		if errors.Is(err, pkg.ErrAdminNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, err.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 
 	data := dto.AdminResponseGetDataById{
@@ -224,7 +224,7 @@ func (handler *adminHandlerImpl) DeleteAdminHandler(c echo.Context) error {
 		if errors.Is(err, pkg.ErrAdminNotFound) {
 			return helper.ErrorHandler(c, http.StatusNotFound, err.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+err.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 	responseData := helper.ResponseData(http.StatusOK, "data successfully deleted", nil)
 	return c.JSON(http.StatusOK, responseData)
@@ -254,7 +254,7 @@ func (handler *adminHandlerImpl) UpdateAdminCurrentLoginHandler(c echo.Context) 
 		if errors.Is(errUc, pkg.ErrPasswordInvalid) {
 			return helper.ErrorHandler(c, http.StatusBadRequest, pkg.ErrPasswordInvalid.Error())
 		}
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error, detail : "+errUc.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "internal server error")
 	}
 	data := dto.AdminResponseUpdate{
 		Id:           claims.UserID,
@@ -284,7 +284,7 @@ func (handler *adminHandlerImpl) AddProfileAdminHandler(c echo.Context) error {
 
 	src, errOpen := file.Open()
 	if errOpen != nil {
-		return helper.ErrorHandler(c, http.StatusInternalServerError, "failed to open file: "+errOpen.Error())
+		return helper.ErrorHandler(c, http.StatusInternalServerError, "failed to open file")
 	}
 	defer src.Close()
 
