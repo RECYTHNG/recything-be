@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"time"
 
@@ -10,31 +11,31 @@ import (
 )
 
 func (m *mysqlDatabase) InitTasks() {
-	// if err := m.GetDB().Migrator().DropTable(&taskEntity.TaskStep{}); err != nil {
-	// 	return
-	// }
-	// if err := m.GetDB().Migrator().DropTable(&taskEntity.TaskChallenge{}); err != nil {
-	// 	return
-	// }
+	if err := m.GetDB().Migrator().DropTable(&taskEntity.TaskStep{}); err != nil {
+		return
+	}
+	if err := m.GetDB().Migrator().DropTable(&taskEntity.TaskChallenge{}); err != nil {
+		return
+	}
 
-	// if err := m.GetDB().AutoMigrate(&taskEntity.TaskStep{}); err != nil {
-	// 	return
-	// }
-	// if err := m.GetDB().AutoMigrate(&taskEntity.TaskChallenge{}); err != nil {
-	// 	return
-	// }
+	if err := m.GetDB().AutoMigrate(&taskEntity.TaskStep{}); err != nil {
+		return
+	}
+	if err := m.GetDB().AutoMigrate(&taskEntity.TaskChallenge{}); err != nil {
+		return
+	}
 
-	// taskChallenges, taskSteps := generateTask()
+	taskChallenges, taskSteps := generateTask()
 
-	// for _, taskChallenge := range taskChallenges {
-	// 	m.GetDB().FirstOrCreate(&taskChallenge, taskChallenge)
-	// }
+	for _, taskChallenge := range taskChallenges {
+		m.GetDB().FirstOrCreate(&taskChallenge, taskChallenge)
+	}
 
-	// for _, taskStep := range taskSteps {
-	// 	m.GetDB().FirstOrCreate(&taskStep, taskStep)
-	// }
+	for _, taskStep := range taskSteps {
+		m.GetDB().FirstOrCreate(&taskStep, taskStep)
+	}
 
-	// log.Println("Task Challenge data added!")
+	log.Println("Task Challenge data added!")
 }
 
 func generateTask() ([]taskEntity.TaskChallenge, []taskEntity.TaskStep) {
