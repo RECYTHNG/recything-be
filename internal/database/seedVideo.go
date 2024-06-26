@@ -1,6 +1,7 @@
 package database
 
 import (
+	"log"
 	"math/rand"
 	"time"
 
@@ -9,31 +10,31 @@ import (
 )
 
 func (m *mysqlDatabase) InitVideos() {
-	// if err := m.GetDB().Migrator().DropTable(&videoEntity.VideoCategory{}); err != nil {
-	// 	return
-	// }
-	// if err := m.GetDB().Migrator().DropTable(&videoEntity.Video{}); err != nil {
-	// 	return
-	// }
+	if err := m.GetDB().Migrator().DropTable(&videoEntity.VideoCategory{}); err != nil {
+		return
+	}
+	if err := m.GetDB().Migrator().DropTable(&videoEntity.Video{}); err != nil {
+		return
+	}
 
-	// if err := m.GetDB().AutoMigrate(&videoEntity.VideoCategory{}); err != nil {
-	// 	return
-	// }
-	// if err := m.GetDB().AutoMigrate(&videoEntity.Video{}); err != nil {
-	// 	return
-	// }
+	if err := m.GetDB().AutoMigrate(&videoEntity.VideoCategory{}); err != nil {
+		return
+	}
+	if err := m.GetDB().AutoMigrate(&videoEntity.Video{}); err != nil {
+		return
+	}
 
-	// videos, videoCategories := generateVideo()
+	videos, videoCategories := generateVideo()
 
-	// for _, video := range videos {
-	// 	m.GetDB().FirstOrCreate(&video, video)
-	// }
+	for _, video := range videos {
+		m.GetDB().FirstOrCreate(&video, video)
+	}
 
-	// for _, videoCategory := range videoCategories {
-	// 	m.GetDB().FirstOrCreate(&videoCategory, videoCategory)
-	// }
+	for _, videoCategory := range videoCategories {
+		m.GetDB().FirstOrCreate(&videoCategory, videoCategory)
+	}
 
-	// log.Println("Video data added!")
+	log.Println("Video data added!")
 }
 
 func generateVideo() ([]videoEntity.Video, []videoEntity.VideoCategory) {
